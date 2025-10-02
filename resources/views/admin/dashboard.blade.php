@@ -31,6 +31,14 @@
     .card:hover {
         transform: translateY(-5px);
     }
+    .hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
 
     /* Table Styling */
     .table {
@@ -145,12 +153,16 @@
             <h3>{{ $suppliers_count }}</h3>
         </div>
     </div>
-    <div class="col-md-3 col-6 mb-3">
-        <div class="card bg-danger text-white text-center p-3">
+<div class="col-md-3 col-6 mb-3">
+    <a href="{{ route('admin.pending.requests') }}" class="text-decoration-none">
+        <div class="card bg-danger text-white text-center p-3 hover-card">
             <h5>Pending Requests</h5>
             <h3>{{ $pending_requests }}</h3>
         </div>
-    </div>
+    </a>
+</div>
+
+
 </div>
 
 

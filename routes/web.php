@@ -32,6 +32,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('vehicles', VehicleController::class);
         Route::resource('tires', TireController::class);
         Route::resource('suppliers', SupplierController::class);
+        Route::get('/requests/pending', [DashboardController::class, 'pendingRequests'])->name('requests.pending');
+        Route::get('/pending-requests', [DashboardController::class, 'pendingRequests'])
+            ->name('pending.requests');
+
 
         // Driver management
         Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');

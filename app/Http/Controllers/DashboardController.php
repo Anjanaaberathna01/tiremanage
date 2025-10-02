@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; // Laravel HTTP Request
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Models\Vehicle;
 use App\Models\Tire;
-use App\Models\TireRequest; // your renamed Request model
+use App\Models\TireRequest;
 use App\Models\Driver;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,13 +16,15 @@ class DashboardController extends Controller
     /**
      * Admin Dashboard
      */
-
     public function admin()
     {
         $vehicles = Vehicle::orderBy('model', 'asc')->get();
         $tires = Tire::with('supplier')->get();
         $suppliers = Supplier::all();
         $drivers = Driver::with('user')->get();
+
+        // ✅ Count pending requests
+        $pending_requests = TireRequest::where('status', 'pending')->count();
 
         return view('admin.dashboard', [
             'vehicles' => $vehicles,
@@ -33,12 +35,21 @@ class DashboardController extends Controller
             'suppliers_count' => $suppliers->count(),
             'drivers' => $drivers,
             'drivers_count' => $drivers->count(),
-            'pending_requests' => 0 // replace with actual pending requests if any
+            'pending_requests' => $pending_requests // ✅ now real count
         ]);
     }
 
+    /**
+     * Admin view pending requests
+     */
+    public function pendingRequests()
+    {
+        $pendingRequests = TireRequest::where('status', 'pending')
+            ->with(['user', 'vehicle', 'tire'])
+            ->get();
 
-
+        return view('admin.pending_requests', compact('pendingRequests'));
+    }
 
     /**
      * Driver Dashboard
@@ -54,14 +65,12 @@ class DashboardController extends Controller
     /**
      * Section Manager Dashboard
      */
-public function sectionManager()
-{
-    $pendingRequests = TireRequest::where('status', 'pending')->get();
+    public function sectionManager()
+    {
+        $pendingRequests = TireRequest::where('status', 'pending')->get();
 
-    // Note: view path uses dot notation for subfolders
-    return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
-}
-
+        return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
+    }
 
     /**
      * Mechanic Officer Dashboard
