@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/requests/create', [TireRequestController::class, 'create'])->name('requests.create');
         Route::post('/requests', [TireRequestController::class, 'store'])->name('requests.store');
 
-        // ✅ Delete tire request
+        // Delete tire request
         Route::delete('/requests/{request}', [TireRequestController::class, 'destroy'])->name('requests.destroy');
 
         // Vehicle lookup
