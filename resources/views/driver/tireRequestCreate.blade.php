@@ -13,7 +13,7 @@
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
-                @foreach ($errors->all() as $error)
+                @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
@@ -45,7 +45,7 @@
             </datalist>
             <small class="text-muted">If the plate is registered, branch will auto-fill.</small>
 
-            {{-- Hidden vehicle_id (used for storing request) --}}
+            {{-- Hidden vehicle_id --}}
             <input type="hidden" name="vehicle_id" id="vehicle_id">
         </div>
 
@@ -77,7 +77,11 @@
             <input type="file" name="images[]" id="images" class="form-control" multiple accept="image/*">
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit Request</button>
+        {{-- Submit & Cancel Buttons --}}
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+            <a href="{{ route('driver.dashboard') }}" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
     </form>
 </div>
 @endsection

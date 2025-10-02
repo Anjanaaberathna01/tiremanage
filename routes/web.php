@@ -42,13 +42,19 @@ Route::middleware(['auth'])->group(function () {
      */
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'driver'])->name('dashboard');
+
+        // Tire Requests
         Route::get('/requests', [TireRequestController::class, 'index'])->name('requests.index');
         Route::get('/requests/create', [TireRequestController::class, 'create'])->name('requests.create');
         Route::post('/requests', [TireRequestController::class, 'store'])->name('requests.store');
 
-        // ✅ FIXED lookup route
+        // ✅ Delete tire request
+        Route::delete('/requests/{request}', [TireRequestController::class, 'destroy'])->name('requests.destroy');
+
+        // Vehicle lookup
         Route::get('/vehicles/lookup', [VehicleController::class, 'lookup'])->name('vehicles.lookup');
 
+        // Profile routes
         Route::get('/profile', [DriverController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile', [DriverController::class, 'updateProfile'])->name('profile.update');
     });

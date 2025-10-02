@@ -6,7 +6,6 @@
 <div class="container mx-auto p-6">
     <h2 class="dashboard-title">Section Manager Dashboard</h2>
 
-
     <ul class="requests-list">
         @foreach($pendingRequests as $req)
             <li class="request-card">
@@ -16,7 +15,9 @@
                             <strong>Request:</strong> User: {{ $req->user->name }}
                         </div>
                         <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }} - Tire: {{ $req->tire->size ?? 'N/A' }}
+                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
+                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                            Tire: {{ $req->tire->size ?? 'N/A' }}
                         </div>
                         <div class="request-damage">
                             <strong>Damage Description:</strong>

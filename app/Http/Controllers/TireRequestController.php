@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Models\Tire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class TireRequestController extends Controller
 {
@@ -24,7 +25,7 @@ class TireRequestController extends Controller
             'vehicle_id' => 'required|exists:vehicles,id',
             'tire_id' => 'required|exists:tires,id',
             'damage_description' => 'required|string|max:500',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // each image max 2MB
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $images = [];
@@ -39,7 +40,6 @@ class TireRequestController extends Controller
             'vehicle_id' => $validated['vehicle_id'],
             'tire_id' => $validated['tire_id'],
             'damage_description' => $validated['damage_description'],
-            // store as array so Eloquent casting (json) works correctly
             'tire_images' => $images,
             'status' => 'pending',
         ]);
@@ -48,15 +48,42 @@ class TireRequestController extends Controller
             ->with('success', 'Tire request submitted successfully!');
     }
 
-
-    // List all requests for driver
+    // List all requests for driver, today first
     public function index()
     {
-        $requests = \App\Models\TireRequest::with(['vehicle', 'tire'])
+        $today = Carbon::today();
+
+        $requests = TireRequest::with(['vehicle', 'tire'])
             ->where('user_id', auth()->id())
+            ->orderByRaw("DATE(created_at) = ? DESC", [$today->toDateString()])
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('driver.tireRequestIndex', compact('requests'));
+    }
+
+    // Delete a tire request (only if pending)
+    public function destroy(TireRequest $request)
+    {
+        if ($request->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($request->status !== 'pending') {
+            return redirect()->route('driver.requests.index')
+                ->with('error', 'Only pending requests can be deleted.');
+        }
+
+        // Delete images from storage
+        if ($request->tire_images && is_array($request->tire_images)) {
+            foreach ($request->tire_images as $img) {
+                \Storage::disk('public')->delete($img);
+            }
+        }
+
+        $request->delete();
+
+        return redirect()->route('driver.requests.index')
+            ->with('success', 'Tire request deleted successfully.');
     }
 }

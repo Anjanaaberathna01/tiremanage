@@ -14,7 +14,9 @@
                             <strong>Request:</strong> User: {{ $req->user->name }}
                         </div>
                         <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }} - Tire: {{ $req->tire->size ?? 'N/A' }}
+                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
+                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                            Tire: {{ $req->tire->size ?? 'N/A' }}
                         </div>
                         <div class="request-damage">
                             <strong>Damage Description:</strong>
@@ -32,7 +34,6 @@
                                     if (is_array($decoded)) {
                                         $images = $decoded;
                                     } else {
-                                        // try unescaping common escaped slashes and decode again
                                         $unescaped = str_replace('\\/', '/', $req->tire_images);
                                         $decoded2 = json_decode($unescaped, true);
                                         if (is_array($decoded2)) {
@@ -41,7 +42,6 @@
                                     }
                                 }
                             }
-                            // fallback to legacy `images` column if present
                             if (empty($images) && isset($req->images) && $req->images) {
                                 $images = is_array($req->images) ? $req->images : array_map('trim', explode(',', $req->images));
                             }
@@ -111,7 +111,7 @@
 
 @push('scripts')
 <script>
-// Simple Lightbox (same as rejected view)
+// Simple Lightbox
 document.addEventListener('DOMContentLoaded', () => {
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';

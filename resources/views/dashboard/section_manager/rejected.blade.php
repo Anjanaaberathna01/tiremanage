@@ -15,7 +15,9 @@
                             <strong>Request:</strong> {{ $req->user->name }}
                         </div>
                         <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }} | Tire: {{ $req->tire->size ?? 'N/A' }}
+                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
+                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                            Tire: {{ $req->tire->size ?? 'N/A' }}
                         </div>
                         <div class="request-damage">
                             <strong>Damage Description:</strong>
