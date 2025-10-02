@@ -5,6 +5,59 @@
 @section('content')
 <div class="container mx-auto p-6 relative">
 
+    {{-- Flash messages (success / error) --}}
+
+@if(session('success'))
+    <div class="flash-msg flash-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="flash-msg flash-error">
+        {{ session('error') }}
+    </div>
+@endif
+
+<style>
+    /* Flash messages creative style */
+    .flash-msg {
+        padding: 1rem 1.5rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        font-size: 1rem;
+        text-align: center;
+        position: fixed;
+        top: 5rem;
+        right: 2rem;
+        z-index: 9999;
+        opacity: 1;
+        transform: translateY(0);
+        animation: slideFade 3s forwards;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        color: white;
+    }
+    .flash-success {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+    .flash-error {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+    }
+
+    @keyframes slideFade {
+        0% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-20px); }
+    }
+</style>
+
+<script>
+    // Auto-hide flash messages after 0.5 seconds
+    setTimeout(() => {
+        const flash = document.querySelectorAll('.flash-msg');
+        flash.forEach(msg => msg.remove());
+    }, 9000); // 0.5s
+</script>
+
+
     {{-- 🔹 Welcome message under navbar, top-left --}}
     @php
         $driver = \App\Models\Driver::where('user_id', auth()->id())->first();

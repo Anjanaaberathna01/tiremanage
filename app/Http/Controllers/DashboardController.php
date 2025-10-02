@@ -54,11 +54,14 @@ class DashboardController extends Controller
     /**
      * Section Manager Dashboard
      */
-    public function sectionManager()
-    {
-        $pendingRequests = TireRequest::where('status', 'pending')->get();
-        return view('dashboard.section_manager', compact('pendingRequests'));
-    }
+public function sectionManager()
+{
+    $pendingRequests = TireRequest::where('status', 'pending')->get();
+
+    // Note: view path uses dot notation for subfolders
+    return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
+}
+
 
     /**
      * Mechanic Officer Dashboard

@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    // Show login form
     public function showLoginForm()
     {
-        return view('login'); // resources/views/login.blade.php
+        return view('login');
     }
 
-    // Handle login
     public function login(Request $request)
     {
         $request->validate([
@@ -26,41 +24,48 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            $user = Auth::user();
+            // Reload user with role to avoid null
+            $user = Auth::user()->load('role');
 
-            $roleName = strtolower(trim($user->role->name ?? ''));
-
-            if (str_contains($roleName, 'admin')) {
-                return redirect()->route('admin.dashboard');
+            if (!$user->role) {
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'User has no role assigned');
             }
 
-            if (str_contains($roleName, 'driver')) {
-                return redirect()->route('driver.dashboard');
-            }
+            // Normalize role name to a predictable key (lowercase, spaces and hyphens -> underscore)
+            $roleRaw = $user->role->name ?? '';
+            $role = strtolower(trim($roleRaw));
+            $role = str_replace([' ', '-'], '_', $role);
 
-            // section manager variations: 'section manager', 'section_manager', 'section-manager'
-            if (str_contains($roleName, 'section') && str_contains($roleName, 'manager')) {
-                return redirect()->route('section_manager.dashboard');
-            }
+            // Redirect based on normalized role
+            switch ($role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
 
-            if (str_contains($roleName, 'mechanic')) {
-                return redirect()->route('mechanic_officer.dashboard');
-            }
+                case 'driver':
+                    return redirect()->route('driver.dashboard');
 
-            if (str_contains($roleName, 'transport')) {
-                return redirect()->route('transport_officer.dashboard');
-            }
+                case 'section_manager':
+                    return redirect()->route('section_manager.dashboard');
 
-            Auth::logout();
-            return redirect()->route('login')->with('error', 'Role not recognized');
+                case 'mechanic_officer':
+                    return redirect()->route('mechanic_officer.dashboard');
+
+                case 'transport_officer':
+                    return redirect()->route('transport_officer.dashboard');
+
+                default:
+                    // Unknown role: logout for safety and show a message
+                    Auth::logout();
+                    return redirect()->route('login')->with('error', 'Role not recognized');
+            }
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ]);
+        return back()->withErrors(['email' => 'Invalid credentials.'])
+            ->withInput($request->only('email'));
     }
 
-    // Handle logout
+
     public function logout(Request $request)
     {
         Auth::logout();

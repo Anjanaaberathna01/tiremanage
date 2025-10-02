@@ -14,7 +14,7 @@ class MechanicOfficerSeeder extends Seeder
             'name' => 'Mechanicofficer@123',
             'email' => 'Mechanicofficer123@gmail.com',
             'password' => Hash::make('12345678'),
-            'role_id' => 2, // Assuming Driver is ID 2
+            'role_id' => 4, 
             'created_at' => now(),
             'updated_at' => now(),
         ]);
