@@ -42,7 +42,7 @@
         <div class="col-md-4 text-center">
             <div class="position-relative d-inline-block profile-photo-wrapper">
                 <img id="photoPreview"
-                     src="{{ $driver->profile_photo && Storage::disk('public')->exists($driver->profile_photo) ? asset('storage/'.$driver->profile_photo) : asset('images/default-profile.jpg') }}"
+                     src="{{ $profilePhoto }}"
                      alt="Profile Photo"
                      class="rounded-circle shadow"
                      style="width:250px; height:250px; object-fit:cover; border:5px solid #2563eb;">
@@ -52,12 +52,10 @@
                     <i class="bi bi-camera-fill"></i>
                 </label>
 
-                {{-- Remove icon (only if photo exists) --}}
-                @if($driver->profile_photo && Storage::disk('public')->exists($driver->profile_photo))
+                {{-- Remove icon --}}
                 <label class="remove-icon" onclick="removePhoto()">
                     <i class="bi bi-x-circle-fill"></i>
                 </label>
-                @endif
             </div>
             <input type="file" id="profilePhotoInput" name="profile_photo" accept="image/*" onchange="previewPhoto(event)" style="display:none;">
             <input type="hidden" id="removePhotoFlag" name="remove_photo" value="0">
@@ -70,13 +68,15 @@
 function previewPhoto(event) {
     const output = document.getElementById('photoPreview');
     output.src = URL.createObjectURL(event.target.files[0]);
-    document.getElementById('removePhotoFlag').value = 0; // reset remove flag
+    document.getElementById('removePhotoFlag').value = 0; // reset remove flag if new photo uploaded
 }
 
 function removePhoto() {
     const output = document.getElementById('photoPreview');
-    output.src = "{{ asset('images/default-profile.jpg') }}"; // fallback image
+    output.src = "{{ asset('images/default-profile.jpg') }}"; // fallback default
     document.getElementById('removePhotoFlag').value = 1;
+    // clear file input if user previously selected a file
+    document.getElementById('profilePhotoInput').value = "";
 }
 </script>
 

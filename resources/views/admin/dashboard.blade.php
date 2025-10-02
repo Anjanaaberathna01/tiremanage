@@ -274,7 +274,7 @@
         <table class="table table-bordered text-center">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>No</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Full Name</th>

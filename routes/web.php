@@ -28,9 +28,12 @@ Route::middleware(['auth'])->group(function () {
      */
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+
         Route::resource('vehicles', VehicleController::class);
         Route::resource('tires', TireController::class);
         Route::resource('suppliers', SupplierController::class);
+
+        // Driver management
         Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
         Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
     });
@@ -70,6 +73,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/requests/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
         Route::post('/requests/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
         Route::post('/requests/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
+        Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
+        Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
+        Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
+        Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
+
     });
 
     /**

@@ -64,6 +64,13 @@
                             <div class="no-images"><em>No images provided</em></div>
                         @endif
                     </div>
+
+                    {{-- 🔹 Edit Button --}}
+                    <div class="request-actions">
+                        <a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn">
+                            ✏️ Edit
+                        </a>
+                    </div>
                 </div>
             </li>
         @empty
@@ -71,7 +78,6 @@
         @endforelse
     </ul>
 </div>
-
 @endsection
 
 @push('styles')
@@ -98,11 +104,16 @@
 .request-img:hover { transform:scale(1.05); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
 .no-images { margin-top:0.5rem; font-style:italic; color:#6b7280; }
 
-/* Lightbox (same pattern as rejected view) */
+/* Lightbox */
 .lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; animation:fadeIn .3s ease; }
 .lightbox.active { display:flex; }
 .lightbox img { max-width:90%; max-height:85%; border-radius:.75rem; box-shadow:0 20px 40px rgba(0,0,0,.5); animation:zoomIn .3s ease; }
 .lightbox .close-btn { position:absolute; top:20px; right:30px; font-size:2rem; color:#fff; cursor:pointer; }
+
+/* Edit Button */
+.request-actions { margin-top:1rem; display:flex; justify-content:flex-end; }
+.edit-btn { display:inline-block; background:#2563eb; color:#fff; font-size:0.9rem; font-weight:600; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; transition:background 0.25s, transform 0.25s; box-shadow:0 4px 10px rgba(37, 99, 235, 0.3); }
+.edit-btn:hover { background:#1e40af; transform:translateY(-2px); box-shadow:0 6px 14px rgba(30, 64, 175, 0.35); }
 
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 @keyframes zoomIn { from {transform:scale(.85);} to {transform:scale(1);} }
@@ -111,7 +122,6 @@
 
 @push('scripts')
 <script>
-// Simple Lightbox
 document.addEventListener('DOMContentLoaded', () => {
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';

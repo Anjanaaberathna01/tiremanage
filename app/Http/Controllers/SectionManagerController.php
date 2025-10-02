@@ -57,4 +57,32 @@ class SectionManagerController extends Controller
         $req->save();
         return redirect()->back()->with('success', 'Request rejected.');
     }
+
+    // Edit request
+    public function edit($id)
+    {
+        $request = TireRequest::with(['user', 'vehicle', 'tire'])->findOrFail($id);
+        return view('dashboard.section_manager.edit_request', compact('request'));
+    }
+
+    // Update request
+    public function update(Request $request, $id)
+    {
+        $req = TireRequest::findOrFail($id);
+
+        $request->validate([
+            'damage_description' => 'nullable|string|max:500',
+            'status' => 'in:approved,rejected,pending',
+        ]);
+
+        $req->damage_description = $request->damage_description;
+        if ($request->has('status')) {
+            $req->status = $request->status;
+        }
+        $req->save();
+
+        // 🔹 Redirect back to Section Manager Dashboard
+        return redirect()->route('section_manager.dashboard')
+            ->with('success', 'Request updated successfully.');
+    }
 }
