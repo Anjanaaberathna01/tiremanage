@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.section_manager')
 
 @section('title', 'Section Manager Dashboard')
 
@@ -6,10 +6,6 @@
 <div class="container mx-auto p-6">
     <h2 class="dashboard-title">Section Manager Dashboard</h2>
 
-    <div class="dashboard-actions" style="display:flex; gap:0.5rem; justify-content:center; margin-bottom:1rem;">
-        <a href="{{ route('section_manager.requests.approved_list') }}" class="btn btn-approve">View Approved</a>
-        <a href="{{ route('section_manager.requests.rejected_list') }}" class="btn btn-reject">View Rejected</a>
-    </div>
 
     <ul class="requests-list">
         @foreach($pendingRequests as $req)

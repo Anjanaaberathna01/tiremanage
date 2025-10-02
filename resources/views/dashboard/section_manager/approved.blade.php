@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.section_manager')
 
 @section('title', 'Approved Requests')
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h2 class="dashboard-title">Approved Requests</h2>
+    <h2 class="dashboard-title">✅ Approved Requests</h2>
     <ul class="requests-list">
         @forelse($requests as $req)
             <li class="request-card">
@@ -52,10 +52,11 @@
                                 <strong>Images:</strong>
                                 <div class="images-container">
                                     @foreach($images as $img)
-                                        @php $imgPath = str_replace('\\/', '/', $img); @endphp
-                                        <a href="{{ asset('storage/' . $imgPath) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $imgPath) }}" alt="image-{{ $req->id }}" class="request-img"/>
-                                        </a>
+                                        @php $imgPath = str_replace('\\/', '/', trim($img)); @endphp
+                                        <img src="{{ asset('storage/' . $imgPath) }}"
+                                             alt="image-{{ $req->id }}"
+                                             class="request-img"
+                                             data-full="{{ asset('storage/' . $imgPath) }}"/>
                                     @endforeach
                                 </div>
                             </div>
@@ -72,3 +73,72 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+/* Title */
+.dashboard-title { font-size:2rem; font-weight:700; text-align:center; margin-bottom:1.5rem; color:#065f46; }
+
+/* Requests list */
+.requests-list { display:flex; flex-direction:column; gap:1.2rem; }
+
+/* Cards */
+.request-card { background: linear-gradient(135deg,#fff,#f0fdf4); border:1px solid rgba(6,95,70,0.12); border-radius:1rem; padding:1.5rem; box-shadow:0 6px 14px rgba(0,0,0,0.06); transition:transform .3s, box-shadow .3s; }
+.request-card:hover { transform: translateY(-5px) scale(1.01); box-shadow:0 12px 24px rgba(0,0,0,0.12); }
+.empty-card { text-align:center; color:#6b7280; font-style:italic; }
+
+/* Info */
+.request-header { font-size:1.1rem; font-weight:600; color:#065f46; margin-bottom:0.25rem; }
+.request-vehicle { color:#374151; margin-bottom:0.6rem; }
+.request-damage p { margin-top:0.3rem; color:#4b5563; }
+
+/* Images */
+.images-container { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem; }
+.request-img { width:110px; height:80px; object-fit:cover; border-radius:0.5rem; border:1px solid #ddd; cursor:pointer; transition:transform .25s, box-shadow .25s; }
+.request-img:hover { transform:scale(1.05); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
+.no-images { margin-top:0.5rem; font-style:italic; color:#6b7280; }
+
+/* Lightbox (same pattern as rejected view) */
+.lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; animation:fadeIn .3s ease; }
+.lightbox.active { display:flex; }
+.lightbox img { max-width:90%; max-height:85%; border-radius:.75rem; box-shadow:0 20px 40px rgba(0,0,0,.5); animation:zoomIn .3s ease; }
+.lightbox .close-btn { position:absolute; top:20px; right:30px; font-size:2rem; color:#fff; cursor:pointer; }
+
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes zoomIn { from {transform:scale(.85);} to {transform:scale(1);} }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+// Simple Lightbox (same as rejected view)
+document.addEventListener('DOMContentLoaded', () => {
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
+    document.body.appendChild(lightbox);
+
+    const imgEl = lightbox.querySelector('img');
+    const closeBtn = lightbox.querySelector('.close-btn');
+
+    document.querySelectorAll('.request-img').forEach(img => {
+        img.addEventListener('click', () => {
+            imgEl.src = img.dataset.full || img.src;
+            lightbox.classList.add('active');
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        imgEl.src = '';
+    });
+
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            lightbox.classList.remove('active');
+            imgEl.src = '';
+        }
+    });
+});
+</script>
+@endpush

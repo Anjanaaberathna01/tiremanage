@@ -63,5 +63,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- ✅ Make sure pushed scripts (e.g., lookupPlate in tireRequestCreate.blade.php) load --}}
+    @stack('scripts')
 </body>
 </html>

@@ -14,8 +14,7 @@ class TireRequestController extends Controller
     public function create()
     {
         $tires = Tire::all();
-        $vehicles = Vehicle::all();
-        return view('driver.tireRequestCreate', compact('tires', 'vehicles'));
+        return view('driver.tireRequestCreate', compact('tires'));
     }
 
     // Store request

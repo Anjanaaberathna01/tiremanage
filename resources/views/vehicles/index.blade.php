@@ -10,6 +10,7 @@
         <tr>
             <th>Model</th>
             <th>Registration Number</th>
+            <th>Branch</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -18,6 +19,7 @@
         <tr>
             <td>{{ $vehicle->model }}</td>
             <td>{{ $vehicle->plate_no }}</td>
+            <td>{{ $vehicle->branch }}</td>
             <td>
                 <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-sm btn-warning">Edit</a>
                 <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">

@@ -14,6 +14,7 @@ class TireRequest extends Model
     protected $fillable = [
         'user_id',
         'vehicle_id',
+        'branch',
         'tire_id',
         'damage_description',
         'tire_images',
@@ -37,5 +38,11 @@ class TireRequest extends Model
     public function tire()
     {
         return $this->belongsTo(Tire::class);
+    }
+
+    // ✅ Helper to get branch name from vehicle
+    public function branchName()
+    {
+        return $this->vehicle ? $this->vehicle->branch : null;
     }
 }

@@ -162,8 +162,9 @@
     <thead>
         <tr>
             <th style="width: 10%;">No</th>
-            <th style="width: 35%;">Model</th>
-            <th style="width: 35%;">Plate Number</th>
+            <th style="width: 25%;">Model</th>
+            <th style="width: 25%;">Plate Number</th>
+            <th style="width: 20%;">Branch</th>
             <th style="width: 20%;">Actions</th>
         </tr>
     </thead>
@@ -173,6 +174,7 @@
             <td>{{ $loop->iteration }}</td>
             <td>{{ $vehicle->model }}</td>
             <td>{{ $vehicle->plate_no }}</td>
+            <td>{{ $vehicle->branch }}</td>
             <td>
                 <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-sm btn-warning">Edit</a>
                 <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
