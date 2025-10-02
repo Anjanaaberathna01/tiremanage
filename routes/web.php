@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     // Section Manager
     Route::prefix('section-manager')->name('section_manager.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'sectionManager'])->name('dashboard');
+        Route::post('/requests/{id}/approve', [App\Http\Controllers\SectionManagerController::class, 'approve'])->name('requests.approve');
+        Route::post('/requests/{id}/reject', [App\Http\Controllers\SectionManagerController::class, 'reject'])->name('requests.reject');
     });
 
 

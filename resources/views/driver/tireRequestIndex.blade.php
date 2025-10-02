@@ -27,12 +27,24 @@
                         <td>{{ $request->tire->size ?? 'N/A' }}</td>
                         <td>{{ $request->damage_description }}</td>
                         <td>
-                            @if($request->images && is_array(json_decode($request->images)))
-                                @foreach(json_decode($request->images) as $image)
-                                    <img src="{{ asset('storage/' . $image) }}"
-                                         alt="Tire Image"
-                                         width="70"
-                                         class="img-thumbnail mb-1">
+                            @php
+                                $images = null;
+                                if(!empty($request->tire_images) && is_array($request->tire_images)) {
+                                    $images = $request->tire_images;
+                                } elseif(!empty($request->images)) {
+                                    $decoded = json_decode($request->images);
+                                    if(is_array($decoded)) $images = $decoded;
+                                }
+                            @endphp
+
+                            @if($images && count($images) > 0)
+                                @foreach($images as $image)
+                                    <a href="{{ asset('storage/' . $image) }}" target="_blank">
+                                        <img src="{{ asset('storage/' . $image) }}"
+                                             alt="Tire Image"
+                                             width="70"
+                                             class="img-thumbnail mb-1" />
+                                    </a>
                                 @endforeach
                             @else
                                 No Images
