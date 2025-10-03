@@ -37,6 +37,28 @@ class MechanicOfficerController extends Controller
         return view('dashboard.mechanic_officer.mechanic_officer', compact('requests'));
     }
 
+    // Show all requests that are approved (for mechanic view - approved list)
+    public function approved()
+    {
+        $requests = TireRequest::with(['user', 'vehicle', 'tire'])
+            ->where('status', 'approved')
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('dashboard.mechanic_officer.approved', ['requests' => $requests]);
+    }
+
+    // Show all requests that are rejected
+    public function rejected()
+    {
+        $requests = TireRequest::with(['user', 'vehicle', 'tire'])
+            ->where('status', 'rejected')
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('dashboard.mechanic_officer.rejected', ['requests' => $requests]);
+    }
+
     // Mechanic approves the request (final approval)
     public function approve($id)
     {

@@ -100,6 +100,8 @@ Route::delete('/drivers/{id}', [SectionManagerController::class, 'destroy'])->na
     Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
         // Use MechanicOfficerController for mechanic workflows
         Route::get('/dashboard', [App\Http\Controllers\MechanicOfficerController::class, 'index'])->name('dashboard');
+        Route::get('/requests/approved', [App\Http\Controllers\MechanicOfficerController::class, 'approved'])->name('requests.approved_list');
+        Route::get('/requests/rejected', [App\Http\Controllers\MechanicOfficerController::class, 'rejected'])->name('requests.rejected_list');
         Route::post('/requests/{id}/approve', [App\Http\Controllers\MechanicOfficerController::class, 'approve'])->name('requests.approve');
         Route::post('/requests/{id}/reject', [App\Http\Controllers\MechanicOfficerController::class, 'reject'])->name('requests.reject');
     });

@@ -1,18 +1,17 @@
 @extends('layouts.mechanic_officer')
 
-@section('title', 'Mechanic Officer Dashboard')
+@section('title', 'Mechanic Approved Requests')
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h2 class="dashboard-title">Mechanic Officer — Manager Approved Requests</h2>
-
+    <h2 class="dashboard-title">✅ Approved Requests</h2>
     <ul class="requests-list">
         @forelse($requests as $req)
             <li class="request-card">
                 <div class="request-content">
                     <div class="request-info">
                         <div class="request-header">
-                            <strong>Request #{{ $req->id }}</strong> — User: {{ $req->user->name ?? 'N/A' }}
+                            <strong>Request:</strong> User: {{ $req->user->name }}
                         </div>
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
@@ -56,22 +55,13 @@
                         @endif
                     </div>
 
-                    {{-- Approve / Reject actions only (mechanic cannot edit/delete) --}}
                     <div class="request-actions">
-                        <form action="{{ route('mechanic_officer.requests.approve', $req->id) }}" method="POST" class="action-form me-2">
-                            @csrf
-                            <button type="submit" class="btn btn-approve">Approve</button>
-                        </form>
-
-                        <form action="{{ route('mechanic_officer.requests.reject', $req->id) }}" method="POST" class="action-form">
-                            @csrf
-                            <button type="submit" class="btn btn-reject">Reject</button>
-                        </form>
+                        {{-- Mechanic cannot edit/delete from here; actions handled on dashboard --}}
                     </div>
                 </div>
             </li>
         @empty
-            <li class="request-card">No manager-approved requests available for mechanic.</li>
+            <li class="request-card">No approved requests found.</li>
         @endforelse
     </ul>
 </div>
@@ -79,13 +69,11 @@
 
 @push('styles')
 <style>
-/* Keep styling consistent with section manager */
 .dashboard-title { font-size:1.75rem; font-weight:700; text-align:center; margin-bottom:1rem; color:#0f766e; }
 .requests-list { display:flex; flex-direction:column; gap:1rem; }
 .request-card { background:#fff; border-radius:0.75rem; padding:1rem; border:1px solid #e6f4f1; box-shadow:0 6px 12px rgba(0,0,0,0.04); }
 .request-actions { margin-top:1rem; display:flex; justify-content:flex-end; gap:0.5rem; }
-.btn-approve { background:#16a34a; color:#fff; padding:0.5rem 0.9rem; border-radius:0.5rem; border:none; cursor:pointer; }
-.btn-reject { background:#dc2626; color:#fff; padding:0.5rem 0.9rem; border-radius:0.5rem; border:none; cursor:pointer; }
+.request-img { width:110px; height:80px; object-fit:cover; border-radius:0.5rem; border:1px solid #ddd; cursor:pointer; }
 </style>
 @endpush
 
