@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\TireRequest;
 use App\Models\Approval;
+use App\Models\Driver;
+use App\Models\User;
+use App\Models\Vehicle; 
 
 class SectionManagerController extends Controller
 {
@@ -135,4 +138,49 @@ public function search(Request $request)
         return redirect()->route('section_manager.dashboard')
             ->with('success', 'Request updated successfully.');
     }
+
+        public function drivers()
+    {
+        $drivers = Driver::with('user')->get();
+        return view('dashboard.section_manager.drivers.index', compact('drivers'));
+    }
+public function destroy($id)
+{
+    $driver = Driver::findOrFail($id);
+
+    if ($driver->user) {
+        $driver->user->delete(); // delete linked user account
+    }
+
+    $driver->delete();
+
+    return redirect()->route('section_manager.drivers.index')
+                     ->with('success', 'Driver deleted successfully.');
+}
+
+ public function vehicles(Request $request)
+    {
+        $search = $request->input('search');
+
+        $vehicles = Vehicle::query();
+
+        if ($search) {
+            $vehicles->where('plate_no', 'like', "%$search%");
+        }
+
+        $vehicles = $vehicles->orderByDesc('id')->get();
+
+        return view('dashboard.section_manager.vehicles.index', compact('vehicles', 'search'));
+    }
+
+    // Delete vehicle
+    public function destroyVehicle($id)
+    {
+        $vehicle = Vehicle::findOrFail($id);
+        $vehicle->delete();
+
+        return redirect()->route('section_manager.vehicles.index')
+                         ->with('success', 'Vehicle deleted successfully.');
+    }
+
 }

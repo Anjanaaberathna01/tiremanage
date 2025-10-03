@@ -16,6 +16,7 @@ class TireRequest extends Model
         'vehicle_id',
         'branch',
         'tire_id',
+        'tire_count',
         'damage_description',
         'tire_images',
         'status',

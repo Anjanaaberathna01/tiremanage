@@ -65,6 +65,12 @@
             </select>
         </div>
 
+        {{-- Tire Count --}}
+        <div class="mb-3">
+            <label for="tire_count" class="form-label">Number of Tires</label>
+            <input type="number" name="tire_count" id="tire_count" class="form-control" min="1" value="1" required>
+        </div>
+
         {{-- Damage Description --}}
         <div class="mb-3">
             <label for="damage_description" class="form-label">Damage Description</label>

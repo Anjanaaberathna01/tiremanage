@@ -33,13 +33,17 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('tires', TireController::class);
         Route::resource('suppliers', SupplierController::class);
         Route::get('/requests/pending', [DashboardController::class, 'pendingRequests'])->name('requests.pending');
-        Route::get('/pending-requests', [DashboardController::class, 'pendingRequests'])
-            ->name('pending.requests');
+        Route::get('/pending-requests', [DashboardController::class, 'pendingRequests'])->name('pending.requests');
 
 
         // Driver management
-    Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
-    Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+         Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+        Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+        Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
+
+        // Vehicle management for Admin
+        Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+        Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
     });
 
     /**
@@ -82,9 +86,18 @@ Route::prefix('section-manager')->name('section_manager.')->group(function () {
     Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
     Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
 
-    // Driver management for Section Manager
-    Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
-    Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+// Driver management for Section Manager
+Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+Route::get('/drivers', [SectionManagerController::class, 'drivers'])->name('drivers.index');
+Route::delete('/drivers/{id}', [SectionManagerController::class, 'destroy'])->name('drivers.destroy');
+
+    // Vehicle management for Section Manager
+Route::get('/vehicles', [SectionManagerController::class, 'vehicles'])->name('vehicles.index'); // Show vehicles
+    Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store'); // Add vehicle
+    Route::delete('/vehicles/{id}', [SectionManagerController::class, 'destroyVehicle'])->name('vehicles.destroy'); // Delete vehicle
+            Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+        Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
 });
 
 

@@ -280,36 +280,44 @@
     </tbody>
 </table>
 
-        {{-- Drivers --}}
-        <h3 class="text-white">Drivers</h3>
-        <a href="{{ route('admin.drivers.create') }}" class="btn btn-primary mb-2">Add Driver</a>
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Full Name</th>
-                    <th>Mobile</th>
-                    <th>ID Number</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($drivers as $driver)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $driver->user->name ?? 'N/A' }}</td>
-                    <td>{{ $driver->user->email ?? 'N/A' }}</td>
-                    <td>{{ $driver->full_name }}</td>
-                    <td>{{ $driver->mobile }}</td>
-                    <td>{{ $driver->id_number }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6">No drivers found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+ {{-- Drivers --}}
+<h3 class="text-white">Drivers</h3>
+<a href="{{ route('admin.drivers.create') }}" class="btn btn-primary mb-2">Add Driver</a>
+<table class="table table-bordered text-center">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Full Name</th>
+            <th>Mobile</th>
+            <th>ID Number</th>
+            <th>Actions</th> {{-- Add this column --}}
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($drivers as $driver)
+        <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $driver->user->name ?? 'N/A' }}</td>
+            <td>{{ $driver->user->email ?? 'N/A' }}</td>
+            <td>{{ $driver->full_name }}</td>
+            <td>{{ $driver->mobile }}</td>
+            <td>{{ $driver->id_number }}</td>
+            <td>
+                <form action="{{ route('admin.drivers.destroy', $driver->id) }}" method="POST" style="display:inline-block;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this driver?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="7">No drivers found.</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
 
 @endsection

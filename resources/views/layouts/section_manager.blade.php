@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Section Manager')</title>
+    <title>@yield('title', 'Section Manager Vehicles')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     @stack('styles')
@@ -24,6 +24,8 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.dashboard') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.requests.approved_list') }}">Approved</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.requests.rejected_list') }}">Rejected</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.vehicles.index') }}">Vehicles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.drivers.index') }}">Drivers</a></li>
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
