@@ -79,7 +79,7 @@ class DashboardController extends Controller
     {
         $tires = Tire::all();
         $vehicles = Vehicle::all();
-        return view('dashboard.mechanic_officer', compact('tires', 'vehicles'));
+        return view('dashboard.mechanic_officer.mechanic_officer', compact('tires', 'vehicles'));
     }
 
     /**

@@ -72,17 +72,18 @@ Route::middleware(['auth'])->group(function () {
      * ----------------
      */
     Route::prefix('section-manager')->name('section_manager.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'sectionManager'])->name('dashboard');
-        Route::get('/requests/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
-        Route::get('/requests/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
-        Route::post('/requests/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
-        Route::post('/requests/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
-        Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
-        Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
-        Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
-        Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
+    Route::get('/dashboard', [SectionManagerController::class, 'index'])->name('dashboard');
 
-    });
+    // Requests
+    Route::get('/requests/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
+    Route::get('/requests/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
+    Route::post('/requests/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
+    Route::post('/requests/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
+    Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
+    Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
+    Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
+
+});
 
     /**
      * ----------------

@@ -8,15 +8,31 @@ use App\Models\TireRequest;
 class SectionManagerController extends Controller
 {
     // Show dashboard with pending requests
-    public function index()
-    {
-        $pendingRequests = TireRequest::with(['user', 'vehicle', 'tire'])
-            ->where('status', 'pending')
-            ->orderByDesc('created_at')
-            ->get();
+public function index()
+{
+    $pendingRequests = TireRequest::with(['user', 'vehicle', 'tire'])
+        ->where('status', 'pending')
+        ->orderByDesc('created_at')
+        ->get();
 
-        return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
-    }
+    return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
+}
+
+
+public function search(Request $request)
+{
+    $search = $request->input('search');
+
+    $requests = TireRequest::with(['user', 'vehicle', 'tire'])
+        ->whereHas('user', function ($q) use ($search) {
+            $q->where('name', 'like', '%' . $search . '%');
+        })
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('dashboard.section_manager.search_results', compact('requests', 'search'));
+}
+
 
     // Show approved
     public function approved()

@@ -6,54 +6,84 @@
 <div class="container mx-auto p-6">
     <h2 class="dashboard-title">Section Manager Dashboard</h2>
 
-    <ul class="requests-list">
-        @foreach($pendingRequests as $req)
-            <li class="request-card">
-                <div class="request-content">
-                    <div class="request-info">
-                        <div class="request-header">
-                            <strong>Request:</strong> User: {{ $req->user->name }}
-                        </div>
-                        <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
-                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tire: {{ $req->tire->size ?? 'N/A' }}
-                        </div>
-                        <div class="request-damage">
-                            <strong>Damage Description:</strong>
-                            <p>{{ $req->damage_description ?? 'No description provided' }}</p>
-                        </div>
+{{-- Search Bar (goes to search page) --}}
+<form action="{{ route('section_manager.requests.search') }}" method="GET" class="mb-6 flex justify-center">
+    <input type="text" name="search" value="{{ request('search') }}"
+        placeholder="Search by Driver Name..."
+        class="w-1/2 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <button type="submit"
+        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-lg hover:bg-blue-700 transition">
+        Search
+    </button>
+</form>
 
-                        @if($req->tire_images && is_array($req->tire_images))
-                            <div class="request-images">
-                                <strong>Images:</strong>
-                                <div class="images-container">
-                                    @foreach($req->tire_images as $img)
-                                        <a href="{{ asset('storage/' . $img) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $img) }}" alt="image-{{ $req->id }}" class="request-img"/>
-                                        </a>
-                                    @endforeach
-                                </div>
+
+{{-- Requests List --}}
+<ul class="requests-list">
+    @foreach($pendingRequests as $req)
+        <li class="request-card">
+            <div class="request-content">
+                <div class="request-info">
+                    <div class="request-header">
+                        <strong>Request:</strong> User: {{ $req->user->name }}
+                    </div>
+                    <div class="request-vehicle">
+                        Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
+                        Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                        Tire: {{ $req->tire->size ?? 'N/A' }}
+                    </div>
+
+                    {{-- Status --}}
+                    <div class="request-status">
+                        <strong>Status:</strong>
+                        <span class="text-yellow-600">Pending</span>
+                    </div>
+
+                    <div class="request-damage">
+                        <strong>Damage Description:</strong>
+                        <p>{{ $req->damage_description ?? 'No description provided' }}</p>
+                    </div>
+
+                    {{-- Tire Images --}}
+                    @if($req->tire_images && is_array($req->tire_images))
+                        <div class="request-images">
+                            <strong>Images:</strong>
+                            <div class="images-container">
+                                @foreach($req->tire_images as $img)
+                                    <a href="{{ asset('storage/' . $img) }}" target="_blank">
+                                        <img src="{{ asset('storage/' . $img) }}" alt="image-{{ $req->id }}" class="request-img"/>
+                                    </a>
+                                @endforeach
                             </div>
-                        @else
-                            <div class="no-images"><em>No images provided</em></div>
-                        @endif
-                    </div>
-
-                    <div class="request-actions">
-                        <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST" class="action-form">
-                            @csrf
-                            <button type="submit" class="btn btn-approve">Approve</button>
-                        </form>
-                        <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST" class="action-form">
-                            @csrf
-                            <button type="submit" class="btn btn-reject">Reject</button>
-                        </form>
-                    </div>
+                        </div>
+                    @else
+                        <div class="no-images"><em>No images provided</em></div>
+                    @endif
                 </div>
-            </li>
-        @endforeach
-    </ul>
+
+                {{-- Actions for pending --}}
+                <div class="request-actions">
+                    <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST" class="action-form">
+                        @csrf
+                        <button type="submit" class="btn btn-approve">Approve</button>
+                    </form>
+                    <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST" class="action-form">
+                        @csrf
+                        <button type="submit" class="btn btn-reject">Reject</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+    @endforeach
+</ul>
+
+{{-- Empty State --}}
+@if($pendingRequests->isEmpty())
+    <div class="text-center text-gray-500 italic mt-6">
+        No pending requests found
+    </div>
+@endif
+
 </div>
 
 <style>
@@ -114,6 +144,12 @@
     margin-top: 0.25rem;
     color: #4b5563;
 }
+
+/* Status colors */
+.request-status span { font-weight: 600; }
+.text-green-600 { color: #16a34a; }
+.text-red-600 { color: #dc2626; }
+.text-yellow-600 { color: #d97706; }
 
 /* Images */
 .request-images {
