@@ -45,7 +45,7 @@ class TireRequestController extends Controller
         ]);
 
         return redirect()->route('driver.dashboard')
-            ->with('success', 'Tire request submitted successfully!');
+            ->with('success', 'Tyre request submitted successfully!');
     }
 
     // List all requests for driver, today first

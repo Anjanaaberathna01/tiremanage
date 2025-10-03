@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Manage Tires')
+@section('title', 'Manage Tyres')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Tires</h2>
-    <a href="{{ route('admin.tires.create') }}" class="btn btn-success">Add Tire</a>
+    <h2>Tyre</h2>
+    <a href="{{ route('admin.tires.create') }}" class="btn btn-success">Add Tyre</a>
 </div>
 
 <table class="table table-bordered">
@@ -18,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        @forelse($tires as $tire)
+    @forelse($tires as $tire)
         <tr>
             <td>{{ $tire->brand }}</td>
             <td>{{ $tire->size }}</td>
@@ -34,7 +34,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="4">No tires found.</td>
+            <td colspan="4">No tyres found.</td>
         </tr>
         @endforelse
     </tbody>

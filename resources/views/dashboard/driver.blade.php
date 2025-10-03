@@ -73,20 +73,20 @@
     {{-- 🔹 First Row: 3 cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2.5 gap-y-2.5 mb-6 mt-6">
         <div class="card interactive-card">
-            <h2 class="card-title">Request Tire</h2>
-            <p class="card-text">Submit a new tire request quickly and easily.</p>
+            <h2 class="card-title">Request Tyre</h2>
+            <p class="card-text">Submit a new tyre request quickly and easily.</p>
             <a href="{{ route('driver.requests.create') }}" class="btn btn-blue">Request Now</a>
         </div>
 
         <div class="card interactive-card">
             <h2 class="card-title">View Your Requests</h2>
-            <p class="card-text">Track the status of your tire requests.</p>
+            <p class="card-text">Track the status of your tyre requests.</p>
             <a href="{{ route('driver.requests.index') }}" class="btn btn-purple">View Requests</a>
         </div>
 
         <div class="card interactive-card">
             <h2 class="card-title">View Receipts</h2>
-            <p class="card-text">Check all your tire request receipts.</p>
+            <p class="card-text">Check all your tyre request receipts.</p>
             <a href="#" class="btn btn-green">View Receipts</a>
         </div>
     </div>

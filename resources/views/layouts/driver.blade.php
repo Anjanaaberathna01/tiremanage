@@ -21,7 +21,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('driver.requests.create') }}">
-                            <i class="bi bi-plus-circle"></i> Request Tire
+                            <i class="bi bi-plus-circle"></i> Request Tyre
                         </a>
                     </li>
 

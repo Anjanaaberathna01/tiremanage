@@ -1,10 +1,10 @@
 @extends('layouts.driver')
 
-@section('title', 'Request a Tire')
+@section('title', 'Request a Tyre')
 
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Request a Tire</h2>
+    <h2 class="mb-4">Request a Tyre</h2>
 
     {{-- ✅ Success & Error messages --}}
     @if(session('success'))
@@ -55,9 +55,9 @@
             <input type="text" name="branch" id="branch" class="form-control" readonly>
         </div>
 
-        {{-- Tire Size --}}
+        {{-- Tyre Size --}}
         <div class="mb-3">
-            <label for="tire_id" class="form-label">Tire Size</label>
+            <label for="tire_id" class="form-label">Tyre Size</label>
             <select name="tire_id" id="tire_id" class="form-control" required>
                 @foreach($tires as $tire)
                     <option value="{{ $tire->id }}">{{ $tire->size }}</option>
@@ -73,7 +73,7 @@
 
         {{-- Upload Images --}}
         <div class="mb-3">
-            <label for="images" class="form-label">Upload Tire Images (max 4, each < 2MB)</label>
+            <label for="images" class="form-label">Upload Tyre Images (max 4, each < 2MB)</label>
             <input type="file" name="images[]" id="images" class="form-control" multiple accept="image/*">
         </div>
 

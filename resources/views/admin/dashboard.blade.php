@@ -143,7 +143,7 @@
     </div>
     <div class="col-md-3 col-6 mb-3">
         <div class="card card-custom text-center p-3">
-            <h5>Total Tires</h5>
+            <h5>Total Tyres</h5>
             <h3>{{ $tires_count }}</h3>
         </div>
     </div>
@@ -205,8 +205,8 @@
 </table>
 
 {{-- Tires --}}
-<h3 class="text-white">Tires</h3>
-<a href="{{ route('admin.tires.create') }}" class="btn btn-success mb-2">Add Tire</a>
+<h3 class="text-white">Tyres</h3>
+<a href="{{ route('admin.tires.create') }}" class="btn btn-success mb-2">Add Tyre</a>
 <table class="table table-bordered text-center">
     <thead>
         <tr>
@@ -217,7 +217,7 @@
         </tr>
     </thead>
     <tbody>
-        @forelse($tires as $tire)
+    @forelse($tires as $tire)
         <tr>
             <td>{{ $tire->brand }}</td>
             <td>{{ $tire->size }}</td>

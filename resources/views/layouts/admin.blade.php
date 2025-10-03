@@ -19,7 +19,7 @@
             <div class="collapse navbar-collapse" id="adminNavbar">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.vehicles.index') }}">Vehicles</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.tires.index') }}">Tires</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.tires.index') }}">Tyres</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a></li>
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">

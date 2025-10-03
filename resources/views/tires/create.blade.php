@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Tire')
+@section('title', 'Add Tyre')
 
 @section('content')
 <div class="container">
-    <h1>Add Tire</h1>
+    <h1>Add Tyre</h1>
     <form action="{{ route('admin.tires.store') }}" method="POST">
         @csrf
         <div class="mb-3">
@@ -24,7 +24,7 @@
                 @endforeach
             </select>
         </div>
-        <button type="submit" class="btn btn-success">Save Tire</button>
+    <button type="submit" class="btn btn-success">Save Tyre</button>
         <a href="{{ route('admin.tires.index') }}" class="btn btn-secondary">Back</a>
     </form>
 </div>
