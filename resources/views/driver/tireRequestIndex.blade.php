@@ -1,13 +1,13 @@
 @extends('layouts.driver')
 
-@section('title', 'My Tire Requests')
+@section('title', 'My Tyre Requests')
 
 @section('content')
 <div class="container my-5">
-    <h2 class="mb-4 text-center">🚗 My Tire Requests</h2>
+    <h2 class="mb-4 text-center">🚗 My Tyre Requests</h2>
 
     @if($requests->isEmpty())
-        <div class="alert alert-info text-center">You have not submitted any tire requests yet.</div>
+    <div class="alert alert-info text-center">You have not submitted any tyre requests yet.</div>
     @else
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
@@ -17,7 +17,6 @@
                         <th>Branch</th>
                         <th>Vehicle</th>
                         <th>Tire Size</th>
-                        <th>Tire Count</th>
                         <th>Description</th>
                         <th>Images</th>
                         <th>Status</th>

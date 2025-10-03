@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Tire')
+@section('title', 'Edit Tyre')
 
 @section('content')
 <div class="container">
-    <h1>Edit Tire</h1>
+    <h1>Edit Tyre</h1>
     <form action="{{ route('admin.tires.update', $tire->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -26,8 +26,8 @@
                 @endforeach
             </select>
         </div>
-        <button type="submit" class="btn btn-success">Update Tire</button>
-        <a href="{{ route('admin.tires.index') }}" class="btn btn-secondary">Back</a>
+    <button type="submit" class="btn btn-success">Update Tyre</button>
+    <a href="{{ route('admin.tires.index') }}" class="btn btn-secondary">Back</a>
     </form>
 </div>
 @endsection

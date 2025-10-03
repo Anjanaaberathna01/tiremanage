@@ -9,7 +9,7 @@
 </head>
 <body>
     {{-- Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('driver.dashboard') }}">SLTMOBITEL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#driverNavbar">
@@ -20,7 +20,8 @@
                 <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.requests.create') }}">Request Tire
+                        <a class="nav-link" href="{{ route('driver.requests.create') }}">
+                            <i class="bi bi-plus-circle"></i> Request Tire
                         </a>
                     </li>
 
@@ -56,6 +57,8 @@
     <div class="container mt-4">
         @yield('content')
     </div>
+
+    @include('partials.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

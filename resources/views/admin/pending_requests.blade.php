@@ -18,7 +18,7 @@
                     <div class="request-vehicle">
                         🚗 Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }} <br>
                         🏢 Branch: {{ $req->vehicle->branch ?? 'N/A' }} <br>
-                        🛞 Tire: {{ $req->tire->size ?? 'N/A' }}
+                        🛞 Tyre: {{ $req->tire->size ?? 'N/A' }}
                     </div>
 
                     <div class="request-damage">

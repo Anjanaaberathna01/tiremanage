@@ -1,0 +1,39 @@
+<footer id="site-footer" class="bg-light text-center text-muted py-3 border-top" style="position:fixed; left:0; right:0; bottom:0; z-index:1030;">
+    <div class="container">
+        <small>&copy; {{ date('Y') }} Tire Management System — All rights reserved. Built with SLTMobitel</small>
+    </div>
+</footer>
+
+<script>
+    // Ensure page content doesn't get hidden behind the fixed footer or fixed navbar(s).
+    (function adjustBodyPadding() {
+        function getFixedNavHeight() {
+            // look for common navbar ids/classes across layouts
+            var selectors = ['nav.navbar.fixed-top', '#adminNavbar', '#driverNavbar', '#moNavbar', '#smNavbar'];
+            var total = 0;
+            // find the first visible fixed-top navbar
+            var el = document.querySelector('nav.navbar.fixed-top');
+            if (el && el.offsetHeight) return el.offsetHeight;
+            // fallback: sum known nav elements if present
+            selectors.forEach(function(sel) {
+                var n = document.querySelector(sel);
+                if (n && n.offsetHeight) total = Math.max(total, n.offsetHeight);
+            });
+            return total;
+        }
+
+        function setPadding() {
+            var footer = document.getElementById('site-footer');
+            var footerHeight = footer ? footer.offsetHeight : 0;
+            var navHeight = getFixedNavHeight() || 0;
+            // set both top and bottom padding so content is visible
+            document.body.style.paddingBottom = footerHeight + 'px';
+            document.body.style.paddingTop = navHeight + 'px';
+        }
+
+        window.addEventListener('load', setPadding);
+        window.addEventListener('resize', setPadding);
+        // run once immediately
+        setPadding();
+    })();
+</script>

@@ -38,7 +38,7 @@ class TireController extends Controller
         ]);
 
         return redirect()->route('admin.tires.index')
-            ->with('success', 'Tire added successfully.');
+            ->with('success', 'Tyre added successfully.');
     }
 
     // Show form to edit an existing tire
@@ -64,7 +64,7 @@ class TireController extends Controller
         ]);
 
         return redirect()->route('admin.tires.index')
-            ->with('success', 'Tire updated successfully.');
+            ->with('success', 'Tyre updated successfully.');
     }
 
     // Delete a tire
@@ -72,6 +72,6 @@ class TireController extends Controller
     {
         $tire->delete();
         return redirect()->route('admin.tires.index')
-            ->with('success', 'Tire deleted successfully.');
+            ->with('success', 'Tyre deleted successfully.');
     }
 }

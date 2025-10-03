@@ -28,41 +28,33 @@
         </div>
     </div>
 
-    {{-- 🔹 Main dashboard layout --}}
-    <div class="dashboard-layout">
-
-        {{-- Left column: driver details + vertical cards --}}
-        <div class="dashboard-left">
-            <div class="driver-info-card">
-                <h2 style="color: #2563eb;"><u>{{ $driver->full_name ?? 'N/A' }}</u></h2>
-                <p><strong>Username:</strong> {{ optional($driver->user)->name ?? 'N/A' }}</p>
-                <p><strong>Email:</strong> {{ optional($driver->user)->email ?? 'N/A' }}</p>
-                <p><strong>Mobile:</strong> {{ $driver->mobile ?? 'N/A' }}</p>
-                <p><strong>ID Number:</strong> {{ $driver->id_number ?? 'N/A' }}</p>
-            </div>
-
-            {{-- Vertical dashboard cards --}}
-            <div class="dashboard-cards-vertical">
-                <a href="{{ route('driver.requests.create') }}" class="dashboard-card blue">Request Tire</a>
-                <a href="{{ route('driver.requests.index') }}" class="dashboard-card purple">View Requests</a>
-                <a href="#" class="dashboard-card green">View Receipts</a>
-                <a href="{{ route('driver.profile.edit') }}" class="dashboard-card yellow">Manage Account</a>
-            </div>
+    {{-- 🔹 First Row: 3 cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2.5 gap-y-2.5 mb-6 mt-6">
+        <div class="card interactive-card">
+            <h2 class="card-title">Request Tire</h2>
+            <p class="card-text">Submit a new tire request quickly and easily.</p>
+            <a href="{{ route('driver.requests.create') }}" class="btn btn-blue">Request Now</a>
         </div>
 
-        {{-- Right column: image with overlay text --}}
-        <div class="dashboard-right">
-            <div class="right-photo-card">
-                <div class="right-text-overlay">
-                    <h2>SLTMOBITEL Contact</h2>
-                    <p>For any problem, please contact:</p>
-                    <ul>
-                        <li><strong>Section Manager:</strong> sectionmanager123@gmail.com</li>
-                        <li><strong>Mechanic Officer:</strong> mechanicofficer123@gmail.com</li>
-                        <li><strong>Transport Officer:</strong> transportofficer123@gmail.com</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="card interactive-card">
+            <h2 class="card-title">View Your Requests</h2>
+            <p class="card-text">Track the status of your tire requests.</p>
+            <a href="{{ route('driver.requests.index') }}" class="btn btn-purple">View Requests</a>
+        </div>
+
+        <div class="card interactive-card">
+            <h2 class="card-title">View Receipts</h2>
+            <p class="card-text">Check all your tire request receipts.</p>
+            <a href="#" class="btn btn-green">View Receipts</a>
+        </div>
+    </div>
+
+    {{-- 🔹 Second Row: 1 card centered --}}
+    <div class="flex flex-wrap justify-center gap-x-2.5 gap-y-2.5">
+        <div class="card interactive-card w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+            <h2 class="card-title">Manage Account</h2>
+            <p class="card-text">Update your profile and account details.</p>
+            <a href="{{ route('driver.profile.edit') }}" class="btn btn-yellow">Manage Account</a>
         </div>
 
     </div>

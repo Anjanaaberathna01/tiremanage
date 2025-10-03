@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tire Management System | Login</title>
+<title>Tyre Management System | Login</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
@@ -80,7 +80,7 @@
 </div>
 
 <div class="system-info">
-  <h1>Tire Management System</h1>
+  <h1>Tyre Management System</h1>
   <p>Smart Management for SLT Mobile Vehicles</p>
   <p>© 2025 SLT Mobile Systems</p>
 </div>

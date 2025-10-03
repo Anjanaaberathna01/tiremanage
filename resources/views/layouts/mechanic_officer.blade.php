@@ -10,7 +10,7 @@
 </head>
 <body>
     {{-- Mechanic Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('mechanic_officer.dashboard') }}">
                 <img src="{{ asset('assets/images/logo3.png') }}" alt="logo" style="height:36px; width:auto; margin-right:20px; margin-bottom: 4px;" />
@@ -39,6 +39,8 @@
     <div class="container mt-4">
         @yield('content')
     </div>
+
+    @include('partials.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
