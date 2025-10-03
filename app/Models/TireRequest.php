@@ -46,7 +46,7 @@ class TireRequest extends Model
         return $this->hasMany(Approval::class, 'request_id');
     }
 
-    // ✅ Helper to get branch name from vehicle
+    // Helper to get branch name from vehicle
     public function branchName()
     {
         return $this->vehicle ? $this->vehicle->branch : null;

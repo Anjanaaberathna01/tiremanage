@@ -2,111 +2,112 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\TireRequest;
 use App\Models\Approval;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MechanicOfficerController extends Controller
 {
-    public function __construct()
-    {
-        // Ensure only authenticated users with mechanic_officer role can access
-        $this->middleware(function ($request, $next) {
-            $user = Auth::user();
-            if (!$user || !$user->role) {
-                abort(403, 'Unauthorized.');
-            }
-
-            $role = strtolower(str_replace([' ', '-'], '_', trim($user->role->name)));
-            if ($role !== 'mechanic_officer') {
-                abort(403, 'Access restricted to Mechanic Officer.');
-            }
-
-            return $next($request);
-        });
-    }
-    // Show requests that have been approved by section manager (status = 'approved')
+    // 🟢 Dashboard: Pending requests for mechanic
     public function index()
     {
-        $requests = TireRequest::with(['user', 'vehicle', 'tire'])
-            ->where('status', 'approved')
-            ->orderByDesc('updated_at')
-            ->get();
+        $requests = TireRequest::whereHas('approvals', function ($q) {
+            $q->where('level', 'section_manager')
+              ->where('status', 'approved');
+        })->where(function ($q) {
+            $q->whereDoesntHave('approvals', function ($q2) {
+                $q2->where('level', 'mechanic_officer');
+            })->orWhereHas('approvals', function ($q3) {
+                $q3->where('level', 'mechanic_officer')
+                   ->where('status', 'pending');
+            });
+        })->orderBy('created_at', 'desc')->get();
 
         return view('dashboard.mechanic_officer.mechanic_officer', compact('requests'));
     }
 
-    // Show all requests that are approved (for mechanic view - approved list)
+    // 🟢 Approved requests by mechanic
     public function approved()
     {
-        $requests = TireRequest::with(['user', 'vehicle', 'tire'])
-            ->where('status', 'approved')
-            ->orderByDesc('updated_at')
-            ->get();
+        $requests = TireRequest::whereHas('approvals', function ($q) {
+            $q->where('level', 'mechanic_officer')
+              ->where('status', 'approved');
+        })->orderBy('created_at', 'desc')->get();
 
-        return view('dashboard.mechanic_officer.approved', ['requests' => $requests]);
+        return view('dashboard.mechanic_officer.approved', compact('requests'));
     }
 
-    // Show all requests that are rejected
+    // 🟢 Rejected requests by mechanic
     public function rejected()
     {
-        $requests = TireRequest::with(['user', 'vehicle', 'tire'])
-            ->where('status', 'rejected')
-            ->orderByDesc('updated_at')
-            ->get();
+        $requests = TireRequest::whereHas('approvals', function ($q) {
+            $q->where('level', 'mechanic_officer')
+              ->where('status', 'rejected');
+        })->orderBy('created_at', 'desc')->get();
 
-        return view('dashboard.mechanic_officer.rejected', ['requests' => $requests]);
+        return view('dashboard.mechanic_officer.rejected', compact('requests'));
     }
 
-    // Mechanic approves the request (final approval)
+    // 🟢 Approve a request
     public function approve($id)
     {
-        $req = TireRequest::findOrFail($id);
+        $request = TireRequest::findOrFail($id);
 
-        // Only act on manager-approved requests
-        if ($req->status !== 'approved') {
-            return redirect()->back()->with('error', 'Only manager-approved requests can be processed by mechanic.');
-        }
+        Approval::updateOrCreate(
+            ['request_id' => $request->id, 'level' => 'mechanic_officer'],
+            ['status' => 'approved', 'approved_by' => Auth::id()]
+        );
 
-        // Record mechanic approval
-        Approval::create([
-            'request_id' => $req->id,
-            'approved_by' => Auth::id(),
-            'level' => 'mechanic_officer',
-            'status' => 'approved',
-            'remarks' => null,
-        ]);
+        $request->update(['status' => 'approved']);
 
-        // Optionally keep request status as 'approved' or set a separate final flag.
-        // We'll keep it as 'approved' to indicate it's cleared for transport.
-        $req->status = 'approved';
-        $req->save();
-
-        return redirect()->back()->with('success', 'Request approved by mechanic.');
+        return redirect()->back()->with('success', 'Request approved by Mechanic Officer.');
     }
 
-    // Mechanic rejects the request
+    // 🟢 Reject a request
     public function reject($id)
     {
-        $req = TireRequest::findOrFail($id);
+        $request = TireRequest::findOrFail($id);
 
-        if ($req->status !== 'approved') {
-            return redirect()->back()->with('error', 'Only manager-approved requests can be processed by mechanic.');
-        }
+        Approval::updateOrCreate(
+            ['request_id' => $request->id, 'level' => 'mechanic_officer'],
+            ['status' => 'rejected', 'approved_by' => Auth::id()]
+        );
 
-        Approval::create([
-            'request_id' => $req->id,
-            'approved_by' => Auth::id(),
-            'level' => 'mechanic_officer',
-            'status' => 'rejected',
-            'remarks' => null,
+        $request->update(['status' => 'rejected']);
+
+        return redirect()->back()->with('success', 'Request rejected by Mechanic Officer.');
+    }
+
+    // 🟢 Edit request form
+    public function edit($id)
+    {
+        $request = TireRequest::with('approvals')->findOrFail($id);
+        return view('dashboard.mechanic_officer.edit_request', compact('request'));
+    }
+
+    // 🟢 Update request (allow mechanic to set pending/approved/rejected)
+    public function update(Request $request, $id)
+    {
+        $tireRequest = TireRequest::findOrFail($id);
+
+        // Validate status
+        $request->validate([
+            'status' => 'required|in:pending,approved,rejected'
         ]);
 
-        // Mark request as rejected
-        $req->status = 'rejected';
-        $req->save();
+        // Update tire request status
+        $tireRequest->update([
+            'status' => $request->input('status'),
+        ]);
 
-        return redirect()->back()->with('success', 'Request rejected by mechanic.');
+        // Update or create mechanic approval
+        Approval::updateOrCreate(
+            ['request_id' => $tireRequest->id, 'level' => 'mechanic_officer'],
+            ['status' => $request->input('status'), 'approved_by' => Auth::id()]
+        );
+
+        return redirect()->route('mechanic_officer.dashboard')
+                         ->with('success', 'Request updated successfully.');
     }
 }

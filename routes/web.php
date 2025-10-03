@@ -9,6 +9,8 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\TireRequestController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\SectionManagerController;
+use App\Http\Controllers\MechanicOfficerController;
+use App\Http\Controllers\TransportOfficerController;
 
 // Root redirect
 Route::get('/', fn() => redirect()->route('login'));
@@ -100,20 +102,31 @@ Route::get('/vehicles', [SectionManagerController::class, 'vehicles'])->name('ve
         Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
 });
 
+/**
+ * ----------------
+ * MECHANIC OFFICER ROUTES
+ * ----------------
+ */
 
-    /**
-     * ----------------
-     * MECHANIC OFFICER ROUTES
-     * ----------------
-     */
-    Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
-        // Use MechanicOfficerController for mechanic workflows
-        Route::get('/dashboard', [App\Http\Controllers\MechanicOfficerController::class, 'index'])->name('dashboard');
-        Route::get('/requests/approved', [App\Http\Controllers\MechanicOfficerController::class, 'approved'])->name('requests.approved_list');
-        Route::get('/requests/rejected', [App\Http\Controllers\MechanicOfficerController::class, 'rejected'])->name('requests.rejected_list');
-        Route::post('/requests/{id}/approve', [App\Http\Controllers\MechanicOfficerController::class, 'approve'])->name('requests.approve');
-        Route::post('/requests/{id}/reject', [App\Http\Controllers\MechanicOfficerController::class, 'reject'])->name('requests.reject');
-    });
+Route::prefix('mechanic-officer')->middleware(['auth'])->group(function() {
+
+    // Dashboard (pending requests)
+    Route::get('/dashboard', [MechanicOfficerController::class, 'index'])->name('mechanic_officer.dashboard');
+
+    // Approved requests list
+    Route::get('/requests/approved', [MechanicOfficerController::class, 'approved'])->name('mechanic_officer.requests.approved_list');
+
+    // Rejected requests list
+    Route::get('/requests/rejected', [MechanicOfficerController::class, 'rejected'])->name('mechanic_officer.requests.rejected_list');
+
+    // Approve / Reject actions
+    Route::post('/requests/{id}/approve', [MechanicOfficerController::class, 'approve'])->name('mechanic_officer.requests.approve');
+    Route::post('/requests/{id}/reject', [MechanicOfficerController::class, 'reject'])->name('mechanic_officer.requests.reject');
+
+    // Edit / Update request
+    Route::get('/requests/{id}/edit', [MechanicOfficerController::class, 'edit'])->name('mechanic_officer.requests.edit');
+    Route::put('/requests/{id}', [MechanicOfficerController::class, 'update'])->name('mechanic_officer.requests.update');
+});
 
     /**
      * ----------------
