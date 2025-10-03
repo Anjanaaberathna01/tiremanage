@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
         // Driver management
          Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
         Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+        Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
 
         // Vehicle management for Admin
         Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');

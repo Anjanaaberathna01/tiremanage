@@ -129,4 +129,18 @@ class DriverController extends Controller
 
         return redirect()->route('driver.profile.edit')->with('success', 'Profile updated successfully!');
     }
+
+    public function destroy($id)
+{
+    $driver = Driver::findOrFail($id);
+
+    // Delete associated user if exists
+    if ($driver->user) {
+        $driver->user->delete();
+    }
+
+    $driver->delete();
+
+    return redirect()->route('admin.dashboard')->with('success', 'Driver deleted successfully.');
+}
 }

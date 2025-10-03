@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
-    {{-- 🔹 Navbar --}}
+    {{-- Navbar --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('driver.dashboard') }}">SLTMOBITEL</a>
@@ -20,34 +20,29 @@
                 <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.requests.create') }}">
-                            <i class="bi bi-plus-circle"></i> Request Tire
+                        <a class="nav-link" href="{{ route('driver.requests.create') }}">Request Tire
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.requests.index') }}">
-                            <i class="bi bi-list-check"></i> View Requests
+                        <a class="nav-link" href="{{ route('driver.requests.index') }}">View Requests
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-receipt"></i> View Receipts
+                        <a class="nav-link" href="#">View Receipts
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.profile.edit') }}">
-                            <i class="bi bi-person-circle"></i> Manage Account
+                        <a class="nav-link" href="{{ route('driver.profile.edit') }}">Manage Account
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                            <button type="submit" class="btn btn-link nav-link">Logout
                             </button>
                         </form>
                     </li>
@@ -57,14 +52,14 @@
         </div>
     </nav>
 
-    {{-- 🔹 Page Content --}}
+    {{-- Page Content --}}
     <div class="container mt-4">
         @yield('content')
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    {{-- ✅ Make sure pushed scripts (e.g., lookupPlate in tireRequestCreate.blade.php) load --}}
+    {{--  Make sure pushed scripts (e.g., lookupPlate in tireRequestCreate.blade.php) load --}}
     @stack('scripts')
 </body>
 </html>
