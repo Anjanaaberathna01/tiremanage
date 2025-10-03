@@ -10,7 +10,7 @@
 </head>
 <body>
     {{-- 🔹 Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">Admin Panel</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
@@ -36,6 +36,10 @@
     <div class="container mt-4">
         @yield('content')
     </div>
+
+</div>
+
+    @include('partials.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

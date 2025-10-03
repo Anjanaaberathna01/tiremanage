@@ -9,7 +9,7 @@
     @stack('styles')
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('driver.dashboard') }}">SLTMOBITEL</a>
             <div class="collapse navbar-collapse">
@@ -32,6 +32,8 @@
     </div>
 
 </div>
+
+    @include('partials.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     {{-- View-specific scripts --}}
