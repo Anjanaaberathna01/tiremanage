@@ -17,6 +17,14 @@
     </button>
 </form>
 
+{{-- Add Driver Button --}}
+<a href="{{ Auth::user()->hasRole(['admin']) ? route('admin.drivers.create') : route('section_manager.drivers.create') }}"
+   class="btn btn-primary">
+   ➕ Add Driver
+</a>
+
+
+
 
 {{-- Requests List --}}
 <ul class="requests-list">

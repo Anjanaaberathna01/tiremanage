@@ -1,13 +1,25 @@
-@extends('layouts.admin')
+@php
+    // Determine layout based on user role
+    $layout = Auth::user() && Auth::user()->role
+        ? strtolower(str_replace(' ', '_', Auth::user()->role->name))
+        : 'admin';
+@endphp
+
+@extends($layout === 'admin' ? 'layouts.admin' : 'layouts.section_manager')
 
 @section('title', 'Register Driver')
 
 @section('content')
-<div class="container">
+<div class="container mx-auto p-6">
     <h2 class="mb-4">Register Driver</h2>
 
+    {{-- Success & Error Messages --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     @if ($errors->any())
@@ -20,15 +32,16 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.drivers.store') }}" method="POST">
+    <form action="{{ $layout === 'admin' ? route('admin.drivers.store') : route('section_manager.drivers.store') }}" method="POST">
         @csrf
+
         <div class="mb-3">
-            <label for="name" class="form-label">Username (for login)</label>
+            <label for="name" class="form-label">Username</label>
             <input type="text" name="name" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">Email (for login)</label>
             <input type="email" name="email" class="form-control" required>
         </div>
 

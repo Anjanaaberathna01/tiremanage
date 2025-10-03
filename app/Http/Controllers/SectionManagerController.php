@@ -34,6 +34,7 @@ public function index()
 }
 
 
+
 public function search(Request $request)
 {
     $search = $request->input('search');
