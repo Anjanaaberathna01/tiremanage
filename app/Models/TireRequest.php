@@ -40,6 +40,11 @@ class TireRequest extends Model
         return $this->belongsTo(Tire::class);
     }
 
+    public function approvals()
+    {
+        return $this->hasMany(Approval::class, 'request_id');
+    }
+
     // ✅ Helper to get branch name from vehicle
     public function branchName()
     {
