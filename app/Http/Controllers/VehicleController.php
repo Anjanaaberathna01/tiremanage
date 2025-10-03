@@ -27,23 +27,24 @@ class VehicleController extends Controller
     /**
      * Store new vehicle
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'model'    => 'required|string|max:255',
-            'plate_no' => 'required|string|max:255|unique:vehicles,plate_no',
-            'branch'   => 'required|string|max:255',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'model' => 'required|string|max:255',
+        'plate_no' => 'required|string|max:50',
+        'branch' => 'required|string|max:100',
+    ]);
 
-        Vehicle::create([
-            'model'    => $request->model,
-            'plate_no' => strtoupper($request->plate_no), // normalize plates
-            'branch'   => $request->branch,
-        ]);
+    Vehicle::create($request->all());
 
-        return redirect()->route('admin.vehicles.index')
-            ->with('success', '✅ Vehicle added successfully.');
+    // redirect based on role
+    if (auth()->user()->role->name === 'Admin') {
+        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle added successfully.');
+    } else {
+        return redirect()->route('section_manager.vehicles.index')->with('success', 'Vehicle added successfully.');
     }
+}
+
 
     /**
      * Edit vehicle

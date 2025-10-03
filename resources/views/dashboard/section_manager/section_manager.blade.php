@@ -5,19 +5,13 @@
 @section('content')
 <div class="container mx-auto p-6">
 
-    {{-- Toolbar: Search + Add Driver --}}
+    {{-- Toolbar: Search --}}
     <div class="toolbar">
         {{-- Search Bar --}}
         <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET">
             <input type="text" name="search" id="search-input" value="{{ request('search') }}" placeholder="Search by Driver Name..." />
             <button type="submit" id="search-button">Search</button>
         </form>
-
-        {{-- Add Driver Button --}}
-        <a href="{{ Auth::user()->hasRole(['admin']) ? route('admin.drivers.create') : route('section_manager.drivers.create') }}"
-           class="add-driver-btn">
-           ➕ Add Driver
-        </a>
     </div>
 
     {{-- Requests List --}}
@@ -89,10 +83,10 @@
 </div>
 
 <style>
-/* Toolbar: search bar + button side by side */
+/* Toolbar: search bar */
 .toolbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin: 20px 0;
     gap: 1rem;
@@ -138,31 +132,11 @@
     border-color: #0056b3;
 }
 
-/* Add Driver button */
-.add-driver-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #1d4ed8; /* Tailwind blue-700 */
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.2s;
-}
-.add-driver-btn:hover {
-    background-color: #2563eb;
-    transform: scale(1.05);
-}
-
 /* Responsive: stack vertically */
 @media (max-width: 768px) {
     .toolbar {
         flex-direction: column;
         align-items: stretch;
-    }
-    .add-driver-btn {
-        width: 100%;
-        text-align: center;
     }
     #driver-search-form {
         max-width: 100%;
@@ -230,15 +204,6 @@ document.getElementById('search-input').addEventListener('keypress', function(e)
         e.preventDefault();
         document.getElementById('driver-search-form').submit();
     }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const addDriverBtn = document.querySelector('.add-driver-btn');
-    addDriverBtn.addEventListener('click', function (e) {
-        if (!confirm('Are you sure you want to add a new driver?')) {
-            e.preventDefault();
-        }
-    });
 });
 </script>
 @endsection
