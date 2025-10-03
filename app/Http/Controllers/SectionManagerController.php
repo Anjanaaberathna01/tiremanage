@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\TireRequest;
 use App\Models\Approval;
+use App\Models\Driver;
+use App\Models\User;
 
 class SectionManagerController extends Controller
 {
@@ -135,4 +137,25 @@ public function search(Request $request)
         return redirect()->route('section_manager.dashboard')
             ->with('success', 'Request updated successfully.');
     }
+
+        public function drivers()
+    {
+        $drivers = Driver::with('user')->get();
+        return view('dashboard.section_manager.drivers.index', compact('drivers'));
+    }
+public function destroy($id)
+{
+    $driver = Driver::findOrFail($id);
+
+    if ($driver->user) {
+        $driver->user->delete(); // delete linked user account
+    }
+
+    $driver->delete();
+
+    return redirect()->route('section_manager.drivers.index')
+                     ->with('success', 'Driver deleted successfully.');
+}
+
+
 }

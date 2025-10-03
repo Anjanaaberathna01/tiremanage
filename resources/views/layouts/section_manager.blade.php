@@ -24,6 +24,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.dashboard') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.requests.approved_list') }}">Approved</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.requests.rejected_list') }}">Rejected</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.drivers.index') }}">Drivers</a></li>
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
