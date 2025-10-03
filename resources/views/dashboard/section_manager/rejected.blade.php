@@ -9,63 +9,61 @@
     <ul class="requests-list">
         @forelse($requests as $req)
             <li class="request-card">
-    <div class="request-content">
-        <div class="request-info">
-            <div class="request-header">
-                <strong>Request:</strong> {{ $req->user->name }}
-            </div>
-            <div class="request-vehicle">
-                Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
-                Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                Tire: {{ $req->tire->size ?? 'N/A' }}
-            </div>
-            <div class="request-damage">
-                <strong>Damage Description:</strong>
-                <p>{{ $req->damage_description ?? 'No description provided' }}</p>
-            </div>
+                <div class="request-content">
+                    <div class="request-info">
+                        <div class="request-header">
+                            <strong>Request By:</strong> {{ $req->user->name }}
+                        </div>
+                        <div class="request-vehicle">
+                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
+                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                            Tire: {{ $req->tire->size ?? 'N/A' }}
+                        </div>
+                        <div class="request-damage">
+                            <strong>Damage Description:</strong>
+                            <p>{{ $req->damage_description ?? 'No description provided' }}</p>
+                        </div>
 
-            {{-- Images --}}
-            @php
-                $images = [];
-                if (isset($req->tire_images)) {
-                    $decoded = is_array($req->tire_images)
-                        ? $req->tire_images
-                        : json_decode(str_replace('\/', '/', $req->tire_images), true);
-                    if (is_array($decoded)) $images = $decoded;
-                }
-                if (empty($images) && isset($req->images) && $req->images) {
-                    $images = is_array($req->images) ? $req->images : explode(',', $req->images);
-                }
-            @endphp
+                        {{-- Images --}}
+                        @php
+                            $images = [];
+                            if (isset($req->tire_images)) {
+                                $decoded = is_array($req->tire_images)
+                                    ? $req->tire_images
+                                    : json_decode(str_replace('\/', '/', $req->tire_images), true);
+                                if (is_array($decoded)) $images = $decoded;
+                            }
+                            if (empty($images) && isset($req->images) && $req->images) {
+                                $images = is_array($req->images) ? $req->images : explode(',', $req->images);
+                            }
+                        @endphp
 
-            @if(count($images) > 0)
-                <div class="request-images">
-                    <strong>Images:</strong>
-                    <div class="images-container">
-                        @foreach($images as $img)
-                            @php $imgPath = str_replace('\/', '/', trim($img)); @endphp
-                            <img src="{{ asset('storage/' . $imgPath) }}"
-                                 alt="image-{{ $req->id }}"
-                                 class="request-img"
-                                 data-full="{{ asset('storage/' . $imgPath) }}"/>
-                        @endforeach
+                        @if(count($images) > 0)
+                            <div class="request-images">
+                                <strong>Images:</strong>
+                                <div class="images-container">
+                                    @foreach($images as $img)
+                                        @php $imgPath = str_replace('\/', '/', trim($img)); @endphp
+                                        <img src="{{ asset('storage/' . $imgPath) }}"
+                                             alt="image-{{ $req->id }}"
+                                             class="request-img"
+                                             data-full="{{ asset('storage/' . $imgPath) }}"/>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            <div class="no-images"><em>No images provided</em></div>
+                        @endif
+                    </div>
+
+                    {{-- 🔹 Actions --}}
+                    <div class="request-actions">
+                        <a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn">
+                            ✏️ Edit
+                        </a>
                     </div>
                 </div>
-            @else
-                <div class="no-images"><em>No images provided</em></div>
-            @endif
-        </div>
-
-        {{-- 🔹 Edit Button --}}
-        <div class="request-actions">
-<a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn">
-    ✏️ Edit
-</a>
-
-        </div>
-    </div>
-</li>
-
+            </li>
         @empty
             <li class="request-card empty-card">No rejected requests found.</li>
         @endforelse
@@ -89,6 +87,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+    padding: 0;
+    list-style: none;
 }
 
 /* Cards */
@@ -152,6 +152,32 @@
     color: #6b7280;
 }
 
+/* Actions container */
+.request-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Edit Button */
+.edit-btn {
+    display: inline-block;
+    background: #2563eb; /* Tailwind Blue-600 */
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.25s;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+.edit-btn:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(30, 64, 175, 0.35);
+}
+
 /* Lightbox */
 .lightbox {
     position: fixed;
@@ -178,32 +204,7 @@
     font-size: 2rem;
     color: #fff;
     cursor: pointer;
-}/* Actions container */
-.request-actions {
-    margin-top: 1rem;
-    display: flex;
-    justify-content: flex-end;
 }
-
-/* Edit Button */
-.edit-btn {
-    display: inline-block;
-    background: #2563eb; /* Tailwind Blue-600 */
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: background 0.25s, transform 0.25s;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-}
-.edit-btn:hover {
-    background: #1e40af; /* Darker blue */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(30, 64, 175, 0.35);
-}
-
 
 /* Animations */
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }

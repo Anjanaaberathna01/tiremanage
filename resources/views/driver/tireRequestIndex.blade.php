@@ -17,6 +17,7 @@
                         <th>Branch</th>
                         <th>Vehicle</th>
                         <th>Tire Size</th>
+                        <th>Tire Count</th>
                         <th>Description</th>
                         <th>Images</th>
                         <th>Status</th>
@@ -31,6 +32,7 @@
                             <td>{{ $request->branchName() ?? 'N/A' }}</td>
                             <td>{{ $request->vehicle->plate_no ?? 'N/A' }}</td>
                             <td>{{ $request->tire->size ?? 'N/A' }}</td>
+                            <td>{{ $request->tire_count ?? 1 }}</td> {{-- Display tire count --}}
                             <td>{{ $request->damage_description }}</td>
 
                             <td>

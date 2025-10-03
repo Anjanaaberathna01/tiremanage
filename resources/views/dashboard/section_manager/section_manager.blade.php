@@ -27,7 +27,8 @@
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
                             Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tire: {{ $req->tire->size ?? 'N/A' }}
+                            Tire: {{ $req->tire->size ?? 'N/A' }}<br>
+                            <strong>Tire Count:</strong> {{ $req->tire_count ?? 1 }}
                         </div>
 
                         <div class="request-status">
@@ -41,11 +42,27 @@
                         </div>
 
                         {{-- Tire Images --}}
-                        @if($req->tire_images && is_array($req->tire_images))
+                        @php
+                            $images = [];
+                            if (isset($req->tire_images)) {
+                                if (is_array($req->tire_images)) {
+                                    $images = $req->tire_images;
+                                } elseif (is_string($req->tire_images)) {
+                                    $decoded = json_decode($req->tire_images, true);
+                                    if (is_array($decoded)) {
+                                        $images = $decoded;
+                                    } else {
+                                        $images = array_map('trim', explode(',', $req->tire_images));
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        @if(count($images) > 0)
                             <div class="request-images">
                                 <strong>Images:</strong>
                                 <div class="images-container">
-                                    @foreach($req->tire_images as $img)
+                                    @foreach($images as $img)
                                         <a href="{{ asset('storage/' . $img) }}" target="_blank">
                                             <img src="{{ asset('storage/' . $img) }}" alt="image-{{ $req->id }}" class="request-img"/>
                                         </a>
@@ -143,7 +160,7 @@
     }
 }
 
-/* ---- Requests List + Card Styles (untouched) ---- */
+/* ---- Requests List + Card Styles ---- */
 .requests-list {
     display: flex;
     flex-direction: column;
@@ -191,6 +208,7 @@
 .btn-approve:hover { background: #15803d; transform: scale(1.05); }
 .btn-reject { background: #dc2626; }
 .btn-reject:hover { background: #b91c1c; transform: scale(1.05); }
+
 @media (max-width: 768px) {
     .request-content { flex-direction: column; }
     .request-actions { flex-direction: row; justify-content: space-between; min-width: 100%; }
