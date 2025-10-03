@@ -18,4 +18,10 @@ public function role()
 {
 return $this->belongsTo(Role::class);
 }
+public function hasRole($roles)
+{
+    $roleName = strtolower(str_replace(' ', '_', $this->role->name ?? ''));
+    return in_array($roleName, (array) $roles);
+}
+
 }

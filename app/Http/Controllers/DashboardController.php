@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $suppliers = Supplier::all();
         $drivers = Driver::with('user')->get();
 
-        // ✅ Count pending requests
+        //  Count pending requests
         $pending_requests = TireRequest::where('status', 'pending')->count();
 
         return view('admin.dashboard', [
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             'suppliers_count' => $suppliers->count(),
             'drivers' => $drivers,
             'drivers_count' => $drivers->count(),
-            'pending_requests' => $pending_requests // ✅ now real count
+            'pending_requests' => $pending_requests //  now real count
         ]);
     }
 

@@ -38,8 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
 
         // Driver management
-        Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
-        Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
+    Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+    Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
     });
 
     /**
@@ -65,13 +65,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [DriverController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile', [DriverController::class, 'updateProfile'])->name('profile.update');
     });
-
-    /**
-     * ----------------
-     * SECTION MANAGER ROUTES
-     * ----------------
-     */
-    Route::prefix('section-manager')->name('section_manager.')->group(function () {
+/**
+ * ----------------
+ * SECTION MANAGER ROUTES
+ * ----------------
+ */
+Route::prefix('section-manager')->name('section_manager.')->group(function () {
     Route::get('/dashboard', [SectionManagerController::class, 'index'])->name('dashboard');
 
     // Requests
@@ -83,7 +82,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
     Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
 
+    // Driver management for Section Manager
+    Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+    Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
 });
+
 
     /**
      * ----------------
