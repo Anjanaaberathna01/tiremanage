@@ -91,7 +91,10 @@ Route::middleware(['auth'])->group(function () {
      * ----------------
      */
     Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'mechanicOfficer'])->name('dashboard');
+        // Use MechanicOfficerController for mechanic workflows
+        Route::get('/dashboard', [App\Http\Controllers\MechanicOfficerController::class, 'index'])->name('dashboard');
+        Route::post('/requests/{id}/approve', [App\Http\Controllers\MechanicOfficerController::class, 'approve'])->name('requests.approve');
+        Route::post('/requests/{id}/reject', [App\Http\Controllers\MechanicOfficerController::class, 'reject'])->name('requests.reject');
     });
 
     /**

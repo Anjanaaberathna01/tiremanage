@@ -4,9 +4,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\TireRequest;
+use App\Models\Approval;
 
 class SectionManagerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if (!$user || !$user->role) {
+                abort(403, 'Unauthorized.');
+            }
+            $role = strtolower(str_replace([' ', '-'], '_', trim($user->role->name)));
+            if ($role !== 'section_manager') {
+                abort(403, 'Access restricted to Section Manager.');
+            }
+            return $next($request);
+        });
+    }
     // Show dashboard with pending requests
 public function index()
 {
@@ -62,6 +77,15 @@ public function search(Request $request)
         $req = TireRequest::findOrFail($id);
         $req->status = 'approved';
         $req->save();
+
+        // Record section manager approval
+        Approval::create([
+            'request_id' => $req->id,
+            'approved_by' => auth()->id(),
+            'level' => 'section_manager',
+            'status' => 'approved',
+            'remarks' => null,
+        ]);
         return redirect()->back()->with('success', 'Request approved.');
     }
 
@@ -71,6 +95,15 @@ public function search(Request $request)
         $req = TireRequest::findOrFail($id);
         $req->status = 'rejected';
         $req->save();
+
+        // Record section manager rejection
+        Approval::create([
+            'request_id' => $req->id,
+            'approved_by' => auth()->id(),
+            'level' => 'section_manager',
+            'status' => 'rejected',
+            'remarks' => null,
+        ]);
         return redirect()->back()->with('success', 'Request rejected.');
     }
 
