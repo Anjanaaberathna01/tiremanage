@@ -4,206 +4,180 @@
 
 @section('content')
 <style>
-    /* 🌈 Page Styling */
-    body {
-        background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
-        font-family: "Poppins", sans-serif;
-    }
+/* Basic Page Styling */
+body {
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+}
 
-    h2 {
-        color: #0d6efd;
-        font-weight: 700;
-        text-shadow: 1px 1px 2px rgba(13, 110, 253, 0.2);
-    }
+h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    /* 🌟 Table Styling */
-    .table {
-        border-radius: 12px;
-        overflow: hidden;
-        background-color: white;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    }
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-    .table thead {
-        background: linear-gradient(90deg, #0d6efd, #6610f2);
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+.table th, .table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
 
-    .table tbody tr {
-        transition: all 0.3s ease-in-out;
-    }
+.table th {
+    background-color: #333;
+    color: white;
+}
 
-    .table tbody tr:hover {
-        background-color: #e9f5ff;
-        transform: scale(1.01);
-    }
+.table tr:hover {
+    background-color: #e6f0ff;
+}
 
-    /* 🖼️ Image Styling */
-    .img-thumbnail {
-        border-radius: 10px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+/* Image Thumbnail */
+.img-thumbnail {
+    width: 70px;
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
 
-    .img-thumbnail:hover {
-        transform: scale(1.2);
-        box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
-    }
+.img-thumbnail:hover {
+    transform: scale(1.2);
+}
 
-    /* 🟢 Badges */
-    .badge {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-        border-radius: 20px;
-        text-transform: capitalize;
-    }
+/* Status Badges */
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: inline-block;
+}
 
-    /* 🗑️ Delete Button */
-    .btn-danger {
-        border-radius: 20px;
-        background: linear-gradient(90deg, #dc3545, #c82333);
-        border: none;
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
+.bg-warning { background-color: #facc15; color: #000; }
+.bg-success { background-color: #16a34a; color: #fff; }
+.bg-danger { background-color: #dc2626; color: #fff; }
+.bg-secondary { background-color: #6b7280; color: #fff; }
 
-    .btn-danger:hover {
-        background: linear-gradient(90deg, #c82333, #dc3545);
-        transform: scale(1.05);
-    }
+/* Delete Button */
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+}
 
-    /* 💡 No Requests Message */
-    .alert-info {
-        background: #e3f2fd;
-        color: #0d6efd;
-        border-radius: 10px;
-        font-weight: 500;
-    }
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
 
-    /* 🎬 Row Fade-In Animation */
-    .fade-in {
-        opacity: 0;
-        transform: translateY(10px);
-        animation: fadeInRow 0.6s forwards;
-    }
-
-    @keyframes fadeInRow {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+/* No Requests Message */
+.alert-info {
+    background-color: #e6f0ff;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+}
 </style>
 
-<div class="container my-5">
-    <h2 class="mb-4 text-center">🚗 My Tyre Requests</h2>
+<div class="container">
+    <h2>🚗 My Tyre Requests</h2>
 
     @if($requests->isEmpty())
-        <div class="alert alert-info text-center">You have not submitted any tyre requests yet.</div>
+        <div class="alert-info">You have not submitted any tyre requests yet.</div>
     @else
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Branch</th>
-                        <th>Vehicle</th>
-                        <th>Tire Size</th>
-                        <th>Description</th>
-                        <th>Tire Count</th>
-                        <th>Images</th>
-                        <th>Status</th>
-                        <th>Requested At</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($requests as $index => $request)
-                        <tr class="fade-in" style="animation-delay: {{ $index * 0.1 }}s;">
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $request->branchName() ?? 'N/A' }}</td>
-                            <td>{{ $request->vehicle->plate_no ?? 'N/A' }}</td>
-                            <td>{{ $request->tire->size ?? 'N/A' }}</td>
-                            <td>{{ $request->damage_description }}</td>
-                            <td>{{ $request->tire_count ?? 1 }}</td>
-
-                            <td>
-                                @php
-                                    $images = [];
-                                    if(!empty($request->tire_images) && is_array($request->tire_images)) {
-                                        $images = $request->tire_images;
-                                    } elseif(!empty($request->images)) {
-                                        $decoded = json_decode($request->images);
-                                        if(is_array($decoded)) $images = $decoded;
-                                    }
-                                @endphp
-
-                                @if(count($images) > 0)
-                                    @foreach($images as $image)
-                                        <a href="{{ asset('storage/' . $image) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $image) }}" width="70" class="img-thumbnail mb-1">
-                                        </a>
-                                    @endforeach
-                                @else
-                                    <span class="text-muted">No Images</span>
-                                @endif
-                            </td>
-
-                            <td>
-                                @if($request->status == 'pending')
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                @elseif($request->status == 'approved')
-                                    <span class="badge bg-success">Approved</span>
-                                @elseif($request->status == 'rejected')
-                                    <span class="badge bg-danger">Rejected</span>
-                                @else
-                                    <span class="badge bg-secondary">{{ ucfirst($request->status) }}</span>
-                                @endif
-                            </td>
-
-                            <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
-
-                            <td>
-                                @if($request->status == 'pending')
-                                    <form action="{{ route('driver.requests.destroy', $request->id) }}" method="POST" onsubmit="return confirmDelete(this);">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash-fill"></i> Delete
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Branch</th>
+                    <th>Vehicle</th>
+                    <th>Tire Size</th>
+                    <th>Description</th>
+                    <th>Tire Count</th>
+                    <th>Images</th>
+                    <th>Status</th>
+                    <th>Requested At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($requests as $index => $request)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $request->branchName() ?? 'N/A' }}</td>
+                    <td>{{ $request->vehicle->plate_no ?? 'N/A' }}</td>
+                    <td>{{ $request->tire->size ?? 'N/A' }}</td>
+                    <td>{{ $request->damage_description }}</td>
+                    <td>{{ $request->tire_count ?? 1 }}</td>
+                    <td>
+                        @php
+                            $images = [];
+                            if(!empty($request->tire_images) && is_array($request->tire_images)) {
+                                $images = $request->tire_images;
+                            } elseif(!empty($request->images)) {
+                                $decoded = json_decode($request->images);
+                                if(is_array($decoded)) $images = $decoded;
+                            }
+                        @endphp
+                        @if(count($images) > 0)
+                            @foreach($images as $image)
+                                <a href="{{ asset('storage/' . $image) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail">
+                                </a>
+                            @endforeach
+                        @else
+                            <span>No Images</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($request->status == 'pending')
+                            <span class="badge bg-warning">Pending</span>
+                        @elseif($request->status == 'approved')
+                            <span class="badge bg-success">Approved</span>
+                        @elseif($request->status == 'rejected')
+                            <span class="badge bg-danger">Rejected</span>
+                        @else
+                            <span class="badge bg-secondary">{{ ucfirst($request->status) }}</span>
+                        @endif
+                    </td>
+                    <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
+                    <td>
+                        @if($request->status == 'pending')
+                            <form action="{{ route('driver.requests.destroy', $request->id) }}" method="POST" onsubmit="return confirmDelete(this);">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-danger">Delete</button>
+                            </form>
+                        @else
+                            <span>-</span>
+                        @endif
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
 </div>
 
-{{--JavaScript Interactivity --}}
 <script>
-    // Animate rows as they appear
-    document.addEventListener("DOMContentLoaded", () => {
-        const rows = document.querySelectorAll(".fade-in");
-        rows.forEach((row, index) => {
-            row.style.animationDelay = `${index * 0.1}s`;
-        });
-    });
-
-    // Sweet-like confirm (simple animation)
-    function confirmDelete(form) {
-        if (confirm("🗑️ Are you sure you want to delete this request?")) {
-            form.submit();
-        } else {
-            const row = form.closest("tr");
-            row.style.backgroundColor = "#f8d7da";
-            setTimeout(() => (row.style.backgroundColor = ""), 500);
-            return false;
-        }
+// Simple Delete Confirmation
+function confirmDelete(form) {
+    if (confirm("Are you sure you want to delete this request?")) {
+        return true;
+    } else {
+        return false;
     }
+}
 </script>
 @endsection
