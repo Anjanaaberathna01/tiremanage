@@ -10,7 +10,7 @@
         @forelse($approvedRecords as $approval)
             @php $req = $approval->request; @endphp
 
-            @if($req->status === \App\Models\Approval::STATUS_APPROVED)
+            @if($req)
             <li class="request-card">
                 <div class="request-content">
                     <div class="request-info">

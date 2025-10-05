@@ -49,7 +49,7 @@ class LoginController extends Controller
                     return redirect()->route('section_manager.dashboard');
 
                 case 'mechanic_officer':
-                    return redirect()->route('mechanic_officer.dashboard');
+                    return redirect()->route('mechanic_officer.pending');
 
                 case 'transport_officer':
                     return redirect()->route('transport_officer.dashboard');

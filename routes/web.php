@@ -83,7 +83,7 @@ Route::prefix('section-manager')->name('section_manager.')->group(function () {
     Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
     Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
 
-    // ✅ VEHICLES (use only the resource, no duplicates)
+    // Vehicles
     Route::resource('vehicles', VehicleController::class)->names([
         'index'   => 'vehicles.index',
         'create'  => 'vehicles.create',
@@ -94,7 +94,7 @@ Route::prefix('section-manager')->name('section_manager.')->group(function () {
         'show'    => 'vehicles.show',
     ]);
 
-    // DRIVERS
+    // Drivers
     Route::get('/drivers', [SectionManagerController::class, 'drivers'])->name('drivers.index');
     Route::get('/drivers/create', [SectionManagerController::class, 'createDriver'])->name('drivers.create');
     Route::post('/drivers', [SectionManagerController::class, 'storeDriver'])->name('drivers.store');
@@ -108,17 +108,14 @@ Route::prefix('section-manager')->name('section_manager.')->group(function () {
      * MECHANIC OFFICER ROUTES
      * ----------------
      */
-Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
-    Route::get('/dashboard', [MechanicOfficerController::class, 'index'])->name('dashboard');
-    Route::get('/requests/approved', [MechanicOfficerController::class, 'approved'])->name('requests.approved_list');
-    Route::get('/requests/rejected', [MechanicOfficerController::class, 'rejected'])->name('requests.rejected_list');
-
-    Route::post('/requests/{id}/approve', [MechanicOfficerController::class, 'approve'])->name('requests.approve');
-    Route::post('/requests/{id}/reject', [MechanicOfficerController::class, 'reject'])->name('requests.reject');
-
-    Route::get('/requests/{id}/edit', [MechanicOfficerController::class, 'edit'])->name('requests.edit');
-    Route::post('/requests/{id}/update', [MechanicOfficerController::class, 'update'])->name('requests.update');
+Route::middleware(['auth'])->prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
+    Route::get('/pending', [MechanicOfficerController::class, 'pending'])->name('pending');
+    Route::post('/approve/{id}', [MechanicOfficerController::class, 'approve'])->name('approve');
+    Route::post('/reject/{id}', [MechanicOfficerController::class, 'reject'])->name('reject');
 });
+
+
+
 
     /**
      * ----------------

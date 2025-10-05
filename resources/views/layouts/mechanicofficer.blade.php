@@ -12,7 +12,7 @@
     {{-- Mechanic Navbar --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('mechanic_officer.dashboard') }}">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('mechanic_officer.pending') }}">
                 <img src="{{ asset('assets/images/logo3.png') }}" alt="logo" style="height:36px; width:auto; margin-right:20px; margin-bottom: 4px;" />
                 <span>Mechanic Officer</span>
             </a>
@@ -21,10 +21,8 @@
             </button>
             <div class="collapse navbar-collapse" id="moNavbar">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('mechanic_officer.dashboard') }}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('mechanic_officer.pending') }}">Dashboard</a></li>
                     {{-- Mechanic may want to view approved or rejected lists --}}
-                    <li class="nav-item"><a class="nav-link" href="{{ route('mechanic_officer.requests.approved_list') }}">Approved</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('mechanic_officer.requests.rejected_list') }}">Rejected</a></li>
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
