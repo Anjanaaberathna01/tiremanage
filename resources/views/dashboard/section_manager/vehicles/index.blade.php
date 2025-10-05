@@ -12,7 +12,7 @@
 </form>
 
 {{-- Add Vehicle --}}
-<a href="{{ route('admin.vehicles.create') }}" class="btn btn-success mb-3">Add Vehicle</a>
+<a href="{{ route('section_manager.vehicles.create') }}" class="btn btn-success mb-3">Add Vehicle</a>
 
 <table class="table table-bordered text-center align-middle">
     <thead class="table-dark">
@@ -32,7 +32,7 @@
             <td>{{ $vehicle->plate_no }}</td>
             <td>{{ $vehicle->branch }}</td>
             <td>
-                <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{{ route('section_manager.vehicles.edit', $vehicle->id) }}" class="btn btn-sm btn-warning">Edit</a>
                 <form action="{{ route('section_manager.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')

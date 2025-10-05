@@ -3,7 +3,7 @@
 @section('title', 'Driver Dashboard')
 
 @section('content')
-<div class="container mx-auto p-6" style="margin-bottom: 40px;">
+<div class="dashboard-container">
 
     {{-- Flash messages --}}
     @if(session('success'))
@@ -16,77 +16,102 @@
     @php
         $driver = \App\Models\Driver::with('user')->where('user_id', auth()->id())->first();
         $profilePhoto = $driver && $driver->profile_photo
-                        ? asset('storage/'.$driver->profile_photo)
-                        : asset('assets/images/default-profile.jpg');
+            ? asset('storage/' . $driver->profile_photo)
+            : asset('assets/images/default-profile.jpg');
     @endphp
 
-    {{-- 🔹 Welcome section --}}
+    {{-- Welcome --}}
     <div class="welcome-section">
         <img src="{{ $profilePhoto }}" alt="Profile Photo" class="avatar-large">
-        <div class="welcome-text">
+        <h1 class="welcome-text">
             Welcome, {{ $driver->full_name ?? 'Driver' }}!
-        </div>
+        </h1>
     </div>
 
-    {{-- 🔹 First Row: 3 cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-2.5 gap-y-2.5 mb-6 mt-6">
-        <div class="card interactive-card">
-            <h2 class="card-title">Request Tire</h2>
-            <p class="card-text">Submit a new tire request quickly and easily.</p>
-            <a href="{{ route('driver.requests.create') }}" class="btn btn-blue">Request Now</a>
-        </div>
-
-        <div class="card interactive-card">
-            <h2 class="card-title">View Your Requests</h2>
-            <p class="card-text">Track the status of your tire requests.</p>
-            <a href="{{ route('driver.requests.index') }}" class="btn btn-purple">View Requests</a>
-        </div>
-
-        <div class="card interactive-card">
-            <h2 class="card-title">View Receipts</h2>
-            <p class="card-text">Check all your tire request receipts.</p>
-            <a href="#" class="btn btn-green">View Receipts</a>
-        </div>
+    {{-- NEW DRIVER INFO CARD --}}
+@if($driver)
+<div class="driver-info-card fade-in">
+    <div class="card-overlay"></div>
+    <h2 class="info-title">👤 Driver Information</h2>
+    <div class="info-grid">
+        <div><strong>Full Name:</strong> {{ $driver->full_name ?? 'N/A' }}</div>
+        <div><strong>Email:</strong> {{ $driver->user->email ?? 'N/A' }}</div>
+        <div><strong>Mobile:</strong> {{ $driver->mobile ?? 'N/A' }}</div>
+        <div><strong>ID Number:</strong> {{ $driver->id_number ?? 'N/A' }}</div>
     </div>
+</div>
+@endif
 
-    {{-- 🔹 Second Row: 1 card centered --}}
-    <div class="flex flex-wrap justify-center gap-x-2.5 gap-y-2.5">
-        <div class="card interactive-card w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-            <h2 class="card-title">Manage Account</h2>
-            <p class="card-text">Update your profile and account details.</p>
-            <a href="{{ route('driver.profile.edit') }}" class="btn btn-yellow">Manage Account</a>
+
+    {{-- Two Column Layout --}}
+    <div class="dashboard-two-col">
+
+        {{-- LEFT COLUMN - Cards --}}
+        <div class="left-col">
+            <div class="cards-stack">
+
+                <div class="card clickable" data-href="{{ route('driver.requests.create') }}">
+                    <h2 class="card-title">Request Tire</h2>
+                    <p class="card-text">Submit a new tire request quickly and easily.</p>
+                </div>
+
+                <div class="card clickable" data-href="{{ route('driver.requests.index') }}">
+                    <h2 class="card-title">View Your Requests</h2>
+                    <p class="card-text">Track the status of your tire requests.</p>
+                </div>
+
+                <div class="card clickable" data-href="#">
+                    <h2 class="card-title">View Receipts</h2>
+                    <p class="card-text">Check all your tire request receipts.</p>
+                </div>
+
+                <div class="card clickable" data-href="{{ route('driver.profile.edit') }}">
+                    <h2 class="card-title">Manage Account</h2>
+                    <p class="card-text">Update your profile and account details.</p>
+                </div>
+
+            </div>
+        </div>
+
+        {{-- RIGHT COLUMN - Image --}}
+        <div class="right-col">
+            <div class="image-panel">
+                <div class="image-bg" style="background-image: url('{{ asset('assets/images/driver-right.jpg') }}');"></div>
+                <div class="image-overlay"></div>
+                <div class="image-content">
+                    <h2 class="image-title">Smooth Rides Start Here</h2>
+                    <p class="image-desc">
+                        Manage your tire requests — request, track approvals, and view receipts all in one place.
+                    </p>
+                </div>
+            </div>
         </div>
 
     </div>
 </div>
+@endsection
 
-{{-- Modern CSS --}}
+@push('styles')
 <style>
-/* Flash messages */
-.flash-msg {
-    padding: 1rem 1.5rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 1rem;
-    position: fixed;
-    top: 5rem;
-    right: 2rem;
-    z-index: 9999;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    opacity: 1;
-    animation: slideFade 4s forwards;
+/* ===== Layout ===== */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    margin-bottom: 100px;
 }
-.flash-success { background: linear-gradient(135deg,#22c55e,#16a34a); }
-.flash-error { background: linear-gradient(135deg,#ef4444,#b91c1c); }
-@keyframes slideFade { 0% {opacity:1; transform:translateY(0);} 100%{opacity:0; transform:translateY(-20px);} }
 
-/* Welcome section */
+/* ===== Welcome Section ===== */
 .welcome-section {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+.welcome-text {
+    font-size: 26px;
+    font-weight: bold;
+    color: #2563eb;
 }
 .avatar-large {
     width: 80px;
@@ -98,141 +123,244 @@
 }
 .avatar-large:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-}
-.welcome-text {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2563eb;
+    box-shadow: 0 8px 20px rgba(37,99,235,0.2);
 }
 
-/* Dashboard layout */
-.dashboard-layout {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-/* Left column */
-.dashboard-left {
-    flex: 1 1 350px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* Driver info card */
-.driver-info-card {
-    background: #f3f4f6;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    text-align: left;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-.driver-info-card:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* Vertical dashboard cards */
-.dashboard-cards-vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.dashboard-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem 2rem;
-    border-radius: 1rem;
-    font-weight: 600;
+/* ===== Flash Messages ===== */
+.flash-msg {
+    position: fixed;
+    top: 70px;
+    right: 25px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    font-weight: bold;
     color: white;
-    text-decoration: none;
-    transition: transform 0.3s, box-shadow 0.3s;
-    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: fadeOut 4s forwards;
 }
-.dashboard-card:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+.flash-success { background: linear-gradient(135deg, #16a34a, #22c55e); }
+.flash-error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-20px); }
 }
-.dashboard-card.blue { background: #2563eb; }
-.dashboard-card.purple { background: #7e22ce; }
-.dashboard-card.green { background: #16a34a; }
-.dashboard-card.yellow { background: #ca8a04; }
 
-/* Right column: image with overlay text */
-.dashboard-right {
-    flex: 1 1 350px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.right-photo-card {
-    width: 100%;
-    min-height: 625px;
-    border-radius: 1rem;
-    overflow: hidden;
+/* ===== Driver Info Card ===== */
+.driver-info-card {
     position: relative;
-    background: url('{{ asset('assets/images/driver-right.jpg') }}') center/cover no-repeat;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    transition: transform 0.3s, box-shadow 0.3s;
+    background: url("{{ asset('assets/images/driver-information.png') }}") no-repeat center center/cover;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    color: #fff;
+    backdrop-filter: blur(5px);
+    transform: translateY(0);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Overlay Text */
-.right-text-overlay {
+/* Overlay to make text readable */
+.driver-info-card .card-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 1.5rem 2rem;
-    background: rgba(0,0,0,0.55);
-    border-radius: 1rem 1rem 0 0;
-    color: #ffffff;
-    text-align: left;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    inset: 0;
+    background: linear-gradient(135deg, rgba(31, 31, 31, 0.65), rgba(164, 164, 165, 0.65));
+    z-index: 1;
+    border-radius: inherit;
 }
-.right-text-overlay h2 {
-    font-size: 1.8rem;
+
+.driver-info-card * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Hover effect */
+.driver-info-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(13, 110, 253, 0.25);
+}
+
+/* Title */
+.info-title {
+    font-size: 24px;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #facc15;
+    color: #fff;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
-.right-text-overlay p {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+
+/* Info grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+    font-size: 16px;
+    color: #f1f5f9;
 }
-.right-text-overlay ul {
-    list-style: none;
-    padding-left: 0;
+
+/* Fade-in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInCard 0.8s ease forwards;
 }
-.right-text-overlay ul li {
-    font-size: 0.95rem;
-    margin-bottom: 0.3rem;
+
+@keyframes fadeInCard {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.right-text-overlay ul li strong {
-    color: #38bdf8;
+
+
+/* ===== Two Column Layout ===== */
+.dashboard-two-col {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
+@media (min-width: 1024px) {
+    .dashboard-two-col {
+        flex-direction: row;
+        gap: 40px;
+        align-items: stretch;
+    }
+}
+.left-col, .right-col { flex: 1; }
+
+/* ===== Cards ===== */
+.cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.card {
+    background: #2563eb;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-25px);
+}
+.card.in-view { opacity: 1; transform: translateX(0); }
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #2563eb
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 0;
+}
+.card:hover::before { opacity: 0.15; }
+.card:hover {
+    transform: translateY(-4px);
+
+}
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ead024;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+}
+.card-text {
+    font-size: 15px;
+    color: #dbba15;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Image Panel ===== */
+.image-panel {
+    position: relative;
+    height: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.image-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
+}
+.image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+}
+.image-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    color: #fff;
+}
+.image-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.image-desc {
+    max-width: 480px;
+    color: rgba(255,255,255,0.9);
+}
+.image-panel:hover .image-bg { transform: scale(1.05); }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .dashboard-layout {
-        flex-direction: column;
-    }
-    .dashboard-right {
-        min-height: 200px;
-    }
+    .dashboard-two-col { flex-direction: column; }
+    .image-panel { height: 320px; }
 }
 </style>
+@endpush
 
-{{-- JS: auto-hide flash messages --}}
+@push('scripts')
 <script>
-setTimeout(() => {
-    document.querySelectorAll('.flash-msg').forEach(msg => msg.remove());
-}, 4000);
-</script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Fade-out flash messages
+    setTimeout(() => {
+        document.querySelectorAll('.flash-msg').forEach(msg => {
+            msg.style.transition = 'opacity 0.6s, transform 0.6s';
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-12px)';
+            setTimeout(() => msg.remove(), 600);
+        });
+    }, 4000);
 
-@endsection
+    // Animate cards
+    const cards = document.querySelectorAll('.card');
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        cards.forEach(card => observer.observe(card));
+    } else {
+        cards.forEach(card => card.classList.add('in-view'));
+    }
+
+    // Card click navigation
+    document.querySelectorAll('.card.clickable').forEach(card => {
+        card.addEventListener('click', () => {
+            const link = card.getAttribute('data-href');
+            if (link) window.location.href = link;
+        });
+    });
+});
+</script>
+@endpush

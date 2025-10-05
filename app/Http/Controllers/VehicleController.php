@@ -10,9 +10,23 @@ class VehicleController extends Controller
     /**
      * Display all vehicles
      */
-    public function index()
+    public function index(Request $request)
     {
-        $vehicles = Vehicle::latest()->get(); // latest for ordering
+        $search = $request->input('search');
+
+        $query = Vehicle::query();
+
+        // ✅ Filter search by plate_no or model
+        if ($search) {
+            $query->where('plate_no', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%");
+        }
+
+        // ✅ Show only unregistered vehicles if applicable
+        $query->where('is_registered', false);
+
+        $vehicles = $query->get();
+
         return view('vehicles.index', compact('vehicles'));
     }
 
@@ -27,24 +41,39 @@ class VehicleController extends Controller
     /**
      * Store new vehicle
      */
-public function store(Request $request)
-{
-    $request->validate([
-        'model' => 'required|string|max:255',
-        'plate_no' => 'required|string|max:50',
-        'branch' => 'required|string|max:100',
-    ]);
+    public function store(Request $request)
+    {
+        // ✅ Validate all fields and check uniqueness of plate_no
+        $request->validate([
+            'model'     => 'required|string|max:255',
+            'plate_no'  => 'required|string|max:50|unique:vehicles,plate_no',
+            'branch'    => 'required|string|max:100',
+        ]);
 
-    Vehicle::create($request->all());
+        // ✅ Normalize plate number (uppercase, trim spaces)
+        $plateNo = strtoupper(trim($request->plate_no));
 
-    // redirect based on role
-    if (auth()->user()->role->name === 'Admin') {
-        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle added successfully.');
-    } else {
-        return redirect()->route('section_manager.vehicles.index')->with('success', 'Vehicle added successfully.');
+        // ✅ Double-check for existing plate (case-insensitive)
+        if (Vehicle::whereRaw('LOWER(TRIM(plate_no)) = ?', [strtolower($plateNo)])->exists()) {
+            return back()
+                ->withInput()
+                ->with('error', '⚠️ Vehicle with this plate number already exists.');
+        }
+
+        Vehicle::create([
+            'model'        => $request->model,
+            'plate_no'     => $plateNo,
+            'branch'       => $request->branch,
+            'is_registered'=> $request->is_registered ?? false,
+        ]);
+
+        // ✅ Redirect based on role
+        $route = auth()->user()->role->name === 'Admin'
+            ? 'admin.vehicles.index'
+            : 'section_manager.vehicles.index';
+
+        return redirect()->route($route)->with('success', '✅ Vehicle added successfully.');
     }
-}
-
 
     /**
      * Edit vehicle
@@ -61,18 +90,22 @@ public function store(Request $request)
     {
         $request->validate([
             'model'    => 'required|string|max:255',
-            'plate_no' => 'required|string|max:255|unique:vehicles,plate_no,' . $vehicle->id,
+            'plate_no' => 'required|string|max:50|unique:vehicles,plate_no,' . $vehicle->id,
             'branch'   => 'required|string|max:255',
         ]);
 
         $vehicle->update([
-            'model'    => $request->model,
-            'plate_no' => strtoupper($request->plate_no),
-            'branch'   => $request->branch,
+            'model'        => $request->model,
+            'plate_no'     => strtoupper(trim($request->plate_no)),
+            'branch'       => $request->branch,
+            'is_registered'=> $request->is_registered ?? $vehicle->is_registered,
         ]);
 
-        return redirect()->route('admin.vehicles.index')
-            ->with('success', '✅ Vehicle updated successfully.');
+        $route = auth()->user()->role->name === 'Admin'
+            ? 'admin.vehicles.index'
+            : 'section_manager.vehicles.index';
+
+        return redirect()->route($route)->with('success', '✅ Vehicle updated successfully.');
     }
 
     /**
@@ -81,35 +114,38 @@ public function store(Request $request)
     public function destroy(Vehicle $vehicle)
     {
         $vehicle->delete();
-        return redirect()->route('admin.vehicles.index')
-            ->with('success', '🗑️ Vehicle deleted successfully.');
+
+        $route = auth()->user()->role->name === 'Admin'
+            ? 'admin.vehicles.index'
+            : 'section_manager.vehicles.index';
+
+        return redirect()->route($route)->with('success', '🗑️ Vehicle deleted successfully.');
     }
 
     /**
      * Lookup vehicle by plate number (AJAX)
      */
-public function lookup(Request $request)
-{
-    $plate = $request->query('plate_no');
+    public function lookup(Request $request)
+    {
+        $plate = $request->query('plate_no');
 
-    if (!$plate) {
-        return response()->json(['found' => false], 400);
+        if (!$plate) {
+            return response()->json(['found' => false], 400);
+        }
+
+        // Normalize search
+        $vehicle = Vehicle::whereRaw('LOWER(TRIM(plate_no)) = ?', [strtolower(trim($plate))])->first();
+
+        if (!$vehicle) {
+            return response()->json(['found' => false]);
+        }
+
+        return response()->json([
+            'found'    => true,
+            'id'       => $vehicle->id,
+            'plate_no' => $vehicle->plate_no,
+            'branch'   => $vehicle->branch,
+            'model'    => $vehicle->model,
+        ]);
     }
-
-    // normalize search
-    $vehicle = Vehicle::whereRaw('LOWER(TRIM(plate_no)) = ?', [strtolower(trim($plate))])->first();
-
-    if (!$vehicle) {
-        return response()->json(['found' => false]);
-    }
-
-    return response()->json([
-        'found'    => true,
-        'id'       => $vehicle->id,
-        'plate_no' => $vehicle->plate_no,
-        'branch'   => $vehicle->branch,
-        'model'    => $vehicle->model,
-    ]);
-}
-
 }

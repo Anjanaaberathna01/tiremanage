@@ -1,226 +1,199 @@
 @extends('layouts.section_manager')
 
-@section('title', 'Section Manager Dashboard')
+@section('title', 'Pending Requests')
 
 @section('content')
 <div class="container mx-auto p-6">
 
-    {{-- Toolbar: Search --}}
-    <div class="toolbar">
-        {{-- Search Bar --}}
-        <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET">
-            <input type="text" name="search" id="search-input" value="{{ request('search') }}" placeholder="Search by Driver Name..." />
-            <button type="submit" id="search-button">Search</button>
+    {{--  Toolbar / Creative Search Bar --}}
+    <div class="toolbar mb-6">
+        <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET" class="search-bar">
+            <input type="text" name="search" id="search-input" value="{{ request('search') }}"
+                placeholder="Search by Driver Name..." />
+            <button type="submit">🔍 Search</button>
         </form>
     </div>
 
-    {{-- Requests List --}}
+    {{--  Pending Requests --}}
     <ul class="requests-list">
-        @foreach($pendingRequests as $req)
+        @forelse($pendingRequests as $req)
             <li class="request-card">
                 <div class="request-content">
-                    {{-- Info Section --}}
                     <div class="request-info">
                         <div class="request-header">
-                            <strong>Request:</strong> User: {{ $req->user->name }}
+                            <strong>Request:</strong> {{ $req->user->name ?? 'N/A' }}
                         </div>
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
                             Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tire: {{ $req->tire->size ?? 'N/A' }}
+                            Tyre: {{ $req->tire->size ?? 'N/A' }}<br>
+                            Tyre Counter: {{ $req->tire_count ?? 'N/A' }}
                         </div>
-
-                        <div class="request-status">
-                            <strong>Status:</strong>
-                            <span class="text-yellow-600">Pending</span>
-                        </div>
-
                         <div class="request-damage">
                             <strong>Damage Description:</strong>
                             <p>{{ $req->damage_description ?? 'No description provided' }}</p>
                         </div>
 
-                        {{-- Tire Images --}}
                         @php
                             $images = [];
-                            if (isset($req->tire_images)) {
-                                if (is_array($req->tire_images)) {
+                            if(!empty($req->tire_images)) {
+                                if(is_array($req->tire_images)) {
                                     $images = $req->tire_images;
-                                } elseif (is_string($req->tire_images)) {
+                                } elseif(is_string($req->tire_images)) {
                                     $decoded = json_decode($req->tire_images, true);
-                                    if (is_array($decoded)) {
-                                        $images = $decoded;
-                                    } else {
-                                        $images = array_map('trim', explode(',', $req->tire_images));
-                                    }
+                                    if(is_array($decoded)) $images = $decoded;
                                 }
                             }
                         @endphp
 
                         @if(count($images) > 0)
-                            <div class="request-images">
-                                <strong>Images:</strong>
-                                <div class="images-container">
-                                    @foreach($images as $img)
-                                        <a href="{{ asset('storage/' . $img) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $img) }}" alt="image-{{ $req->id }}" class="request-img"/>
-                                        </a>
-                                    @endforeach
-                                </div>
+                        <div class="request-images">
+                            <strong>Images:</strong>
+                            <div class="images-container">
+                                @foreach($images as $img)
+                                    <img src="{{ asset('storage/' . $img) }}"
+                                         alt="image-{{ $req->id }}"
+                                         class="request-img"
+                                         data-full="{{ asset('storage/' . $img) }}" />
+                                @endforeach
                             </div>
+                        </div>
                         @else
                             <div class="no-images"><em>No images provided</em></div>
                         @endif
                     </div>
 
-                    {{-- Actions Section --}}
                     <div class="request-actions">
-                        <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST" class="action-form">
+                        <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-approve">Approve</button>
+                            <button type="submit" class="approve-btn">Approve</button>
                         </form>
-                        <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST" class="action-form">
+                        <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-reject">Reject</button>
+                            <button type="submit" class="reject-btn">Reject</button>
                         </form>
                     </div>
                 </div>
             </li>
-        @endforeach
+        @empty
+            <li class="request-card empty-card">No pending requests found.</li>
+        @endforelse
     </ul>
 
-    {{-- Empty State --}}
-    @if($pendingRequests->isEmpty())
-        <div class="text-center text-gray-500 italic mt-6">
-            No pending requests found
-        </div>
-    @endif
-
 </div>
+@endsection
 
+@push('styles')
 <style>
-/* Toolbar: search bar */
-.toolbar {
+/* --- Search Bar --- */
+.search-bar {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 20px 0;
-    gap: 1rem;
+    max-width: 400px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
-/* Search Form */
-#driver-search-form {
-    display: flex;
+.search-bar input[type="text"] {
     flex: 1;
-    max-width: 500px;
-}
-
-/* Input field */
-#search-input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-right: none;
-    border-radius: 5px 0 0 5px;
-    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1rem;
     outline: none;
-    transition: all 0.3s ease;
+    transition: background 0.3s;
 }
-#search-input:focus {
-    border-color: #007BFF;
-    box-shadow: 0 0 5px rgba(0,123,255,0.5);
+.search-bar input[type="text"]:focus {
+    background: #e6f7ff;
 }
-
-/* Search button */
-#search-button {
-    padding: 10px 16px;
-    border: 1px solid #007BFF;
-    background-color: #007BFF;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 0 5px 5px 0;
+.search-bar button {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s;
 }
-#search-button:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
-
-/* Responsive: stack vertically */
-@media (max-width: 768px) {
-    .toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    #driver-search-form {
-        max-width: 100%;
-    }
+.search-bar button:hover {
+    background: #059669;
 }
 
-/* ---- Requests List + Card Styles ---- */
-.requests-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-.request-card {
-    background: linear-gradient(145deg, #ffffff, #f0f4ff);
-    padding: 1.5rem;
-    margin-top: 10px;
-    border-radius: 1rem;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-.request-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-}
-.request-content {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-.request-info { flex: 1; }
-.request-header { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; }
-.request-vehicle { font-size: 1rem; margin-bottom: 0.5rem; color: #374151; }
-.request-damage p { margin-top: 0.25rem; color: #4b5563; }
-.request-status span { font-weight: 600; }
-.text-green-600 { color: #16a34a; }
-.text-red-600 { color: #dc2626; }
-.text-yellow-600 { color: #d97706; }
-.request-images { margin-top: 0.75rem; }
-.images-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-.request-img { width: 100px; border-radius: 0.5rem; border: 1px solid #d1d5db; transition: transform 0.2s; }
-.request-img:hover { transform: scale(1.05); }
-.no-images { margin-top: 0.5rem; color: #6b7280; font-style: italic; }
-.request-actions {
-    min-width: 140px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-.btn { padding: 0.5rem 1rem; border-radius: 0.75rem; font-weight: 600; color: white; font-size: 0.95rem; transition: all 0.3s ease; border: none; cursor: pointer; }
-.btn-approve { background: #16a34a; }
-.btn-approve:hover { background: #15803d; transform: scale(1.05); }
-.btn-reject { background: #dc2626; }
-.btn-reject:hover { background: #b91c1c; transform: scale(1.05); }
+/* --- Requests --- */
+.requests-list { display:flex; flex-direction:column; gap:1.5rem; }
+.request-card { background: linear-gradient(135deg,#f5f593,#f5f589); border:1px solid rgba(6,95,70,0.2); border-radius:1rem; padding:1.5rem; box-shadow:0 6px 14px rgba(0,0,0,0.06); transition:transform .3s, box-shadow .3s; }
+.request-card:hover { transform:translateY(-4px); box-shadow:0 12px 20px rgba(0,0,0,0.1); }
+.request-header { font-weight:600; color:#7a6b00; margin-bottom:5px; font-size:1.1rem; }
+.request-vehicle, .request-damage p { color:#374151; margin-bottom:5px; }
+.images-container { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem; }
+.request-img { width:100px; height:70px; object-fit:cover; border-radius:6px; border:1px solid #ccc; cursor:pointer; transition:transform 0.25s, box-shadow 0.25s; }
+.request-img:hover { transform:scale(1.05); box-shadow:0 6px 15px rgba(0,0,0,0.15); }
+.no-images { font-style:italic; color:#6b7280; margin-top:5px; }
 
-@media (max-width: 768px) {
-    .request-content { flex-direction: column; }
-    .request-actions { flex-direction: row; justify-content: space-between; min-width: 100%; }
-    .dashboard-title { text-align: center; }
-}
+/* --- Buttons --- */
+.request-actions { margin-top:10px; display:flex; gap:10px; }
+.approve-btn { background:#10b981; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; transition:background 0.25s, transform 0.25s; }
+.approve-btn:hover { background:#059669; transform:translateY(-2px); }
+.reject-btn { background:#ef4444; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; transition:background 0.25s, transform 0.25s; }
+.reject-btn:hover { background:#b91c1c; transform:translateY(-2px); }
+.empty-card { text-align:center; color:#6b7280; font-style:italic; }
+
+/* --- Lightbox --- */
+.lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; }
+.lightbox.active { display:flex; }
+.lightbox img { max-width:90%; max-height:85%; border-radius:12px; }
+.lightbox .close-btn { position:absolute; top:20px; right:30px; font-size:2rem; color:#fff; cursor:pointer; }
 </style>
+@endpush
 
+
+@push('scripts')
 <script>
-document.getElementById('search-input').addEventListener('keypress', function(e){
-    if(e.key === 'Enter'){
-        e.preventDefault();
-        document.getElementById('driver-search-form').submit();
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    // Lightbox
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
+    document.body.appendChild(lightbox);
+    const imgEl = lightbox.querySelector('img');
+    const closeBtn = lightbox.querySelector('.close-btn');
+
+    document.querySelectorAll('.request-img').forEach(img => {
+        img.addEventListener('click', () => {
+            imgEl.src = img.dataset.full || img.src;
+            lightbox.classList.add('active');
+        });
+    });
+    closeBtn.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        imgEl.src = '';
+    });
+    lightbox.addEventListener('click', (e) => {
+        if(e.target === lightbox){
+            lightbox.classList.remove('active');
+            imgEl.src = '';
+        }
+    });
+
+    // Live Search Highlight Effect
+    const searchInput = document.getElementById('search-input');
+    const searchForm = document.getElementById('driver-search-form');
+    searchInput.addEventListener('keypress', function(e){
+        if(e.key === 'Enter'){
+            e.preventDefault();
+            searchForm.submit();
+        }
+    });
+
+    searchInput.addEventListener('input', function(){
+        const term = searchInput.value.toLowerCase();
+        document.querySelectorAll('.request-card').forEach(card => {
+            const userName = card.querySelector('.request-header').textContent.toLowerCase();
+            if(userName.includes(term) || term === ''){
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
 });
 </script>
-@endsection
+@endpush

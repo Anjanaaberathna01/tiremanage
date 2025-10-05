@@ -154,7 +154,7 @@
         </div>
     </div>
 <div class="col-md-3 col-6 mb-3">
-    <a href="{{ route('admin.pending.requests') }}" class="text-decoration-none">
+    <a href="{{ route('admin.request.pending') }}" class="text-decoration-none">
         <div class="card bg-danger text-white text-center p-3 hover-card">
             <h5>Pending Requests</h5>
             <h3>{{ $pending_requests }}</h3>

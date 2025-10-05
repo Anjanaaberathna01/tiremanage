@@ -23,5 +23,15 @@ public function hasRole($roles)
     $roleName = strtolower(str_replace(' ', '_', $this->role->name ?? ''));
     return in_array($roleName, (array) $roles);
 }
+public function isDriver() {
+    return $this->hasRole('driver');
+}
+public function isSectionManager() {
+    return $this->hasRole('section_manager');
+}
+public function isMechanicOfficer() {
+    return $this->hasRole('mechanic_officer');
+}
+
 
 }

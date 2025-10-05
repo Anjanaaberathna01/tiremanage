@@ -12,15 +12,15 @@ use App\Http\Controllers\SectionManagerController;
 use App\Http\Controllers\MechanicOfficerController;
 use App\Http\Controllers\TransportOfficerController;
 
-// Root redirect
+// Redirect root to login
 Route::get('/', fn() => redirect()->route('login'));
 
-// Authentication
+// ------------------ AUTHENTICATION ------------------
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Protected routes
+// ------------------ PROTECTED ROUTES ------------------
 Route::middleware(['auth'])->group(function () {
 
     /**
@@ -31,21 +31,18 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
 
+        // Resources
         Route::resource('vehicles', VehicleController::class);
         Route::resource('tires', TireController::class);
         Route::resource('suppliers', SupplierController::class);
-        Route::get('/requests/pending', [DashboardController::class, 'pendingRequests'])->name('requests.pending');
-        Route::get('/pending-requests', [DashboardController::class, 'pendingRequests'])->name('pending.requests');
 
+        // Requests
+        Route::get('/requests/pending', [DashboardController::class, 'pendingRequests'])->name('request.pending');
 
         // Driver management
-         Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+        Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
         Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
         Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
-
-        // Vehicle management for Admin
-        Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
-        Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
     });
 
     /**
@@ -56,76 +53,71 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'driver'])->name('dashboard');
 
-        // Tire Requests
         Route::get('/requests', [TireRequestController::class, 'index'])->name('requests.index');
         Route::get('/requests/create', [TireRequestController::class, 'create'])->name('requests.create');
         Route::post('/requests', [TireRequestController::class, 'store'])->name('requests.store');
-
-        // Delete tire request
         Route::delete('/requests/{request}', [TireRequestController::class, 'destroy'])->name('requests.destroy');
 
-        // Vehicle lookup
         Route::get('/vehicles/lookup', [VehicleController::class, 'lookup'])->name('vehicles.lookup');
 
-        // Profile routes
         Route::get('/profile', [DriverController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile', [DriverController::class, 'updateProfile'])->name('profile.update');
     });
-/**
- * ----------------
- * SECTION MANAGER ROUTES
- * ----------------
- */
+
+    /**
+     * ----------------
+     * SECTION MANAGER ROUTES
+     * ----------------
+     */
+
 Route::prefix('section-manager')->name('section_manager.')->group(function () {
     Route::get('/dashboard', [SectionManagerController::class, 'index'])->name('dashboard');
 
     // Requests
-    Route::get('/requests/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
-    Route::get('/requests/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
-    Route::post('/requests/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
-    Route::post('/requests/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
+    Route::get('/pending', [SectionManagerController::class, 'pending'])->name('requests.pending');
+    Route::get('/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
+    Route::get('/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
+    Route::post('/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
+    Route::post('/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
     Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
     Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
     Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
 
-// Driver management for Section Manager
-Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
-Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
-Route::get('/drivers', [SectionManagerController::class, 'drivers'])->name('drivers.index');
-Route::delete('/drivers/{id}', [SectionManagerController::class, 'destroy'])->name('drivers.destroy');
+    // ✅ VEHICLES (use only the resource, no duplicates)
+    Route::resource('vehicles', VehicleController::class)->names([
+        'index'   => 'vehicles.index',
+        'create'  => 'vehicles.create',
+        'store'   => 'vehicles.store',
+        'edit'    => 'vehicles.edit',
+        'update'  => 'vehicles.update',
+        'destroy' => 'vehicles.destroy',
+        'show'    => 'vehicles.show',
+    ]);
 
-    // Vehicle management for Section Manager
-Route::get('/vehicles', [SectionManagerController::class, 'vehicles'])->name('vehicles.index'); // Show vehicles
-    Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store'); // Add vehicle
-    Route::delete('/vehicles/{id}', [SectionManagerController::class, 'destroyVehicle'])->name('vehicles.destroy'); // Delete vehicle
-            Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
-        Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
+    // DRIVERS
+    Route::get('/drivers', [SectionManagerController::class, 'drivers'])->name('drivers.index');
+    Route::get('/drivers/create', [SectionManagerController::class, 'createDriver'])->name('drivers.create');
+    Route::post('/drivers', [SectionManagerController::class, 'storeDriver'])->name('drivers.store');
+    Route::delete('/drivers/{id}', [SectionManagerController::class, 'destroyDriver'])->name('drivers.destroy');
 });
 
-/**
- * ----------------
- * MECHANIC OFFICER ROUTES
- * ----------------
- */
 
-Route::prefix('mechanic-officer')->middleware(['auth'])->group(function() {
 
-    // Dashboard (pending requests)
-    Route::get('/dashboard', [MechanicOfficerController::class, 'index'])->name('mechanic_officer.dashboard');
+    /**
+     * ----------------
+     * MECHANIC OFFICER ROUTES
+     * ----------------
+     */
+Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
+    Route::get('/dashboard', [MechanicOfficerController::class, 'index'])->name('dashboard');
+    Route::get('/requests/approved', [MechanicOfficerController::class, 'approved'])->name('requests.approved_list');
+    Route::get('/requests/rejected', [MechanicOfficerController::class, 'rejected'])->name('requests.rejected_list');
 
-    // Approved requests list
-    Route::get('/requests/approved', [MechanicOfficerController::class, 'approved'])->name('mechanic_officer.requests.approved_list');
+    Route::post('/requests/{id}/approve', [MechanicOfficerController::class, 'approve'])->name('requests.approve');
+    Route::post('/requests/{id}/reject', [MechanicOfficerController::class, 'reject'])->name('requests.reject');
 
-    // Rejected requests list
-    Route::get('/requests/rejected', [MechanicOfficerController::class, 'rejected'])->name('mechanic_officer.requests.rejected_list');
-
-    // Approve / Reject actions
-    Route::post('/requests/{id}/approve', [MechanicOfficerController::class, 'approve'])->name('mechanic_officer.requests.approve');
-    Route::post('/requests/{id}/reject', [MechanicOfficerController::class, 'reject'])->name('mechanic_officer.requests.reject');
-
-    // Edit / Update request
-    Route::get('/requests/{id}/edit', [MechanicOfficerController::class, 'edit'])->name('mechanic_officer.requests.edit');
-    Route::put('/requests/{id}', [MechanicOfficerController::class, 'update'])->name('mechanic_officer.requests.update');
+    Route::get('/requests/{id}/edit', [MechanicOfficerController::class, 'edit'])->name('requests.edit');
+    Route::post('/requests/{id}/update', [MechanicOfficerController::class, 'update'])->name('requests.update');
 });
 
     /**
@@ -136,5 +128,4 @@ Route::prefix('mechanic-officer')->middleware(['auth'])->group(function() {
     Route::prefix('transport-officer')->name('transport_officer.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'transportOfficer'])->name('dashboard');
     });
-
 });

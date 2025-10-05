@@ -4,101 +4,75 @@
 
 @section('content')
 <div class="container mx-auto p-6">
+
+    {{-- ✅ Search Bar --}}
+    <div class="toolbar mb-6">
+        <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET" class="flex">
+            <input type="text" name="search" id="search-input" value="{{ old('search', $search ?? '') }}"
+                placeholder="Search by Driver Name..."
+                class="flex-1 border border-gray-300 rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            <button type="submit"
+                class="bg-yellow-500 text-white px-4 py-2 rounded-r hover:bg-yellow-600 transition">
+                🔍 Search
+            </button>
+        </form>
+    </div>
+
+    {{-- ✅ Results --}}
     <h2 class="dashboard-title">🔍 Search Results for "{{ $search }}"</h2>
 
     <ul class="requests-list">
-        @forelse($requests as $req)
-            <li class="request-card">
-                <div class="request-content">
-                    <div class="request-info">
-                        {{-- Request Header --}}
-                        <div class="request-header">
-                            <strong>Request:</strong> User: {{ $req->user->name }}
-                        </div>
+        @forelse($pendingRequests as $req)
+            <li class="request-card" style="background-color:#e5db1b;">
+                <div class="request-content flex justify-between flex-wrap gap-4">
 
-                        {{-- Vehicle Info --}}
-                        <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
-                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tyre: {{ $req->tire->size ?? 'N/A' }}
-                        </div>
-
-                        {{-- Status --}}
-                        <div class="request-status">
-                            <strong>Status:</strong>
-                            <span class="
-                                @if($req->status == 'approved') text-green-600
-                                @elseif($req->status == 'rejected') text-red-600
-                                @else text-yellow-600
-                                @endif
-                            ">
-                                {{ ucfirst($req->status) }}
-                            </span>
-                        </div>
-
-                        {{-- Damage Description --}}
-                        <div class="request-damage">
-                            <strong>Damage Description:</strong>
-                            <p>{{ $req->damage_description ?? 'No description provided' }}</p>
-                        </div>
+                    {{-- Request Info --}}
+                    <div class="flex-1">
+                        <h4 class="request-header font-semibold text-lg mb-1">
+                            Request #{{ $req->id }} — {{ $req->user->name ?? 'Unknown User' }}
+                        </h4>
+                        <p><strong>Vehicle:</strong> {{ $req->vehicle->plate_no ?? 'N/A' }}</p>
+                        <p><strong>Branch:</strong> {{ $req->vehicle->branch ?? 'N/A' }}</p>
+                        <p><strong>Tire:</strong> {{ $req->tire->size ?? 'N/A' }}</p>
+                        <p><strong>Damage Description:</strong> {{ $req->damage_description ?? 'No description' }}</p>
 
                         {{-- Tire Images --}}
                         @php
-                            $images = [];
-                            if (isset($req->tire_images)) {
-                                if (is_array($req->tire_images)) {
-                                    $images = $req->tire_images;
-                                } elseif (is_string($req->tire_images) && trim($req->tire_images) !== '') {
-                                    $decoded = json_decode($req->tire_images, true);
-                                    if (is_array($decoded)) $images = $decoded;
-                                }
+                            $images = $req->tire_images ?? [];
+                            if(is_string($images)){
+                                $decoded = json_decode($images, true);
+                                $images = is_array($decoded) ? $decoded : explode(',', $images);
                             }
                         @endphp
-
                         @if(count($images) > 0)
-                            <div class="request-images">
+                            <div class="request-images mt-3">
                                 <strong>Images:</strong>
-                                <div class="images-container">
+                                <div class="images-container flex flex-wrap gap-2 mt-2">
                                     @foreach($images as $img)
-                                        @php $imgPath = str_replace('\\/', '/', trim($img)); @endphp
-                                        <img src="{{ asset('storage/' . $imgPath) }}"
-                                             alt="image-{{ $req->id }}"
-                                             class="request-img"
-                                             data-full="{{ asset('storage/' . $imgPath) }}"/>
+                                        <img src="{{ asset('storage/' . $img) }}"
+                                             class="request-img w-24 h-24 object-cover rounded shadow"
+                                             data-full="{{ asset('storage/' . $img) }}" />
                                     @endforeach
                                 </div>
                             </div>
-                        @else
-                            <div class="no-images"><em>No images provided</em></div>
                         @endif
                     </div>
 
                     {{-- Actions --}}
-                    <div class="request-actions">
-                        @if($req->status == 'pending')
-                            <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST" class="inline-block mr-2">
-                                @csrf
-                                <button type="submit" class="btn btn-approve">Approve</button>
-                            </form>
-                            <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="btn btn-reject">Reject</button>
-                            </form>
-                        @else
-                            <span class="font-semibold">
-                                {{ ucfirst($req->status) }}
-                            </span>
-                        @endif
-
-                        {{-- Edit Button --}}
-                        <a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn ml-3">
-                            ✏️ Edit
-                        </a>
+                    <div class="flex flex-col gap-2 request-actions">
+                        <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-approve">✅ Approve</button>
+                        </form>
+                        <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-reject">❌ Reject</button>
+                        </form>
                     </div>
                 </div>
             </li>
         @empty
-            <li class="request-card empty-card">No requests found for "{{ $search }}"</li>
+            <li class="request-card empty-card">No pending requests found for "{{ $search }}"</li>
         @endforelse
     </ul>
 </div>
@@ -108,50 +82,38 @@
 <style>
 /* Dashboard Title */
 .dashboard-title { font-size:2rem; font-weight:700; text-align:center; margin-bottom:1.5rem; color:#065f46; }
-
 /* Requests List */
 .requests-list { display:flex; flex-direction:column; gap:1.2rem; }
-
 /* Cards */
-.request-card { background: linear-gradient(135deg,#fff,#f0fdf4); border-radius:1rem; padding:1.5rem; box-shadow:0 6px 14px rgba(0,0,0,0.06); transition: transform .3s, box-shadow .3s; }
+.request-card { border-radius:1rem; padding:1.5rem; box-shadow:0 6px 14px rgba(0,0,0,0.06); transition: transform .3s, box-shadow .3s; }
 .request-card:hover { transform: translateY(-5px) scale(1.01); box-shadow:0 12px 24px rgba(0,0,0,0.12); }
 .empty-card { text-align:center; color:#6b7280; font-style:italic; }
-
 /* Info */
-.request-header { font-size:1.1rem; font-weight:600; color:#065f46; margin-bottom:0.25rem; }
+.request-header { font-size:1.1rem; font-weight:600; color:#1f1f1f; margin-bottom:0.25rem; }
 .request-vehicle { color:#374151; margin-bottom:0.6rem; }
 .request-damage p { margin-top:0.3rem; color:#4b5563; }
-
-/* Status Colors */
-.text-green-600 { color: #16a34a; }
-.text-red-600 { color: #dc2626; }
-.text-yellow-600 { color: #d97706; }
-
 /* Images */
 .images-container { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem; }
 .request-img { width:110px; height:80px; object-fit:cover; border-radius:0.5rem; border:1px solid #ddd; cursor:pointer; transition:transform .25s, box-shadow .25s; }
 .request-img:hover { transform:scale(1.05); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
-.no-images { margin-top:0.5rem; font-style:italic; color:#6b7280; }
-
-/* Actions */
-.request-actions { margin-top:1rem; display:flex; align-items:center; flex-wrap:wrap; gap:0.5rem; }
-
 /* Buttons */
 .btn { padding:0.5rem 1rem; border-radius:0.75rem; font-weight:600; color:white; font-size:0.95rem; cursor:pointer; border:none; transition:all .3s ease; }
 .btn-approve { background:#16a34a; }
 .btn-approve:hover { background:#15803d; transform:scale(1.05); }
 .btn-reject { background:#dc2626; }
 .btn-reject:hover { background:#b91c1c; transform:scale(1.05); }
-
-/* Edit Button */
-.edit-btn { background:#2563eb; color:#fff; font-size:0.9rem; font-weight:600; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; transition:background 0.25s, transform 0.25s; }
-.edit-btn:hover { background:#1e40af; transform:translateY(-2px); }
+/* Lightbox */
+.lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; }
+.lightbox.active { display:flex; }
+.lightbox img { max-width:90%; max-height:85%; border-radius:.75rem; }
+.lightbox .close-btn { position:absolute; top:20px; right:30px; font-size:2rem; color:#fff; cursor:pointer; }
 </style>
 @endpush
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Lightbox
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
     lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
@@ -173,9 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
+        if(e.target === lightbox){
             lightbox.classList.remove('active');
             imgEl.src = '';
+        }
+    });
+
+    // Search: prevent empty submission
+    const searchForm = document.getElementById('driver-search-form');
+    const searchInput = document.getElementById('search-input');
+    searchForm.addEventListener('submit', function(e){
+        if(searchInput.value.trim() === ''){
+            e.preventDefault();
+            window.location.href = "{{ route('section_manager.dashboard') }}";
         }
     });
 });
