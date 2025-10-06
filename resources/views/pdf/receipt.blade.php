@@ -23,7 +23,7 @@
         <h3>Supplier Details</h3>
         <p><strong>Name:</strong> {{ $receipt->supplier->name ?? 'N/A' }}</p>
         <p><strong>Address:</strong> {{ $receipt->supplier->address ?? 'N/A' }}</p>
-        <p><strong>Contact:</strong> {{ $receipt->supplier->contact_number ?? 'N/A' }}</p>
+        <p><strong>Contact:</strong> {{ $receipt->supplier->contact_no ?? 'N/A' }}</p>
 
         <h3>Vehicle & Request Details</h3>
         <p><strong>Vehicle Plate:</strong> {{ $receipt->tireRequest->vehicle->plate_number ?? 'N/A' }}</p>
