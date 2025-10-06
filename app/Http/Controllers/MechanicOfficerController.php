@@ -64,7 +64,7 @@ class MechanicOfficerController extends Controller
         return view('dashboard.mechanic_officer.edit_request', compact('requestItem'));
     }
 
-    /** ---------------- UPDATE REQUEST ---------------- */
+/** ---------------- UPDATE REQUEST ---------------- */
 public function update(Request $request, $id)
 {
     $requestItem = TireRequest::findOrFail($id);
@@ -91,13 +91,12 @@ public function update(Request $request, $id)
         ]
     );
 
-    // Update tire request status & level
+    // Update TireRequest status & current level based on status
     if ($status === Approval::STATUS_APPROVED_BY_MECHANIC) {
         $requestItem->update([
             'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
             'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
         ]);
-
         return redirect()->route('mechanic_officer.approved')
             ->with('success', '✅ Request updated and approved.');
     }
@@ -107,15 +106,20 @@ public function update(Request $request, $id)
             'status' => Approval::STATUS_REJECTED_BY_MECHANIC,
             'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
         ]);
-
         return redirect()->route('mechanic_officer.rejected')
             ->with('error', '❌ Request updated and rejected.');
     }
 
-    // Default fallback (still pending)
+    // Pending case
+    $requestItem->update([
+        'status' => Approval::STATUS_PENDING_MECHANIC,
+        'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
+    ]);
+
     return redirect()->route('mechanic_officer.pending')
-        ->with('success', 'Request updated successfully!');
+        ->with('success', '⏳ Request updated and remains pending.');
 }
+
 
 
     /** ---------------- APPROVE QUICK ACTION ---------------- */
