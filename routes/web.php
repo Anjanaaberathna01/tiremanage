@@ -108,11 +108,21 @@ Route::prefix('section-manager')->name('section_manager.')->group(function () {
      * MECHANIC OFFICER ROUTES
      * ----------------
      */
-Route::middleware(['auth'])->prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
+Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () {
     Route::get('/pending', [MechanicOfficerController::class, 'pending'])->name('pending');
     Route::post('/approve/{id}', [MechanicOfficerController::class, 'approve'])->name('approve');
     Route::post('/reject/{id}', [MechanicOfficerController::class, 'reject'])->name('reject');
+
+    // New pages
+    Route::get('/approved', [MechanicOfficerController::class, 'approved'])->name('approved');
+    Route::get('/rejected', [MechanicOfficerController::class, 'rejected'])->name('rejected');
+
+    // FIXED
+    Route::get('/edit-request/{id}', [MechanicOfficerController::class, 'edit'])->name('edit_request');
+    Route::put('/update-request/{id}', [MechanicOfficerController::class, 'update'])->name('update');
 });
+
+
 
 
 

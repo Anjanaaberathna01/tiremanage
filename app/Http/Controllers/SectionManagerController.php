@@ -53,28 +53,30 @@ public function approved()
 
 
     /** ---------------- REJECTED REQUESTS ---------------- */
-    public function rejected()
-    {
-        $requests = TireRequest::where('status', Approval::STATUS_REJECTED)
-            ->with(['user', 'vehicle', 'tire'])
-            ->orderByDesc('updated_at')
-            ->get();
+public function rejected()
+{
+    $requests = TireRequest::where('status', Approval::STATUS_REJECTED)
+        ->where('current_level', Approval::LEVEL_SECTION_MANAGER)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('updated_at')
+        ->get();
 
-        return view('dashboard.section_manager.rejected', compact('requests'));
-    }
+    return view('dashboard.section_manager.rejected', compact('requests'));
+}
+
 
     /** ---------------- APPROVE REQUEST ---------------- */
     public function approve($id)
     {
         $requestItem = TireRequest::findOrFail($id);
 
-        // ✅ Step 1: Update TireRequest → forward to Mechanic Officer
+        // Step 1: Update TireRequest → forward to Mechanic Officer
         $requestItem->update([
             'status' => Approval::STATUS_PENDING_MECHANIC, // waiting for Mechanic Officer
             'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
         ]);
 
-        // ✅ Step 2: Log in Approval table
+        // Step 2: Log in Approval table
         Approval::updateOrCreate(
             ['request_id' => $requestItem->id, 'level' => Approval::LEVEL_SECTION_MANAGER],
             [
@@ -83,7 +85,7 @@ public function approved()
             ]
         );
 
-        // ✅ Step 3: Redirect → approved list
+        // Step 3: Redirect → approved list
         return redirect()->route('section_manager.requests.approved_list')
             ->with('success', '✅ Request approved successfully and forwarded to Mechanic Officer.');
     }
@@ -93,13 +95,13 @@ public function approved()
     {
         $requestItem = TireRequest::findOrFail($id);
 
-        // ✅ Step 1: Update request
+        // Step 1: Update request
         $requestItem->update([
             'status' => Approval::STATUS_REJECTED,
             'current_level' => Approval::LEVEL_SECTION_MANAGER,
         ]);
 
-        // ✅ Step 2: Log in Approval table
+        // Step 2: Log in Approval table
         Approval::updateOrCreate(
             ['request_id' => $requestItem->id, 'level' => Approval::LEVEL_SECTION_MANAGER],
             [
@@ -108,7 +110,7 @@ public function approved()
             ]
         );
 
-        // ✅ Step 3: Redirect → rejected list
+        // Step 3: Redirect → rejected list
         return redirect()->route('section_manager.requests.rejected_list')
             ->with('error', '❌ Request rejected successfully.');
     }
@@ -121,45 +123,69 @@ public function approved()
     }
 
     /** ---------------- UPDATE REQUEST ---------------- */
-    public function update(Request $req, $id)
-    {
-        $requestItem = TireRequest::findOrFail($id);
+public function update(Request $req, $id)
+{
+    $requestItem = TireRequest::findOrFail($id);
 
-        // ✅ Update description and remarks
-        $requestItem->update([
-            'damage_description' => $req->damage_description,
-            'current_level' => Approval::LEVEL_SECTION_MANAGER,
-        ]);
+    // Step 1: Update basic fields
+    $requestItem->update([
+        'damage_description' => $req->damage_description,
+        'current_level' => Approval::LEVEL_SECTION_MANAGER,
+    ]);
 
-        if ($req->filled('status')) {
-            $requestItem->update(['status' => $req->status]);
+    // Step 2: Handle status updates
+    if ($req->filled('status')) {
+        $status = strtolower($req->status);
+
+        if ($status === 'approved') {
+            // Forward to Mechanic Officer
+            $requestItem->update([
+                'status' => Approval::STATUS_PENDING_MECHANIC,
+                'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
+            ]);
+
+            // Log approval
+            Approval::updateOrCreate(
+                ['request_id' => $requestItem->id, 'level' => Approval::LEVEL_SECTION_MANAGER],
+                [
+                    'approved_by' => auth()->id(),
+                    'status' => Approval::STATUS_APPROVED,
+                    'remarks' => $req->remarks ?? null,
+                ]
+            );
+
+            // Redirect to Mechanic Officer pending requests
+            return redirect()->route('section_manager.requests.approved_list')
+                ->with('success', '✅ Request approved and forwarded to Mechanic Officer.');
+        }
+        elseif ($status === 'rejected') {
+            $requestItem->update([
+                'status' => Approval::STATUS_REJECTED,
+                'current_level' => Approval::LEVEL_SECTION_MANAGER,
+            ]);
 
             Approval::updateOrCreate(
                 ['request_id' => $requestItem->id, 'level' => Approval::LEVEL_SECTION_MANAGER],
                 [
                     'approved_by' => auth()->id(),
-                    'status' => match ($req->status) {
-                        'approved' => Approval::STATUS_APPROVED,
-                        'rejected' => Approval::STATUS_REJECTED,
-                        default => Approval::STATUS_PENDING,
-                    },
+                    'status' => Approval::STATUS_REJECTED,
                     'remarks' => $req->remarks ?? null,
                 ]
             );
-        }
 
-        // ✅ Redirect based on status
-        if ($req->status === 'approved') {
-            return redirect()->route('section_manager.requests.approved_list')
-                ->with('success', '✅ Request updated and moved to approved list.');
-        } elseif ($req->status === 'rejected') {
             return redirect()->route('section_manager.requests.rejected_list')
-                ->with('error', '❌ Request updated and moved to rejected list.');
+                ->with('error', '❌ Request rejected successfully.');
         }
-
-        return redirect()->route('section_manager.requests.pending')
-            ->with('success', '✏️ Request updated successfully.');
+        else {
+            $requestItem->update(['status' => Approval::STATUS_PENDING]);
+        }
     }
+
+    // Default redirect (no status change)
+    return redirect()->route('section_manager.requests.pending')
+        ->with('success', '✏️ Request updated successfully.');
+}
+
 
     /** ---------------- SEARCH ---------------- */
     public function search(Request $request)

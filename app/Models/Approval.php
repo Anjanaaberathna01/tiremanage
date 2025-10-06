@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,23 +19,34 @@ class Approval extends Model
         'remarks',
     ];
 
-    // Approval level constants
+    /** ---------------- LEVEL CONSTANTS ---------------- */
     public const LEVEL_SECTION_MANAGER = 1;
     public const LEVEL_MECHANIC_OFFICER = 2;
     public const LEVEL_TRANSPORT_OFFICER = 3;
     public const LEVEL_FINISHED = 0;
 
-    // Status constants (add these for clarity & reuse)
+    /** ---------------- STATUS CONSTANTS ---------------- */
     public const STATUS_PENDING = 'pending';
-    public const STATUS_PENDING_MECHANIC = 'pending_mechanic';            // forwarded to mechanic
-    public const STATUS_APPROVED_BY_MANAGER = 'approved_by_manager';      // optional
+
+    // Forwarded to Mechanic Officer
+    public const STATUS_PENDING_MECHANIC = 'pending_mechanic';
+
+    // Approved by Section Manager
+    public const STATUS_APPROVED_BY_MANAGER = 'approved_by_manager';
+
+    // Generic approved (for flexibility)
     public const STATUS_APPROVED = 'approved';
-    public const STATUS_APPROVED_BY_MECHANIC = 'approved_by_mechanic';    // optional
+
+    // Mechanic Officer’s own approval/rejection
+    public const STATUS_APPROVED_BY_MECHANIC = 'approved_by_mechanic';
+    public const STATUS_REJECTED_BY_MECHANIC = 'rejected_by_mechanic';
+
+    // Generic rejection
     public const STATUS_REJECTED = 'rejected';
 
-public function request()
-{
-    return $this->belongsTo(TireRequest::class, 'request_id');
-}
-
+    /** ---------------- RELATIONSHIP ---------------- */
+    public function request()
+    {
+        return $this->belongsTo(TireRequest::class, 'request_id');
+    }
 }

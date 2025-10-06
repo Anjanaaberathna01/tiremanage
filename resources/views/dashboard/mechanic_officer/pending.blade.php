@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto p-6">
 
-    {{-- 🔍 Search Bar --}}
+    {{-- Search Bar --}}
     <div class="toolbar mb-6">
         <form id="driver-search-form" action="{{ route('mechanic_officer.pending') }}" method="GET" class="search-bar">
             <input type="text" name="search" id="search-input" value="{{ request('search') }}"
@@ -14,7 +14,7 @@
         </form>
     </div>
 
-    {{-- ✅ Flash Messages --}}
+    {{-- Flash Messages --}}
     @if(session('success'))
         <div class="bg-green-100 text-green-800 p-4 mb-4 rounded-lg shadow">
             {{ session('success') }}
@@ -26,14 +26,14 @@
         </div>
     @endif
 
-    {{-- 🧾 Pending Requests --}}
+    {{--  Pending Requests --}}
     <ul class="requests-list">
         @forelse($pendingRequests as $req)
             <li class="request-card">
                 <div class="request-content">
                     <div class="request-info">
                         <div class="request-header">
-                            <strong>Driver:</strong> {{ $req->driver->full_name ?? 'N/A' }}
+                            <strong>Driver:</strong> {{ $req->user->name ?? 'N/A' }}
                         </div>
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
@@ -45,7 +45,7 @@
                             <p>{{ $req->damage_description ?? 'No description provided' }}</p>
                         </div>
 
-                        {{-- 🔧 Tire Images --}}
+                        {{-- Tire Images --}}
                         @php
                             $images = [];
                             if(!empty($req->tire_images)) {
@@ -75,7 +75,7 @@
                         @endif
                     </div>
 
-                    {{-- ✅ Action Buttons --}}
+                    {{-- Action Buttons --}}
                     <div class="request-actions">
                         <form action="{{ route('mechanic_officer.approve', $req->id) }}" method="POST">
                             @csrf
@@ -159,7 +159,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 🖼 Lightbox
+    // Lightbox
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
     lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 🔎 Live Search Filter
+    // Live Search Filter
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', function(){
         const term = searchInput.value.toLowerCase();

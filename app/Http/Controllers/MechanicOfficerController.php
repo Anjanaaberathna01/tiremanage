@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TireRequest;
 use App\Models\Approval;
+use Illuminate\Support\Facades\Auth;
 
 class MechanicOfficerController extends Controller
 {
     public function __construct()
     {
-        // ✅ Restrict access to only Mechanic Officer users
+        // Restrict access to only Mechanic Officer users
         $this->middleware(function ($request, $next) {
             $user = auth()->user();
             if (!$user || !$user->role || strtolower($user->role->name) !== 'mechanic officer') {
@@ -23,7 +24,6 @@ class MechanicOfficerController extends Controller
     /** ---------------- PENDING REQUESTS ---------------- */
     public function pending()
     {
-        // ✅ Fetch requests forwarded from Section Manager
         $pendingRequests = TireRequest::where('status', Approval::STATUS_PENDING_MECHANIC)
             ->where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
             ->with(['user', 'driver', 'vehicle', 'tire'])
@@ -33,53 +33,132 @@ class MechanicOfficerController extends Controller
         return view('dashboard.mechanic_officer.pending', compact('pendingRequests'));
     }
 
-    /** ---------------- APPROVE REQUEST ---------------- */
+    /** ---------------- APPROVED REQUESTS ---------------- */
+    public function approved()
+    {
+        $approvedRequests = TireRequest::where('status', Approval::STATUS_APPROVED_BY_MECHANIC)
+            ->where('current_level', Approval::LEVEL_TRANSPORT_OFFICER) // next phase
+            ->with(['user', 'driver', 'vehicle', 'tire'])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('dashboard.mechanic_officer.approved', compact('approvedRequests'));
+    }
+
+    /** ---------------- REJECTED REQUESTS ---------------- */
+    public function rejected()
+    {
+        $rejectedRequests = TireRequest::where('status', Approval::STATUS_REJECTED_BY_MECHANIC)
+            ->where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
+            ->with(['user', 'driver', 'vehicle', 'tire'])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('dashboard.mechanic_officer.rejected', compact('rejectedRequests'));
+    }
+
+    /** ---------------- EDIT REQUEST ---------------- */
+    public function edit($id)
+    {
+        $requestItem = TireRequest::with(['user', 'vehicle', 'tire', 'approvals'])->findOrFail($id);
+        return view('dashboard.mechanic_officer.edit_request', compact('requestItem'));
+    }
+
+    /** ---------------- UPDATE REQUEST ---------------- */
+public function update(Request $request, $id)
+{
+    $requestItem = TireRequest::findOrFail($id);
+
+    // Update description
+    $requestItem->update([
+        'damage_description' => $request->damage_description,
+    ]);
+
+    // Determine status
+    $status = match ($request->status) {
+        'approved' => Approval::STATUS_APPROVED_BY_MECHANIC,
+        'rejected' => Approval::STATUS_REJECTED_BY_MECHANIC,
+        default => Approval::STATUS_PENDING_MECHANIC,
+    };
+
+    // Update approval table
+    Approval::updateOrCreate(
+        ['request_id' => $requestItem->id, 'level' => Approval::LEVEL_MECHANIC_OFFICER],
+        [
+            'remarks' => $request->remarks,
+            'approved_by' => auth()->id(),
+            'status' => $status,
+        ]
+    );
+
+    // Update tire request status & level
+    if ($status === Approval::STATUS_APPROVED_BY_MECHANIC) {
+        $requestItem->update([
+            'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
+            'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
+        ]);
+
+        return redirect()->route('mechanic_officer.approved')
+            ->with('success', '✅ Request updated and approved.');
+    }
+
+    if ($status === Approval::STATUS_REJECTED_BY_MECHANIC) {
+        $requestItem->update([
+            'status' => Approval::STATUS_REJECTED_BY_MECHANIC,
+            'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
+        ]);
+
+        return redirect()->route('mechanic_officer.rejected')
+            ->with('error', '❌ Request updated and rejected.');
+    }
+
+    // Default fallback (still pending)
+    return redirect()->route('mechanic_officer.pending')
+        ->with('success', 'Request updated successfully!');
+}
+
+
+    /** ---------------- APPROVE QUICK ACTION ---------------- */
     public function approve($id)
     {
         $req = TireRequest::findOrFail($id);
 
-        // ✅ Update status to approved by Mechanic Officer and forward to Transport Officer
         $req->update([
-            'status' => Approval::STATUS_APPROVED_BY_MECHANIC, // ✅ standardized constant
-            'current_level' => Approval::LEVEL_TRANSPORT_OFFICER, // ✅ move to next level
+            'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
+            'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
         ]);
 
-        // ✅ Record approval in Approval table
         Approval::updateOrCreate(
             ['request_id' => $req->id, 'level' => Approval::LEVEL_MECHANIC_OFFICER],
             [
-                'approved_by' => auth()->id(),
-                'status' => Approval::STATUS_APPROVED,
+                'approved_by' => Auth::id(),
+                'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
             ]
         );
 
-        return redirect()
-            ->route('mechanic_officer.pending')
-            ->with('success', '✅ Request approved and forwarded to Transport Officer successfully.');
+        return redirect()->route('mechanic_officer.approved')
+            ->with('success', '✅ Request approved and sent to Transport Officer.');
     }
 
-    /** ---------------- REJECT REQUEST ---------------- */
+    /** ---------------- REJECT QUICK ACTION ---------------- */
     public function reject($id)
     {
         $req = TireRequest::findOrFail($id);
 
-        // ✅ Update status to rejected by Mechanic Officer
         $req->update([
-            'status' => Approval::STATUS_REJECTED,
-            'current_level' => Approval::LEVEL_MECHANIC_OFFICER, // stays the same level
+            'status' => Approval::STATUS_REJECTED_BY_MECHANIC,
+            'current_level' => Approval::LEVEL_MECHANIC_OFFICER,
         ]);
 
-        // ✅ Record rejection in Approval table
         Approval::updateOrCreate(
             ['request_id' => $req->id, 'level' => Approval::LEVEL_MECHANIC_OFFICER],
             [
-                'approved_by' => auth()->id(),
-                'status' => Approval::STATUS_REJECTED,
+                'approved_by' => Auth::id(),
+                'status' => Approval::STATUS_REJECTED_BY_MECHANIC,
             ]
         );
 
-        return redirect()
-            ->route('mechanic_officer.pending')
-            ->with('error', '❌ Request rejected by Mechanic Officer.');
+        return redirect()->route('mechanic_officer.rejected')
+            ->with('error', '❌ Request rejected.');
     }
 }

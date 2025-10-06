@@ -21,8 +21,19 @@
             </button>
             <div class="collapse navbar-collapse" id="moNavbar">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('mechanic_officer.pending') }}">Dashboard</a></li>
-                    {{-- Mechanic may want to view approved or rejected lists --}}
+                    {{-- Dashboard / Pending Requests --}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('mechanic_officer.pending') }}">Home</a>
+                    </li>
+                    {{-- Approved Requests --}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('mechanic_officer.approved') }}">Approved Requests</a>
+                    </li>
+                    {{-- Rejected Requests --}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('mechanic_officer.rejected') }}">Rejected Requests</a>
+                    </li>
+                    {{-- Logout --}}
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -34,7 +45,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-5 pt-4">
         @yield('content')
     </div>
 
