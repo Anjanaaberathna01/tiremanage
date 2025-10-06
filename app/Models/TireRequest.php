@@ -27,6 +27,7 @@ class TireRequest extends Model
 
     protected $casts = [
         'tire_images' => 'array',
+
     ];
 
     /*

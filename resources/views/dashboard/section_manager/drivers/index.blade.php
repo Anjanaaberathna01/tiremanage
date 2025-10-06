@@ -1,4 +1,4 @@
-@extends('layouts.section_manager')
+@extends($layout === 'admin' ? 'layouts.admin' : 'layouts.section_manager')
 
 @section('title', 'Driver List')
 

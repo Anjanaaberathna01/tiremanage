@@ -163,31 +163,51 @@ public function approved()
             ->with('error', '❌ Request rejected.');
     }
 
-    public function createReceipt(Request $request)
+public function createReceipt($id)
 {
-    $suppliers = Supplier::all(); // get all suppliers
-    return view('dashboard.transport_officer.create_receipt', compact('request', 'suppliers'));
-}
+    $tireRequest = TireRequest::with('user')->findOrFail($id);
+    $suppliers = Supplier::all();
 
+    return view('dashboard.transport_officer.create_receipt', compact('tireRequest', 'suppliers'));
+}
 public function storeReceipt(Request $request)
 {
-    $request->validate([
-'request_id' => 'required|exists:tire_requests,id',
-    'supplier_id' => 'required|exists:suppliers,id',
+    $validated = $request->validate([
+        'request_id' => 'required|exists:requests,id',
+        'supplier_id' => 'required|exists:suppliers,id',
+        'amount' => 'required|numeric',
         'description' => 'nullable|string',
-        'amount' => 'nullable|numeric',
     ]);
+
+    $tireRequest = TireRequest::findOrFail($validated['request_id']);
 
     Receipt::create([
-        'request_id' => $request->request_id,
-        'supplier_id' => $request->supplier_id,
-        'description' => $request->description,
-        'amount' => $request->amount,
+        'request_id' => $tireRequest->id,
+        'user_id' => $tireRequest->user_id,  // 👈 driver’s user_id
+        'supplier_id' => $validated['supplier_id'],
+        'amount' => $validated['amount'],
+        'description' => $validated['description'] ?? null,
     ]);
 
-    // Optionally send notification to driver (via email or database)
-    // Driver email: $request->user->email
-
-    return redirect()->route('transport_officer.approved')->with('success', 'Receipt generated successfully.');
+    return redirect()->route('transport_officer.approved')
+        ->with('success', 'Receipt generated successfully.');
 }
+
+
+public function generateReceipt($user_id, Request $request)
+{
+    $request = request::findOrFail($user_id);
+
+    // Create a new receipt record
+    $receipt = new Receipt();
+    $receipt->tire_request_id = $request->id;
+    $receipt->user_id = $request->user_id; // link to the driver’s user_id
+    $receipt->supplier_id = $request->supplier_id;
+    $receipt->issued_date = now();
+    $receipt->status = 'issued';
+    $receipt->save();
+
+    return redirect()->back()->with('success', 'Receipt generated successfully!');
+}
+
 }

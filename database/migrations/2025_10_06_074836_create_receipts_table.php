@@ -13,12 +13,17 @@ return new class extends Migration
     {
 Schema::create('receipts', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('request_id')->constrained()->onDelete('cascade');
+
+    // Use 'requests' table for the foreign key
+    $table->foreignId('user_id')->constrained('requests')->onDelete('cascade');
+
     $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
     $table->text('description')->nullable();
     $table->decimal('amount', 10, 2)->nullable();
     $table->timestamps();
 });
+
+
     }
 
     /**

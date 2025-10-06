@@ -60,7 +60,7 @@
                     <p class="card-text">Track the status of your tire requests.</p>
                 </div>
 
-                <div class="card clickable" data-href="#">
+                <div class="card clickable" data-href="{{ route ('driver.receipts') }}">
                     <h2 class="card-title">View Receipts</h2>
                     <p class="card-text">Check all your tire request receipts.</p>
                 </div>

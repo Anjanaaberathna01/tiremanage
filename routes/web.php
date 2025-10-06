@@ -62,6 +62,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/profile', [DriverController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile', [DriverController::class, 'updateProfile'])->name('profile.update');
+
+        Route::get('/receipts', [DriverController::class, 'receipts'])->name('receipts');
+        Route::get('/receipts/{id}/download', [DriverController::class, 'downloadReceipt'])->name('receipt.download');
+
+
     });
 
     /**
@@ -140,11 +145,8 @@ Route::prefix('transport-officer')->name('transport_officer.')->middleware(['aut
     Route::post('approve/{id}', [TransportOfficerController::class, 'approve'])->name('approve');
     Route::post('reject/{id}', [TransportOfficerController::class, 'reject'])->name('reject');
 
-    // ✅ Receipt Routes
-    Route::get('receipt/create/{request}', [TransportOfficerController::class, 'createReceipt'])->name('receipt.create');
+    //  Receipt Routes
+    Route::get('receipt/create/{id}', [TransportOfficerController::class, 'createReceipt'])->name('receipt.create');
     Route::post('receipt/store', [TransportOfficerController::class, 'storeReceipt'])->name('receipt.store');
 });
-
-
-
 });

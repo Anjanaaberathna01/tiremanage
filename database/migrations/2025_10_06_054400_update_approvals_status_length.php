@@ -19,7 +19,7 @@ public function up(): void
 public function down(): void
 {
     \Illuminate\Support\Facades\Schema::table('approvals', function ($table) {
-        $table->string('status', 20)->change(); // revert back
+        $table->string('status', 50)->change(); // revert back
     });
 }
 

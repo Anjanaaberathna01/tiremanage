@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Driver;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\TireRequest;
+use App\Models\Receipt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -143,4 +146,30 @@ class DriverController extends Controller
 
     return redirect()->route('admin.dashboard')->with('success', 'Driver deleted successfully.');
 }
+
+public function receipts()
+{
+$receipts = Receipt::with(['supplier', 'tireRequest.vehicle'])
+    ->whereHas('tireRequest', function ($query) {
+        $query->where('user_id', auth()->id());
+    })
+    ->orderByDesc('created_at')
+    ->get();
+
+
+    return view('driver.receipts', compact('receipts'));
+}
+
+public function downloadReceipt($id)
+{
+    $receipt = Receipt::with(['supplier', 'tireRequest.vehicle', 'user'])
+        ->findOrFail($id);
+
+    $pdf = Pdf::loadView('pdf.receipt', compact('receipt'));
+
+    $filename = 'Receipt_' . $receipt->id . '.pdf';
+
+    return $pdf->download($filename);
+}
+
 }

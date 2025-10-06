@@ -18,7 +18,7 @@ return new class extends Migration
     {
         Schema::table('requests', function (Blueprint $table) {
             // Revert to a smaller length if you must — pick the original value here.
-            $table->string('status', 20)->default('pending')->change();
+            $table->string('status', 100)->default('pending')->change();
         });
     }
 };
