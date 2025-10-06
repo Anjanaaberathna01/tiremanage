@@ -7,10 +7,8 @@
     <h2 class="dashboard-title">✅ Approved Requests</h2>
 
     <ul class="requests-list">
-        @forelse($approvedRequests as $approval)
-            @php $req = $approval->request; @endphp
+        @forelse($approvedRequests as $req)
 
-            @if($req)
             <li class="request-card">
                 <div class="request-content">
                     <div class="request-info">
@@ -62,10 +60,45 @@
 
                     <div class="request-actions">
                         <a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn">✏️ Edit</a>
+
+                        <!-- Generate Receipt Button -->
+                        <button class="edit-btn" onclick="document.getElementById('receipt-form-{{ $req->id }}').classList.toggle('hidden')">
+                            💳 Generate Receipt
+                        </button>
                     </div>
+
+                    <!-- Receipt Form (hidden initially) -->
+                    <div id="receipt-form-{{ $req->id }}" class="mt-4 hidden">
+                        <form action="{{ route('transport_officer.receipt.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="request_id" value="{{ $req->id }}">
+
+                            <div class="mb-2">
+                                <label for="supplier_id-{{ $req->id }}" class="block font-semibold">Select Supplier:</label>
+                                <select name="supplier_id" id="supplier_id-{{ $req->id }}" class="w-full border rounded p-2">
+                                    @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}">{{ $supplier->name }} - {{ $supplier->contact }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="description-{{ $req->id }}" class="block font-semibold">Description:</label>
+                                <textarea name="description" id="description-{{ $req->id }}" class="w-full border rounded p-2" rows="2"></textarea>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="amount-{{ $req->id }}" class="block font-semibold">Amount:</label>
+                                <input type="number" name="amount" id="amount-{{ $req->id }}" class="w-full border rounded p-2" step="0.01">
+                            </div>
+
+                            <button type="submit" class="edit-btn bg-blue-600 hover:bg-blue-800">Generate & Send</button>
+                        </form>
+                    </div>
+
                 </div>
             </li>
-            @endif
+
         @empty
             <li class="request-card empty-card">🚫 No approved requests found.</li>
         @endforelse
@@ -87,9 +120,10 @@
 .request-img { width:110px; height:80px; object-fit:cover; border-radius:0.5rem; border:1px solid #ddd; cursor:pointer; transition:transform .25s, box-shadow .25s; }
 .request-img:hover { transform:scale(1.05); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
 .no-images { margin-top:0.5rem; font-style:italic; color:#6b7280; }
-.request-actions { margin-top:1rem; display:flex; justify-content:flex-end; }
-.edit-btn { display:inline-block; background:#16a34a; color:#fff; font-size:0.9rem; font-weight:600; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; transition:background 0.25s, transform 0.25s; box-shadow:0 4px 10px rgba(22,163,74,0.3); }
+.request-actions { margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap; }
+.edit-btn { display:inline-block; background:#16a34a; color:#fff; font-size:0.9rem; font-weight:600; padding:0.5rem 1rem; border-radius:0.5rem; text-decoration:none; transition:background 0.25s, transform 0.25s; box-shadow:0 4px 10px rgba(22,163,74,0.3); cursor:pointer; }
 .edit-btn:hover { background:#15803d; transform:translateY(-2px); box-shadow:0 6px 14px rgba(21,128,61,0.35); }
+.hidden { display:none; }
 /* Lightbox Styles */
 .lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; animation:fadeIn .3s ease; }
 .lightbox.active { display:flex; }

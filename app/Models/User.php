@@ -33,5 +33,7 @@ public function isMechanicOfficer() {
     return $this->hasRole('mechanic_officer');
 }
 
+public function isTransportOfficer() {
+    return $this->hasRole('transport_officer');}
 
 }

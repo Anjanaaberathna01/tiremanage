@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TireRequest;
 use App\Models\Approval;
+use App\Models\Supplier;
+use App\Models\Receipt;
 use Illuminate\Support\Facades\Auth;
 
 class TransportOfficerController extends Controller
@@ -34,15 +36,18 @@ class TransportOfficerController extends Controller
     }
 
     /** ---------------- APPROVED REQUESTS ---------------- */
-    public function approved()
-    {
-        $approvedRequests = TireRequest::where('status', Approval::STATUS_APPROVED_BY_TRANSPORT)
-            ->with(['user', 'driver', 'vehicle', 'tire'])
-            ->orderByDesc('updated_at')
-            ->get();
+public function approved()
+{
+    $approvedRequests = TireRequest::where('status', Approval::STATUS_APPROVED_BY_TRANSPORT)
+        ->with(['user', 'driver', 'vehicle', 'tire'])
+        ->orderByDesc('updated_at')
+        ->get();
 
-        return view('dashboard.transport_officer.approved', compact('approvedRequests'));
-    }
+    $suppliers = Supplier::all(); // ✅ Add this line
+
+    return view('dashboard.transport_officer.approved', compact('approvedRequests', 'suppliers'));
+}
+
 
     /** ---------------- REJECTED REQUESTS ---------------- */
     public function rejected()
@@ -157,4 +162,32 @@ class TransportOfficerController extends Controller
         return redirect()->route('transport_officer.rejected')
             ->with('error', '❌ Request rejected.');
     }
+
+    public function createReceipt(Request $request)
+{
+    $suppliers = Supplier::all(); // get all suppliers
+    return view('dashboard.transport_officer.create_receipt', compact('request', 'suppliers'));
+}
+
+public function storeReceipt(Request $request)
+{
+    $request->validate([
+'request_id' => 'required|exists:tire_requests,id',
+    'supplier_id' => 'required|exists:suppliers,id',
+        'description' => 'nullable|string',
+        'amount' => 'nullable|numeric',
+    ]);
+
+    Receipt::create([
+        'request_id' => $request->request_id,
+        'supplier_id' => $request->supplier_id,
+        'description' => $request->description,
+        'amount' => $request->amount,
+    ]);
+
+    // Optionally send notification to driver (via email or database)
+    // Driver email: $request->user->email
+
+    return redirect()->route('transport_officer.approved')->with('success', 'Receipt generated successfully.');
+}
 }

@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="request-actions">
-                        <a href="{{ route('mechanic_officer.edit_request', $req->id) }}" class="edit-btn">✏️ Edit</a>
+                        <a href="{{ route('transport_officer.edit_request', $req->id) }}" class="edit-btn">✏️ Edit</a>
                     </div>
                 </div>
             </li>
