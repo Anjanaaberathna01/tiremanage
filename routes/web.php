@@ -123,16 +123,21 @@ Route::prefix('mechanic-officer')->name('mechanic_officer.')->group(function () 
 });
 
 
-
-
-
-
     /**
      * ----------------
      * TRANSPORT OFFICER ROUTES
      * ----------------
      */
-    Route::prefix('transport-officer')->name('transport_officer.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'transportOfficer'])->name('dashboard');
-    });
+Route::prefix('transport-officer')->name('transport_officer.')->middleware(['auth'])->group(function () {
+    // Dashboard route (redirect here after login)
+    Route::get('/', [TransportOfficerController::class, 'pending'])->name('dashboard');
+
+    Route::get('pending', [TransportOfficerController::class, 'pending'])->name('pending');
+    Route::get('approved', [TransportOfficerController::class, 'approved'])->name('approved');
+    Route::get('rejected', [TransportOfficerController::class, 'rejected'])->name('rejected');
+    Route::get('edit/{id}', [TransportOfficerController::class, 'edit'])->name('edit_request');
+    Route::put('update/{id}', [TransportOfficerController::class, 'update'])->name('update');
+    Route::post('approve/{id}', [TransportOfficerController::class, 'approve'])->name('approve');
+    Route::post('reject/{id}', [TransportOfficerController::class, 'reject'])->name('reject');
+});
 });

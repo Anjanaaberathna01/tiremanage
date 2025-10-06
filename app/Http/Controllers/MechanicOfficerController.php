@@ -92,15 +92,14 @@ public function update(Request $request, $id)
     );
 
     // Update TireRequest status & current level based on status
-    if ($status === Approval::STATUS_APPROVED_BY_MECHANIC) {
-        $requestItem->update([
-            'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
-            'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
-        ]);
-        return redirect()->route('mechanic_officer.approved')
-            ->with('success', '✅ Request updated and approved.');
-    }
-
+        if ($status === Approval::STATUS_APPROVED_BY_MECHANIC) {
+            $requestItem->update([
+                'status' => Approval::STATUS_PENDING_TRANSPORT, // send to Transport Officer
+                'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
+            ]);
+            return redirect()->route('mechanic_officer.approved')
+                ->with('success', '✅ Request updated and approved. Sent to Transport Officer.');
+        }
     if ($status === Approval::STATUS_REJECTED_BY_MECHANIC) {
         $requestItem->update([
             'status' => Approval::STATUS_REJECTED_BY_MECHANIC,
@@ -128,7 +127,7 @@ public function update(Request $request, $id)
         $req = TireRequest::findOrFail($id);
 
         $req->update([
-            'status' => Approval::STATUS_APPROVED_BY_MECHANIC,
+            'status' => Approval::STATUS_PENDING_TRANSPORT,
             'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
         ]);
 

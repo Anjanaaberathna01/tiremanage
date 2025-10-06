@@ -41,6 +41,12 @@ class Approval extends Model
     public const STATUS_APPROVED_BY_MECHANIC = 'approved_by_mechanic';
     public const STATUS_REJECTED_BY_MECHANIC = 'rejected_by_mechanic';
 
+    // Transport Officer’s own approval/rejection
+public const STATUS_PENDING_TRANSPORT = 'pending_transport';
+public const STATUS_APPROVED_BY_TRANSPORT = 'approved_by_transport';
+public const STATUS_REJECTED_BY_TRANSPORT = 'rejected_by_transport';
+
+
     // Generic rejection
     public const STATUS_REJECTED = 'rejected';
 
@@ -49,4 +55,5 @@ class Approval extends Model
     {
         return $this->belongsTo(TireRequest::class, 'request_id');
     }
+
 }
