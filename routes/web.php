@@ -8,6 +8,7 @@ use App\Http\Controllers\TireController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\TireRequestController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SectionManagerController;
 use App\Http\Controllers\MechanicOfficerController;
 use App\Http\Controllers\TransportOfficerController;
@@ -148,5 +149,8 @@ Route::prefix('transport-officer')->name('transport_officer.')->middleware(['aut
     //  Receipt Routes
     Route::get('receipt/create/{id}', [TransportOfficerController::class, 'createReceipt'])->name('receipt.create');
     Route::post('receipt/store', [TransportOfficerController::class, 'storeReceipt'])->name('receipt.store');
+Route::get('/receipts/{id}/pdf', [ReceiptController::class, 'generatePDF'])
+    ->name('transport_officer.receipts.pdf');
 });
+
 });

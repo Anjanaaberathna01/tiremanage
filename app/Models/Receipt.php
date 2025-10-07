@@ -20,4 +20,6 @@ use Illuminate\Database\Eloquent\Model;
     {
         return $this->belongsTo(TireRequest::class, 'request_id');
     }
+
+
 }

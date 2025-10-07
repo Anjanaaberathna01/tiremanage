@@ -166,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     @if(session('wa_link'))
-<script>
     (function() {
         const wa = @json(session('wa_link'));
         // try to open in new tab
@@ -182,8 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { wrap.remove(); }, 15000);
         }
     })();
-</script>
-@endif
+            @endif
+
+
 
 });
 </script>

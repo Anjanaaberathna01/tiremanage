@@ -48,21 +48,21 @@ class DashboardController extends Controller
 public function pendingRequests()
 {
     // Pending at Section Manager level
-    $sectionManagerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING)
+    $sectionManagerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING)
         ->where('current_level', \App\Models\Approval::LEVEL_SECTION_MANAGER)
         ->with(['user', 'vehicle', 'tire'])
         ->orderByDesc('created_at')
         ->get();
 
     // Pending at Mechanic Officer level
-    $mechanicOfficerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_MECHANIC)
+    $mechanicOfficerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_MECHANIC)
         ->where('current_level', \App\Models\Approval::LEVEL_MECHANIC_OFFICER)
         ->with(['user', 'vehicle', 'tire'])
         ->orderByDesc('created_at')
         ->get();
 
     // Pending at Transport Officer level
-    $transportOfficerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_TRANSPORT)
+    $transportOfficerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_TRANSPORT)
         ->where('current_level', \App\Models\Approval::LEVEL_TRANSPORT_OFFICER)
         ->with(['user', 'vehicle', 'tire'])
         ->orderByDesc('created_at')

@@ -8,6 +8,7 @@ use App\Models\Approval;
 use App\Models\Supplier;
 use App\Models\Receipt;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\Auth;
 
 class TransportOfficerController extends Controller
@@ -233,12 +234,14 @@ public function storeReceipt(Request $request)
     $vehiclePlate = $tireRequest->vehicle->plate_no ?? 'N/A';
 
     $messageLines = [
-        "📦 Tire Request Receipt",
+        " Tire Request Receipt",
         "------------------------------",
         "Request ID: {$tireRequest->id}",
         "Driver: {$driverName}",
         "Vehicle: {$vehiclePlate}",
-        "Amount: " . number_format($receipt->amount, 2),
+        "Tire: {$tireRequest->tire->name} ({$tireRequest->tire->size})",
+        "Tire Count: {$tireRequest->tire_count}",
+        "Amount: LKR " . number_format($receipt->amount, 2),
     ];
 
     if (!empty($receipt->description)) {
@@ -301,6 +304,5 @@ private function normalizePhoneForWhatsApp(string $rawPhone): string
 
     return $phone;
 }
-
 
 }

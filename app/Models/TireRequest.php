@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Approval;
+use App\Models\User;
+use App\Models\Vehicle;
+use App\Models\Tire;
+use App\Models\Driver;
+use App\Models\Receipt;
+
 
 class TireRequest extends Model
 {
@@ -59,10 +65,11 @@ class TireRequest extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
-    public function receipt()
-    {
-        return $this->hasOne(\App\Models\Receipt::class, 'request_id');
-    }
+public function receipt()
+{
+    return $this->hasOne(Receipt::class, 'request_id');
+}
+
 
     /*
     |--------------------------------------------------------------------------
