@@ -20,18 +20,16 @@
 
   .logo-top-left{ position:absolute; top:20px; left:30px; width:150px; z-index:2; }
 
-  /* wrapper so we can center underline easily */
   .welcome-wrapper{
     position:absolute; top:60px; left:50%; transform:translateX(-50%);
     text-align:center; z-index:2;
   }
 
-  /* container that holds the inline spans */
   .welcome-text{
-    display:inline-block;          /* important for accurate width measurement */
+    display:inline-block;
     font-size:2rem; font-weight:600;
     white-space:nowrap;
-    color: #ffffff;                /* fallback color for normal text */
+    color: #ffffff;
   }
 
   .welcome-underline{
@@ -61,6 +59,12 @@
   .form-control{ border-radius:50px; margin-bottom:15px; padding:10px 20px; }
   .btn-primary{ border-radius:50px; width:100%; font-weight:600; padding:10px; }
 
+  /* Remember Me checkbox */
+  .form-check-label {
+    user-select: none;
+    font-weight: 500;
+  }
+
   @media (max-width:500px){
     .login-container{ width:90%; padding:20px; }
     .system-info h1{ font-size:1.8rem; }
@@ -73,7 +77,6 @@
 
 <img src="{{ asset('assets/images/logo3.png') }}" alt="Company Logo" class="logo-top-left">
 
-<!-- welcome typing with underline -->
 <div class="welcome-wrapper">
   <div class="welcome-text" id="welcomeText"></div>
   <div class="welcome-underline" id="welcomeUnderline"></div>
@@ -99,13 +102,18 @@
     <input type="password" name="password" class="form-control" placeholder="Password" required>
     @error('password')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
 
+    <!-- Remember Me Checkbox -->
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+      <label class="form-check-label" for="remember">Remember Me</label>
+    </div>
+
     <button type="submit" class="btn btn-primary mt-2">Login</button>
   </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // parts array: each part has text and optional className
   const parts = [
     { text: "Welcome ", className: "" },
     { text: "SLT", className: "slt" },
@@ -118,42 +126,33 @@
   let partIndex = 0;
   let charIndex = 0;
   let currentSpan = null;
-  const typingSpeed = 100;     // ms per char
-  const betweenPartsDelay = 150; // ms between parts
-  const restartDelay = 1500;   // ms after complete before restart
+  const typingSpeed = 100;
+  const betweenPartsDelay = 150;
+  const restartDelay = 1500;
 
   function typeStep(){
-    // still parts left
     if (partIndex < parts.length) {
       const part = parts[partIndex];
-
-      // create a span for this part only once
       if (!currentSpan) {
         currentSpan = document.createElement('span');
         if (part.className) currentSpan.className = part.className;
         container.appendChild(currentSpan);
       }
 
-      // increment char index and set span content
       charIndex++;
       currentSpan.textContent = part.text.slice(0, charIndex);
 
-      // update underline width to match whole container
-      const width = Math.ceil(container.getBoundingClientRect().width);
-      underline.style.width = width + 'px';
+      underline.style.width = Math.ceil(container.getBoundingClientRect().width) + 'px';
 
       if (charIndex < part.text.length) {
         setTimeout(typeStep, typingSpeed);
       } else {
-        // finished this part
         currentSpan = null;
         charIndex = 0;
         partIndex++;
         setTimeout(typeStep, betweenPartsDelay);
       }
-
     } else {
-      // finished all parts -> pause, then clear and restart
       setTimeout(() => {
         container.innerHTML = '';
         underline.style.width = '0px';
@@ -165,16 +164,11 @@
     }
   }
 
-  // keep underline width correct on resize
   window.addEventListener('resize', () => {
-    const w = container.getBoundingClientRect().width;
-    underline.style.width = (w ? Math.ceil(w) + 'px' : '0px');
+    underline.style.width = Math.ceil(container.getBoundingClientRect().width) + 'px';
   });
 
-  // start when page is ready
-  window.addEventListener('load', () => {
-    typeStep();
-  });
+  window.addEventListener('load', () => { typeStep(); });
 </script>
 </body>
 </html>

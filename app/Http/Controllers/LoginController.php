@@ -19,50 +19,50 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+$credentials = $request->only('email', 'password');
+$remember = $request->has('remember'); // true if checkbox is checked
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+if (Auth::attempt($credentials, $remember)) {
+    $request->session()->regenerate();
 
-            // Reload user with role to avoid null
-            $user = Auth::user()->load('role');
+    // Reload user with role to avoid null
+    $user = Auth::user()->load('role');
 
-            if (!$user->role) {
-                Auth::logout();
-                return redirect()->route('login')->with('error', 'User has no role assigned');
-            }
+    if (!$user->role) {
+        Auth::logout();
+        return redirect()->route('login')->with('error', 'User has no role assigned');
+    }
 
-            // Normalize role name to a predictable key (lowercase, spaces and hyphens -> underscore)
-            $roleRaw = $user->role->name ?? '';
-            $role = strtolower(trim($roleRaw));
-            $role = str_replace([' ', '-'], '_', $role);
+    $roleRaw = $user->role->name ?? '';
+    $role = strtolower(trim($roleRaw));
+    $role = str_replace([' ', '-'], '_', $role);
 
-            // Redirect based on normalized role
-            switch ($role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
+    switch ($role) {
+        case 'admin':
+            return redirect()->route('admin.dashboard');
 
-                case 'driver':
-                    return redirect()->route('driver.dashboard');
+        case 'driver':
+            return redirect()->route('driver.dashboard');
 
-                case 'section_manager':
-                    return redirect()->route('section_manager.dashboard');
+        case 'section_manager':
+            return redirect()->route('section_manager.dashboard');
 
-                case 'mechanic_officer':
-                    return redirect()->route('mechanic_officer.pending');
+        case 'mechanic_officer':
+            return redirect()->route('mechanic_officer.pending');
 
-                case 'transport_officer':
-                    return redirect()->route('transport_officer.dashboard');
+        case 'transport_officer':
+            return redirect()->route('transport_officer.dashboard');
 
-                default:
-                    // Unknown role: logout for safety and show a message
-                    Auth::logout();
-                    return redirect()->route('login')->with('error', 'Role not recognized');
-            }
-        }
+        default:
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Role not recognized');
+    }
+}
 
-        return back()->withErrors(['email' => 'Invalid credentials.'])
-            ->withInput($request->only('email'));
+return back()->withErrors(['email' => 'Invalid credentials.'])
+    ->withInput($request->only('email', 'remember'));
+
+
     }
 
 

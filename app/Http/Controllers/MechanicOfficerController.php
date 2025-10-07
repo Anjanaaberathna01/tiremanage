@@ -34,16 +34,19 @@ class MechanicOfficerController extends Controller
     }
 
     /** ---------------- APPROVED REQUESTS ---------------- */
-    public function approved()
-    {
-        $approvedRequests = TireRequest::where('status', Approval::STATUS_APPROVED_BY_MECHANIC)
-            ->where('current_level', Approval::LEVEL_TRANSPORT_OFFICER) // next phase
-            ->with(['user', 'driver', 'vehicle', 'tire'])
-            ->orderByDesc('updated_at')
-            ->get();
+public function approved()
+{
+    $approvedRequests = TireRequest::whereHas('approvals', function($q){
+            $q->where('level', Approval::LEVEL_MECHANIC_OFFICER)
+              ->where('status', Approval::STATUS_APPROVED_BY_MECHANIC);
+        })
+        ->with(['user', 'driver', 'vehicle', 'tire'])
+        ->orderByDesc('updated_at')
+        ->get();
 
-        return view('dashboard.mechanic_officer.approved', compact('approvedRequests'));
-    }
+    return view('dashboard.mechanic_officer.approved', compact('approvedRequests'));
+}
+
 
     /** ---------------- REJECTED REQUESTS ---------------- */
     public function rejected()

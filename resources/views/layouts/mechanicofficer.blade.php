@@ -10,10 +10,10 @@
 </head>
 <body>
     {{-- Mechanic Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('mechanic_officer.pending') }}">
-                <img src="{{ asset('assets/images/logo3.png') }}" alt="logo" style="height:36px; width:auto; margin-right:20px; margin-bottom: 4px;" />
+                <img src="{{ asset('assets/images/logo2.png') }}" alt="logo" style="height:36px; width:auto; margin-right:20px; margin-bottom: 4px;" />
                 <span>Mechanic Officer</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#moNavbar">

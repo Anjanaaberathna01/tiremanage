@@ -9,9 +9,12 @@
     @stack('styles')
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top mb-4">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('driver.dashboard') }}">SLTMOBITEL</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('driver.dashboard') }}">
+                <img src="{{ asset('assets/images/logo2.png') }}" alt="SLTMOBITEL Logo" style="height:40px; width:auto; margin-right:10px;">
+                <span>SLTMOBITEL</span>
+            </a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     @auth
@@ -30,8 +33,6 @@
     <div class="container">
         @yield('content')
     </div>
-
-</div>
 
     @include('partials.footer')
 

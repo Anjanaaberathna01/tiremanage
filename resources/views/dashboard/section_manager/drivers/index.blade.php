@@ -1,13 +1,18 @@
+@php
+    $layout = Auth::user() && Auth::user()->role
+        ? strtolower(str_replace(' ', '_', Auth::user()->role->name))
+        : 'admin';
+@endphp
 @extends($layout === 'admin' ? 'layouts.admin' : 'layouts.section_manager')
-
 @section('title', 'Driver List')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold text-dark"><i class="bi bi-people-fill me-2"></i> Drivers</h3>
-    <a href="{{ route('section_manager.drivers.create') }}" class="btn btn-primary shadow-sm">
-        <i class="bi bi-plus-lg"></i> Add Driver
-    </a>
+<a href="{{ $layout === 'admin' ? route('admin.drivers.create') : route('section_manager.drivers.create') }}"
+   class="btn btn-primary shadow-sm">
+    <i class="bi bi-plus-lg"></i> Add Driver
+</a>
 </div>
 
 <div class="card shadow-lg border-0 rounded-3">
@@ -41,13 +46,17 @@
                             <td>{{ $driver->id_number ?? 'N/A' }}</td>
                             <td>
                                 <!-- Delete Button -->
-                                <form action="{{ route('section_manager.drivers.destroy', $driver->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this driver?')" style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </form>
+<form action="{{ $layout === 'admin' ? route('admin.drivers.destroy', $driver->id) : route('section_manager.drivers.destroy', $driver->id) }}"
+      method="POST"
+      onsubmit="return confirm('Are you sure you want to delete this driver?')"
+      style="display:inline-block;">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-sm btn-danger">
+        <i class="bi bi-trash"></i> Delete
+    </button>
+</form>
+
                             </td>
                         </tr>
                     @empty

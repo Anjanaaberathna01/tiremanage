@@ -6,20 +6,41 @@ use Illuminate\Http\Request;
 use App\Models\TireRequest;
 use App\Models\Approval;
 use App\Models\Vehicle;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+
+use App\Models\Role;
 use App\Models\Driver;
 
 class SectionManagerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            $user = auth()->user();
-            if (!$user || !$user->role || strtolower($user->role->name) !== 'section manager') {
-                abort(403, 'Access restricted to Section Manager.');
-            }
-            return $next($request);
-        });
-    }
+public function __construct()
+{
+    $this->middleware(function ($request, $next) {
+        $user = auth()->user();
+
+        if (!$user || !$user->role) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $role = strtolower($user->role->name);
+
+        // Restrict *most* actions, but skip for driver management
+        if (!in_array($role, ['section manager', 'admin']) &&
+            in_array($request->route()->getActionMethod(), [
+                'drivers', 'createDriver', 'storeDriver', 'destroyDriver'
+            ]) === false
+        ) {
+            abort(403, 'Access restricted to Section Manager.');
+        }
+
+        return $next($request);
+    });
+}
+
+
 
     /** ---------------- DASHBOARD (Pending Requests) ---------------- */
     public function index()
@@ -225,20 +246,39 @@ public function update(Request $req, $id)
         return view('admin.drivers.create');
     }
 
-    public function storeDriver(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'full_name' => 'required|string|max:255',
-            'mobile' => 'nullable|string|max:20',
-            'id_number' => 'nullable|string|max:20',
-        ]);
+public function storeDriver(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|unique:users,name',
+        'email' => 'required|email|unique:users,email',
+        'full_name' => 'required|string|max:255',
+        'mobile' => 'nullable|string|max:20',
+        'id_number' => 'nullable|string|max:20',
+    ]);
 
-        Driver::create($request->all());
+    // Create User for the driver
+    $driverRole = Role::where('name', 'driver')->firstOrFail();
 
-        return redirect()->route('section_manager.drivers.index')
-            ->with('success', '✅ Driver added successfully.');
-    }
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make('12345678'), // default password
+        'role_id' => $driverRole->id,
+        'must_change_password' => true,
+    ]);
+
+    // Create Driver record
+    Driver::create([
+        'user_id' => $user->id,
+        'full_name' => $request->full_name,
+        'mobile' => $request->mobile,
+        'id_number' => $request->id_number,
+    ]);
+
+    return redirect()->route('section_manager.drivers.index')
+        ->with('success', '✅ Driver created successfully.');
+}
+
 
     public function destroyDriver($id)
     {

@@ -4,65 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Driver Dashboard')</title>
+
+    {{-- Bootstrap & Icons --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    @stack('styles')
 </head>
 <body>
-    {{-- Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    {{-- Driver Navbar --}}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('driver.dashboard') }}">SLTMOBITEL</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('driver.dashboard') }}">
+                <img src="{{ asset('assets/images/logo2.png') }}" alt="logo"
+                     style="height:36px; width:auto; margin-right:15px; margin-bottom: 4px;">
+                <span>Driver Dashboard</span>
+            </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#driverNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="driverNavbar">
                 <ul class="navbar-nav ms-auto">
-
+                    {{-- Request Tire --}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('driver.requests.create') }}">
-                            <i class="bi bi-plus-circle"></i> Request Tire
+                          Request Tire
                         </a>
                     </li>
 
+                    {{-- View Requests --}}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.requests.index') }}">View Requests
+                        <a class="nav-link" href="{{ route('driver.requests.index') }}">
+                         View Requests
                         </a>
                     </li>
-
+                    {{-- Manage Account --}}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">View Receipts
+                        <a class="nav-link" href="{{ route('driver.profile.edit') }}">
+                            Manage Account
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('driver.profile.edit') }}">Manage Account
-                        </a>
-                    </li>
-
+                    {{-- Logout --}}
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link">Logout
+                            <button type="submit" class="btn btn-link nav-link">
+                             Logout
                             </button>
                         </form>
                     </li>
-
                 </ul>
             </div>
         </div>
     </nav>
 
     {{-- Page Content --}}
-    <div class="container mt-4">
+    <div class="container mt-5 pt-4">
         @yield('content')
     </div>
 
+    {{-- Footer --}}
     @include('partials.footer')
 
+    {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    {{--  Make sure pushed scripts (e.g., lookupPlate in tireRequestCreate.blade.php) load --}}
     @stack('scripts')
 </body>
 </html>

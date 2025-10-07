@@ -10,25 +10,36 @@ class VehicleController extends Controller
     /**
      * Display all vehicles
      */
-    public function index(Request $request)
-    {
-        $search = $request->input('search');
+public function index(Request $request)
+{
+    $search = $request->input('search');
+    $query = Vehicle::query();
 
-        $query = Vehicle::query();
-
-        // ✅ Filter search by plate_no or model
-        if ($search) {
-            $query->where('plate_no', 'like', "%{$search}%")
-                  ->orWhere('model', 'like', "%{$search}%");
-        }
-
-        // ✅ Show only unregistered vehicles if applicable
-        $query->where('is_registered', false);
-
-        $vehicles = $query->get();
-
-        return view('vehicles.index', compact('vehicles'));
+    // ✅ Filter by plate_no or model if search provided
+    if (!empty($search)) {
+        $query->where(function ($q) use ($search) {
+            $q->where('plate_no', 'like', "%{$search}%")
+              ->orWhere('model', 'like', "%{$search}%");
+        });
     }
+
+    // ✅ Show only unregistered vehicles
+    $query->where('is_registered', false);
+
+    $vehicles = $query->get();
+
+    // ✅ Detect layout based on logged-in user role
+    $user = auth()->user();
+    $layout = 'section_manager'; // default
+
+    if ($user && isset($user->role->name)) {
+        $layout = ($user->role->name === 'Admin') ? 'admin' : 'section_manager';
+    }
+
+    // ✅ Pass layout + vehicles to the view
+    return view('vehicles.index', compact('vehicles', 'layout'));
+}
+
 
     /**
      * Show create vehicle form
