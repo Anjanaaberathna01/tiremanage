@@ -240,8 +240,8 @@ public function storeReceipt(Request $request)
         "Driver: {$driverName}",
         "Vehicle: {$vehiclePlate}",
         "Tire: {$tireRequest->tire->name} ({$tireRequest->tire->size})",
+        
         "Tire Count: {$tireRequest->tire_count}",
-        "Amount: LKR " . number_format($receipt->amount, 2),
     ];
 
     if (!empty($receipt->description)) {
