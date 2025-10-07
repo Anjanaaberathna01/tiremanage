@@ -22,6 +22,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.tires.index') }}">Tyres</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('section_manager.drivers.index') }}">Drivers</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a></li>
+                    <li class-"nav-item"><a class="nav-link" href="{{ route('admin.request.pending') }}">Requests</a></li>
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

@@ -59,6 +59,10 @@ class TireRequest extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+    public function receipt()
+    {
+        return $this->hasOne(\App\Models\Receipt::class, 'request_id');
+    }
 
     /*
     |--------------------------------------------------------------------------

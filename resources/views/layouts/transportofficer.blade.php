@@ -56,6 +56,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
+
+    @if(session('success'))
+    <div class="alert alert-success" style="background:#dcfce7;color:#065f46;padding:10px 15px;border-radius:6px;margin-bottom:15px;">
+        {{ session('success') }}
+    </div>
+@endif
+
 </body>
 
 </html>

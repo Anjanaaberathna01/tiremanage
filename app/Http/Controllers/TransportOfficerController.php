@@ -96,8 +96,9 @@ public function approved()
                 'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
                 'current_level' => Approval::LEVEL_FINISHED,
             ]);
-            return redirect()->route('transport_officer.approved')
-                ->with('success', '✅ Request updated and approved.');
+        return redirect()->route('transport_officer.approved')
+                 ->with('success', 'Receipt sent successfully!');
+
         }
 
         if ($status === Approval::STATUS_REJECTED_BY_TRANSPORT) {
@@ -181,16 +182,33 @@ public function storeReceipt(Request $request)
 
     $tireRequest = TireRequest::findOrFail($validated['request_id']);
 
+    // ✅ Create new receipt record
     Receipt::create([
         'request_id' => $tireRequest->id,
-        'user_id' => $tireRequest->user_id,  // 👈 driver’s user_id
+        'user_id' => $tireRequest->user_id, // driver user_id
         'supplier_id' => $validated['supplier_id'],
         'amount' => $validated['amount'],
         'description' => $validated['description'] ?? null,
     ]);
 
+    // ✅ Update status so it stays visible in "Approved Requests"
+    $tireRequest->update([
+        'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
+        'current_level' => Approval::LEVEL_FINISHED, // stays in finished state
+    ]);
+
+    // ✅ Update or create approval record with a “receipt sent” remark
+    Approval::updateOrCreate(
+        ['request_id' => $tireRequest->id, 'level' => Approval::LEVEL_TRANSPORT_OFFICER],
+        [
+            'approved_by' => auth()->id(),
+            'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
+            'remarks' => 'Receipt sent successfully.',
+        ]
+    );
+
     return redirect()->route('transport_officer.approved')
-        ->with('success', 'Receipt generated successfully.');
+        ->with('success', '✅ Receipt sent successfully and saved in Approved Requests.');
 }
 
 

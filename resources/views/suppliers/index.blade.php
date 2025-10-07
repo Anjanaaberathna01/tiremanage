@@ -21,6 +21,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Contact</th>
+                    <th>Address</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -29,6 +30,7 @@
                     <tr>
                         <td class="supplier-name">{{ $supplier->name }}</td>
                         <td class="supplier-contact">{{ $supplier->contact }}</td>
+                        <td class="supplier-address">{{ $supplier->address }}</td>
                         <td>
                             <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
                             <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">

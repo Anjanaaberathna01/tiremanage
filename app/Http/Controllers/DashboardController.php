@@ -42,14 +42,39 @@ class DashboardController extends Controller
     /**
      * Admin view pending requests
      */
-    public function pendingRequests()
-    {
-        $pendingRequests = TireRequest::where('status', 'pending')
-            ->with(['user', 'vehicle', 'tire'])
-            ->get();
+/**
+ * ---------------- ADMIN: PENDING REQUESTS OVERVIEW ----------------
+ */
+public function pendingRequests()
+{
+    // Pending at Section Manager level
+    $sectionManagerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING)
+        ->where('current_level', \App\Models\Approval::LEVEL_SECTION_MANAGER)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
 
-        return view('admin.pending_requests', compact('pendingRequests'));
-    }
+    // Pending at Mechanic Officer level
+    $mechanicOfficerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_MECHANIC)
+        ->where('current_level', \App\Models\Approval::LEVEL_MECHANIC_OFFICER)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
+
+    // Pending at Transport Officer level
+    $transportOfficerRequests = \App\Models\TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_TRANSPORT)
+        ->where('current_level', \App\Models\Approval::LEVEL_TRANSPORT_OFFICER)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('admin.pending_requests', compact(
+        'sectionManagerRequests',
+        'mechanicOfficerRequests',
+        'transportOfficerRequests'
+    ));
+}
+
 
     /**
      * Driver Dashboard

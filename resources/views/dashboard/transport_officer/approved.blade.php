@@ -24,6 +24,11 @@
                             <strong>Damage Description:</strong>
                             <p>{{ $req->damage_description ?? 'No description provided' }}</p>
                         </div>
+                            @if($req->receipt)
+    <div class="mt-2 text-green-700 font-semibold">
+        ✅ Receipt Sent Successfully
+    </div>
+@endif
 
                         @php
                             $images = [];
@@ -59,7 +64,7 @@
                     </div>
 
                     <div class="request-actions">
-                        <a href="{{ route('section_manager.requests.edit', $req->id) }}" class="edit-btn">✏️ Edit</a>
+                        <a href="{{ route('transport_officer.edit_request', $req->id) }}" class="edit-btn">✏️ Edit</a>
 
                         <!-- Generate Receipt Button -->
                         <button class="edit-btn" onclick="document.getElementById('receipt-form-{{ $req->id }}').classList.toggle('hidden')">
