@@ -74,18 +74,14 @@
 
                     <!-- Receipt Form (hidden initially) -->
                     <div id="receipt-form-{{ $req->id }}" class="mt-4 hidden">
-                        <form action="{{ route('transport_officer.receipt.store') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="request_id" value="{{ $req->id }}">
-
-                            <div class="mb-2">
-                                <label for="supplier_id-{{ $req->id }}" class="block font-semibold">Select Supplier:</label>
-                                <select name="supplier_id" id="supplier_id-{{ $req->id }}" class="w-full border rounded p-2">
-                                    @foreach($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}">{{ $supplier->name }} - {{ $supplier->contact }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+<form action="{{ route('transport_officer.receipt.store') }}" method="POST">
+    @csrf
+    <input type="hidden" name="request_id" value="{{ $req->id }}">
+    <select name="supplier_id" id="supplier_id-{{ $req->id }}">
+        @foreach($suppliers as $supplier)
+            <option value="{{ $supplier->id }}">{{ $supplier->name }} - {{ $supplier->contact }}</option>
+        @endforeach
+    </select>
 
                             <div class="mb-2">
                                 <label for="description-{{ $req->id }}" class="block font-semibold">Description:</label>
@@ -168,6 +164,27 @@ document.addEventListener('DOMContentLoaded', () => {
             imgEl.src = '';
         }
     });
+
+    @if(session('wa_link'))
+<script>
+    (function() {
+        const wa = @json(session('wa_link'));
+        // try to open in new tab
+        const opened = window.open(wa, '_blank');
+
+        if (!opened) {
+            // fallback: show a small clickable notice
+            const wrap = document.createElement('div');
+            wrap.style = 'position:fixed;right:18px;bottom:18px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:9999;';
+            wrap.innerHTML = '<div style="font-weight:700;color:#065f46;margin-bottom:6px;">Open WhatsApp</div>' +
+                             '<a href="'+wa+'" target="_blank" style="color:#065f46;text-decoration:none;font-weight:600;">Open WhatsApp Chat</a>';
+            document.body.appendChild(wrap);
+            setTimeout(() => { wrap.remove(); }, 15000);
+        }
+    })();
+</script>
+@endif
+
 });
 </script>
 @endpush

@@ -7,6 +7,7 @@ use App\Models\TireRequest;
 use App\Models\Approval;
 use App\Models\Supplier;
 use App\Models\Receipt;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
 class TransportOfficerController extends Controller
@@ -164,68 +165,142 @@ public function approved()
             ->with('error', '❌ Request rejected.');
     }
 
+
 public function createReceipt($id)
 {
-    $tireRequest = TireRequest::with('user')->findOrFail($id);
+    // load request with relations
+    $tireRequest = TireRequest::with(['user', 'driver', 'vehicle', 'tire'])->findOrFail($id);
     $suppliers = Supplier::all();
 
+    // If you already open the inline form in approved.blade.php you can keep this view or ignore it.
     return view('dashboard.transport_officer.create_receipt', compact('tireRequest', 'suppliers'));
 }
+
 public function storeReceipt(Request $request)
 {
+    $tireRequestModel = new TireRequest();
+    $supplierModel = new Supplier();
+
     $validated = $request->validate([
-        'request_id' => 'required|exists:requests,id',
-        'supplier_id' => 'required|exists:suppliers,id',
-        'amount' => 'required|numeric',
+        'request_id'  => ['required', Rule::exists($tireRequestModel->getTable(), 'id')],
+        'supplier_id' => ['required', Rule::exists($supplierModel->getTable(), 'id')],
+        'amount'      => 'required|numeric',
         'description' => 'nullable|string',
     ]);
 
-    $tireRequest = TireRequest::findOrFail($validated['request_id']);
+    $tireRequest = TireRequest::with(['user', 'vehicle'])->findOrFail($validated['request_id']);
+    $supplier = Supplier::findOrFail($validated['supplier_id']);
 
-    // ✅ Create new receipt record
-    Receipt::create([
-        'request_id' => $tireRequest->id,
-        'user_id' => $tireRequest->user_id, // driver user_id
-        'supplier_id' => $validated['supplier_id'],
-        'amount' => $validated['amount'],
+    // ✅ Create receipt record
+    $receipt = Receipt::create([
+        'request_id'  => $tireRequest->id,
+        'user_id'     => $tireRequest->user_id,
+        'supplier_id' => $supplier->id,
+        'amount'      => $validated['amount'],
         'description' => $validated['description'] ?? null,
     ]);
 
-    // ✅ Update status so it stays visible in "Approved Requests"
+    try {
+        $receipt->issued_date = now();
+        $receipt->status = 'issued';
+        $receipt->save();
+    } catch (\Throwable $e) {
+        // ignore if column doesn't exist
+    }
+
+    // ✅ Update tire request + approval table
     $tireRequest->update([
         'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
-        'current_level' => Approval::LEVEL_FINISHED, // stays in finished state
+        'current_level' => Approval::LEVEL_FINISHED,
     ]);
 
-    // ✅ Update or create approval record with a “receipt sent” remark
     Approval::updateOrCreate(
         ['request_id' => $tireRequest->id, 'level' => Approval::LEVEL_TRANSPORT_OFFICER],
         [
             'approved_by' => auth()->id(),
             'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
-            'remarks' => 'Receipt sent successfully.',
+            'remarks' => 'Receipt sent to supplier ' . $supplier->name,
         ]
     );
 
-    return redirect()->route('transport_officer.approved')
-        ->with('success', '✅ Receipt sent successfully and saved in Approved Requests.');
+    // ✅ Prepare WhatsApp message (supplier only)
+    if (empty($supplier->contact)) {
+        return redirect()->route('transport_officer.approved')
+            ->with('error', '⚠️ Supplier contact number not found. WhatsApp message not sent.');
+    }
+
+    $driverName   = $tireRequest->user->name ?? 'N/A';
+    $vehiclePlate = $tireRequest->vehicle->plate_no ?? 'N/A';
+
+    $messageLines = [
+        "📦 Tire Request Receipt",
+        "------------------------------",
+        "Request ID: {$tireRequest->id}",
+        "Driver: {$driverName}",
+        "Vehicle: {$vehiclePlate}",
+        "Amount: " . number_format($receipt->amount, 2),
+    ];
+
+    if (!empty($receipt->description)) {
+        $messageLines[] = "Description: {$receipt->description}";
+    }
+
+    $messageLines[] = "Issued on: " . now()->toDateString();
+    $message = implode("\n", $messageLines);
+
+    // ✅ Normalize contact and open WhatsApp
+    $phoneDigits = $this->normalizePhoneForWhatsApp($supplier->contact);
+    $waLink = "https://wa.me/{$phoneDigits}?text=" . urlencode($message);
+
+    // ✅ Redirect directly to WhatsApp
+    return redirect()->away($waLink);
 }
 
 
-public function generateReceipt($user_id, Request $request)
+public function generateReceiptForDriver($requestId)
 {
-    $request = request::findOrFail($user_id);
-
-    // Create a new receipt record
-    $receipt = new Receipt();
-    $receipt->tire_request_id = $request->id;
-    $receipt->user_id = $request->user_id; // link to the driver’s user_id
-    $receipt->supplier_id = $request->supplier_id;
+    $tireRequest = TireRequest::with(['user','vehicle'])->findOrFail($requestId);
+    $receipt = Receipt::create([
+        'request_id' => $tireRequest->id,
+        'user_id'    => $tireRequest->user_id,
+        'supplier_id'=> null,
+        'amount'     => 0,
+        'description'=> 'Generated for driver',
+    ]);
     $receipt->issued_date = now();
     $receipt->status = 'issued';
     $receipt->save();
 
-    return redirect()->back()->with('success', 'Receipt generated successfully!');
+    return redirect()->back()->with('success', 'Receipt generated for driver.');
 }
+
+/**
+ * Normalize supplier contact to international digits for wa.me links (no + sign).
+ * Examples:
+ *   "+94711234567" -> "94711234567"
+ *   "0711234567"   -> "94711234567" (uses DEFAULT_PHONE_COUNTRY)
+ */
+private function normalizePhoneForWhatsApp(string $rawPhone): string
+{
+    // remove everything except digits and plus
+    $phone = preg_replace('/[^0-9+]/', '', (string)$rawPhone);
+
+    $defaultCountry = config('app.default_phone_country', env('DEFAULT_PHONE_COUNTRY', '94'));
+
+    if (strpos($phone, '+') === 0) {
+        return ltrim($phone, '+');
+    }
+
+    // remove leading zero(s)
+    $phone = preg_replace('/^0+/', '', $phone);
+
+    // If phone looks short (no country code) prepend default country code
+    if (strlen($phone) <= 9) {
+        $phone = $defaultCountry . $phone;
+    }
+
+    return $phone;
+}
+
 
 }

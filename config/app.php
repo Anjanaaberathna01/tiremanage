@@ -40,6 +40,8 @@ return [
     */
 
     'debug' => (bool) env('APP_DEBUG', false),
+    // near bottom or anywhere in config/app.php
+'default_phone_country' => env('DEFAULT_PHONE_COUNTRY', '94'),
 
     /*
     |--------------------------------------------------------------------------
