@@ -45,7 +45,7 @@ public function approved()
         ->orderByDesc('updated_at')
         ->get();
 
-    $suppliers = Supplier::all(); // ✅ Add this line
+    $suppliers = Supplier::all(); // Add this line
 
     return view('dashboard.transport_officer.approved', compact('approvedRequests', 'suppliers'));
 }
@@ -192,7 +192,7 @@ public function storeReceipt(Request $request)
     $tireRequest = TireRequest::with(['user', 'vehicle'])->findOrFail($validated['request_id']);
     $supplier = Supplier::findOrFail($validated['supplier_id']);
 
-    // ✅ Create receipt record
+    // Create receipt record
     $receipt = Receipt::create([
         'request_id'  => $tireRequest->id,
         'user_id'     => $tireRequest->user_id,
@@ -209,7 +209,7 @@ public function storeReceipt(Request $request)
         // ignore if column doesn't exist
     }
 
-    // ✅ Update tire request + approval table
+    // Update tire request + approval table
     $tireRequest->update([
         'status' => Approval::STATUS_APPROVED_BY_TRANSPORT,
         'current_level' => Approval::LEVEL_FINISHED,
@@ -224,7 +224,7 @@ public function storeReceipt(Request $request)
         ]
     );
 
-    // ✅ Prepare WhatsApp message (supplier only)
+    // Prepare WhatsApp message (supplier only)
     if (empty($supplier->contact)) {
         return redirect()->route('transport_officer.approved')
             ->with('error', '⚠️ Supplier contact number not found. WhatsApp message not sent.');
@@ -239,8 +239,9 @@ public function storeReceipt(Request $request)
         "Request ID: {$tireRequest->id}",
         "Driver: {$driverName}",
         "Vehicle: {$vehiclePlate}",
+        "Amount: {$receipt->amount}",
         "Tire: {$tireRequest->tire->name} ({$tireRequest->tire->size})",
-        
+
         "Tire Count: {$tireRequest->tire_count}",
     ];
 
@@ -251,11 +252,11 @@ public function storeReceipt(Request $request)
     $messageLines[] = "Issued on: " . now()->toDateString();
     $message = implode("\n", $messageLines);
 
-    // ✅ Normalize contact and open WhatsApp
+    // Normalize contact and open WhatsApp
     $phoneDigits = $this->normalizePhoneForWhatsApp($supplier->contact);
     $waLink = "https://wa.me/{$phoneDigits}?text=" . urlencode($message);
 
-    // ✅ Redirect directly to WhatsApp
+    // Redirect directly to WhatsApp
     return redirect()->away($waLink);
 }
 

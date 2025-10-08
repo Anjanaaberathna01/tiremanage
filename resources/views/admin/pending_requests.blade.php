@@ -71,7 +71,7 @@
     }
 
     th {
-        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        background: #4ade80;
         color: white;
         padding: 12px;
         text-transform: uppercase;
@@ -148,7 +148,7 @@
                     <tr>
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
-                        <td>{{ $req->vehicle->license_plate ?? 'N/A' }}</td>
+                        <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>
@@ -181,7 +181,7 @@
                     <tr>
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
-                        <td>{{ $req->vehicle->license_plate ?? 'N/A' }}</td>
+                        <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>
@@ -214,7 +214,7 @@
                     <tr>
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
-                        <td>{{ $req->vehicle->license_plate ?? 'N/A' }}</td>
+                        <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>
