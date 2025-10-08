@@ -11,7 +11,10 @@
         </div>
         <div class="mb-3">
             <label>Contact</label>
-            <input type="text" name="contact" class="form-control" required>
+            <input type="text" name="contact" class="form-control @error('contact') is-invalid @enderror" value="{{ old('contact') }}" placeholder="e.g. +94 71 123 4567" required>
+            @error('contact')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
         <div class="mb-3">
             <label>Address</label>

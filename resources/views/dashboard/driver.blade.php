@@ -51,18 +51,18 @@
             <div class="cards-stack">
 
                 <div class="card clickable" data-href="{{ route('driver.requests.create') }}">
-                    <h2 class="card-title">Request Tire</h2>
-                    <p class="card-text">Submit a new tire request quickly and easily.</p>
+                    <h2 class="card-title">Request Tyre</h2>
+                    <p class="card-text">Submit a new tyre request quickly and easily.</p>
                 </div>
 
                 <div class="card clickable" data-href="{{ route('driver.requests.index') }}">
                     <h2 class="card-title">View Your Requests</h2>
-                    <p class="card-text">Track the status of your tire requests.</p>
+                    <p class="card-text">Track the status of your tyre requests.</p>
                 </div>
 
                 <div class="card clickable" data-href="{{ route ('driver.receipts') }}">
                     <h2 class="card-title">View Receipts</h2>
-                    <p class="card-text">Check all your tire request receipts.</p>
+                    <p class="card-text">Check all your tyre request receipts.</p>
                 </div>
 
                 <div class="card clickable" data-href="{{ route('driver.profile.edit') }}">
@@ -81,7 +81,7 @@
                 <div class="image-content">
                     <h2 class="image-title">Smooth Rides Start Here</h2>
                     <p class="image-desc">
-                        Manage your tire requests — request, track approvals, and view receipts all in one place.
+                        Manage your tyre requests — request, track approvals, and view receipts all in one place.
                     </p>
                 </div>
             </div>

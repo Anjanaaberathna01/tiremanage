@@ -20,10 +20,15 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
+        // Accept phone numbers in international or local formats: digits, spaces, +, -, ()
+        $phoneRule = ['required', 'string', 'max:255', 'regex:/^[0-9+()\-\s]+$/'];
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'required|string|max:255',
+            'contact' => $phoneRule,
             'address' => 'nullable|string|max:500',
+        ], [
+            'contact.regex' => 'The contact number may contain only digits, spaces, parentheses, plus and hyphens.',
         ]);
 
         Supplier::create($request->all());
@@ -39,10 +44,14 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier)
     {
+        $phoneRule = ['required', 'string', 'max:255', 'regex:/^[0-9+()\-\s]+$/'];
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'required|string|max:255',
+            'contact' => $phoneRule,
             'address' => 'nullable|string|max:500',
+        ], [
+            'contact.regex' => 'The contact number may contain only digits, spaces, parentheses, plus and hyphens.',
         ]);
 
         $supplier->update($request->all());

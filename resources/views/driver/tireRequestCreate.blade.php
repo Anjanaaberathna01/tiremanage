@@ -65,9 +65,9 @@
             </select>
         </div>
 
-        {{-- Tire Count --}}
+        {{-- Tyre Count --}}
         <div class="mb-3">
-            <label for="tire_count" class="form-label">Number of Tires</label>
+            <label for="tire_count" class="form-label">Number of Tyres</label>
             <input type="number" name="tire_count" id="tire_count" class="form-control" min="1" value="1" required>
         </div>
 

@@ -252,8 +252,10 @@ public function storeDriver(Request $request)
         'name' => 'required|string|unique:users,name',
         'email' => 'required|email|unique:users,email',
         'full_name' => 'required|string|max:255',
-        'mobile' => 'nullable|string|max:20',
+        'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
         'id_number' => 'nullable|string|max:20',
+    ], [
+        'mobile.regex' => 'The mobile number may contain only digits, spaces, parentheses, plus and hyphens.',
     ]);
 
     // Create User for the driver

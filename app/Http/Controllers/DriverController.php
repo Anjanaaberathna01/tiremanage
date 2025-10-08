@@ -44,7 +44,8 @@ class DriverController extends Controller
             'name' => 'required|string|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'full_name' => 'nullable|string|max:255',
-            'mobile' => 'nullable|string|max:20',
+            // Allow digits, spaces, parentheses, + and hyphens
+            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
             'id_number' => 'nullable|string|max:50',
         ]);
 
@@ -99,7 +100,7 @@ class DriverController extends Controller
         $request->validate([
             'name' => 'required|string|unique:users,name,' . $user->id,
             'full_name' => 'required|string|max:255',
-            'mobile' => 'nullable|string|max:50',
+            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'remove_photo' => 'nullable|in:0,1',
         ]);

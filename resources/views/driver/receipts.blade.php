@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container p-6">
-    <h2 class="page-title mb-4">🧾 Tire Request Receipts</h2>
+    <h2 class="page-title mb-4">🧾 Tyre Request Receipts</h2>
 
     @if($receipts->isEmpty())
         <p class="text-muted">No receipts found.</p>
@@ -20,7 +20,7 @@
                     <tr>
                         <th>No</th>
                         <th>Vehicle</th>
-                        <th>Tire Count</th>
+                        <th>Tyre Count</th>
                         <th>Supplier</th>
                         <th>Supplier Address</th>
                         <th>Supplier Contact</th>
