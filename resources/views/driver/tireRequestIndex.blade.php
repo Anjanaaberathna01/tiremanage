@@ -103,8 +103,8 @@ h2 {
                     <th>Branch</th>
                     <th>Vehicle</th>
                     <th>Tire Size</th>
-                    <th>Description</th>
-                    <th>Tire Count</th>
+                            <th>Tyre Size</th>
+                            <th>Tyre Count</th>
                     <th>Images</th>
                     <th>Status</th>
                     <th>Requested At</th>
@@ -138,8 +138,8 @@ h2 {
                             @endforeach
                         @else
                             <span>No Images</span>
-                        @endif
-                    </td>
+                                        <td>{{ $request->tire->size ?? 'N/A' }}</td>
+                                        <td>{{ $request->tire_count ?? 1 }}</td>
                     <td>
                         @if($request->status == 'pending')
                             <span class="badge bg-warning">Pending</span>

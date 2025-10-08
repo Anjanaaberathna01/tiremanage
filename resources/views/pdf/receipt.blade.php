@@ -103,7 +103,7 @@
 </head>
 <body>
     <div class="header">
-        <h2 class="title">Transport Department - Tire Request Receipt</h2>
+    <h2 class="title">Transport Department - Tyre Request Receipt</h2>
         <p class="receipt-meta">
             <strong>Receipt ID:</strong> #{{ $receipt->id }}<br>
             <strong>Date:</strong> {{ $receipt->created_at->format('Y-m-d') }}
@@ -118,7 +118,7 @@
 
         <div class="section-title">Vehicle & Request Details</div>
         <p><strong>Vehicle Plate:</strong> {{ $receipt->tireRequest->vehicle->plate_number ?? 'N/A' }}</p>
-        <p><strong>Tire Count:</strong> {{ $receipt->tireRequest->tire_count ?? 'N/A' }}</p>
+    <p><strong>Tyre Count:</strong> {{ $receipt->tireRequest->tire_count ?? 'N/A' }}</p>
         <p><strong>Description:</strong> {{ $receipt->description ?? 'N/A' }}</p>
 
         <div class="section-title">Amount</div>

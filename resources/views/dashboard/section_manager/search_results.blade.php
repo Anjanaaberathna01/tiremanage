@@ -33,7 +33,7 @@
                         </h4>
                         <p><strong>Vehicle:</strong> {{ $req->vehicle->plate_no ?? 'N/A' }}</p>
                         <p><strong>Branch:</strong> {{ $req->vehicle->branch ?? 'N/A' }}</p>
-                        <p><strong>Tire:</strong> {{ $req->tire->size ?? 'N/A' }}</p>
+                        <p><strong>Tyre:</strong> {{ $req->tire->size ?? 'N/A' }}</p>
                         <p><strong>Damage Description:</strong> {{ $req->damage_description ?? 'No description' }}</p>
 
                         {{-- Tire Images --}}

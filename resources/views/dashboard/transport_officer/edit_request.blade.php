@@ -1,10 +1,10 @@
 @extends('layouts.transportofficer')
 
-@section('title', 'Edit Tire Request')
+@section('title', 'Edit Tyre Request')
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h2 class="page-title mb-4">✏️ Edit Tire Request</h2>
+    <h2 class="page-title mb-4">✏️ Edit Tyre Request</h2>
 
     @if ($errors->any())
         <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">

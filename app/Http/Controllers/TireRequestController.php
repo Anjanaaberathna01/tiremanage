@@ -86,6 +86,6 @@ class TireRequestController extends Controller
         $request->delete();
 
         return redirect()->route('driver.requests.index')
-            ->with('success', 'Tire request deleted successfully.');
+            ->with('success', 'Tyre request deleted successfully.');
     }
 }

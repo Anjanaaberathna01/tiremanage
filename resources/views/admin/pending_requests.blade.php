@@ -138,7 +138,7 @@
                         <th>ID</th>
                         <th>Driver</th>
                         <th>Vehicle</th>
-                        <th>Tire</th>
+                        <th>Tyre</th>
                         <th>Date</th>
                         <th>Status</th>
                     </tr>

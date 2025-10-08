@@ -219,7 +219,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="4">No tires found.</td></tr>
+    <tr><td colspan="4">No tyres found.</td></tr>
         @endforelse
     </tbody>
 </table>

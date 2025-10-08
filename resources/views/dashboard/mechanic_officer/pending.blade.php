@@ -1,6 +1,6 @@
 @extends('layouts.mechanicofficer')
 
-@section('title', 'Pending Tire Requests')
+@section('title', 'Pending Tyre Requests')
 
 @section('content')
 <div class="container mx-auto p-6">
