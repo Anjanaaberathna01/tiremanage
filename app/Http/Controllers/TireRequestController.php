@@ -24,7 +24,7 @@ class TireRequestController extends Controller
         $validated = $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
             'tire_id' => 'required|exists:tires,id',
-            'tire_count' => 'required|integer|min:1', // <-- new validation
+            'tire_count' => 'required|integer|min:1', 
             'damage_description' => 'required|string|max:500',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);

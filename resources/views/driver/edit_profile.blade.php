@@ -30,7 +30,10 @@
             {{-- Mobile --}}
             <div class="mb-3">
                 <label class="form-label">Mobile</label>
-                <input type="text" name="mobile" class="form-control" value="{{ $driver->mobile }}">
+                <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" value="{{ old('mobile', $driver->mobile) }}" placeholder="e.g. +94 71 123 4567">
+                @error('mobile')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Email (Read Only) --}}
