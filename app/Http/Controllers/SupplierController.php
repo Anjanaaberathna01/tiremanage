@@ -20,15 +20,18 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
-        // Accept phone numbers in international or local formats: digits, spaces, +, -, ()
-        $phoneRule = ['required', 'string', 'max:255', 'regex:/^[0-9+()\-\s]+$/'];
+        // Normalize contact: remove spaces, hyphens and parentheses but keep leading + if present
+        $rawContact = $request->input('contact');
+        $normalized = $rawContact !== null ? preg_replace('/[\s\-\(\)]/', '', $rawContact) : null;
+        $request->merge(['contact' => $normalized]);
 
+        // Accept either: 0XXXXXXXXX (10 digits, leading 0) OR optional +94/94 followed by 9 digits
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => $phoneRule,
+            'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'address' => 'nullable|string|max:500',
         ], [
-            'contact.regex' => 'The contact number may contain only digits, spaces, parentheses, plus and hyphens.',
+            'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
         ]);
 
         Supplier::create($request->all());
@@ -44,14 +47,16 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier)
     {
-        $phoneRule = ['required', 'string', 'max:255', 'regex:/^[0-9+()\-\s]+$/'];
+        $rawContact = $request->input('contact');
+        $normalized = $rawContact !== null ? preg_replace('/[\s\-\(\)]/', '', $rawContact) : null;
+        $request->merge(['contact' => $normalized]);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => $phoneRule,
+            'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'address' => 'nullable|string|max:500',
         ], [
-            'contact.regex' => 'The contact number may contain only digits, spaces, parentheses, plus and hyphens.',
+            'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
         ]);
 
         $supplier->update($request->all());

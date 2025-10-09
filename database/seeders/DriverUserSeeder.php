@@ -10,13 +10,30 @@ class DriverUserSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('users')->insert([
-            'name' => 'driver@123',
-            'email' => 'driver123@gmail.com',
-            'password' => Hash::make('12345678'),
-            'role_id' => 2, // Assuming Driver is ID 2
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $email = 'driver123@gmail.com';
+
+        $roleId = DB::table('roles')->where('name', 'Driver')->value('id') ?? 2;
+
+        $existing = DB::table('users')->where('email', $email)->first();
+
+        if ($existing) {
+            DB::table('users')
+                ->where('id', $existing->id)
+                ->update([
+                    'name' => 'driver@123',
+                    'password' => Hash::make('12345678'),
+                    'role_id' => $roleId,
+                    'updated_at' => now(),
+                ]);
+        } else {
+            DB::table('users')->insert([
+                'name' => 'driver@123',
+                'email' => $email,
+                'password' => Hash::make('12345678'),
+                'role_id' => $roleId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

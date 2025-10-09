@@ -248,14 +248,18 @@ public function update(Request $req, $id)
 
 public function storeDriver(Request $request)
 {
+    $rawMobile = $request->input('mobile');
+    $normalizedMobile = $rawMobile !== null ? preg_replace('/[\s\-\(\)]/', '', $rawMobile) : null;
+    $request->merge(['mobile' => $normalizedMobile]);
+
     $request->validate([
         'name' => 'required|string|unique:users,name',
         'email' => 'required|email|unique:users,email',
         'full_name' => 'required|string|max:255',
-        'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
+        'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
         'id_number' => 'nullable|string|max:20',
     ], [
-        'mobile.regex' => 'The mobile number may contain only digits, spaces, parentheses, plus and hyphens.',
+        'mobile.regex' => 'Mobile must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
     ]);
 
     // Create User for the driver

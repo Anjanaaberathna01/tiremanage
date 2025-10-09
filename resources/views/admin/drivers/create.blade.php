@@ -52,7 +52,7 @@
 
         <div class="mb-3">
             <label for="mobile" class="form-label">Mobile</label>
-            <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" value="{{ old('mobile') }}" placeholder="e.g. +94 71 123 4567">
+            <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" value="{{ old('mobile') }}" placeholder="e.g. 0711234567 or +94711234567">
             @error('mobile')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

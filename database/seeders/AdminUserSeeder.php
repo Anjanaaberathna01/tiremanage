@@ -10,13 +10,30 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('users')->insert([
-            'name' => 'admin123',
-            'email' => 'admin123@gmail.com',
-            'password' => Hash::make('12345678'),
-            'role_id' => 1, // Assuming 'Admin' is ID 1 in roles table
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $email = 'admin123@gmail.com';
+
+        $roleId = DB::table('roles')->where('name', 'Admin')->value('id') ?? 1;
+
+        $existing = DB::table('users')->where('email', $email)->first();
+
+        if ($existing) {
+            DB::table('users')
+                ->where('id', $existing->id)
+                ->update([
+                    'name' => 'admin123',
+                    'password' => Hash::make('12345678'),
+                    'role_id' => $roleId,
+                    'updated_at' => now(),
+                ]);
+        } else {
+            DB::table('users')->insert([
+                'name' => 'admin123',
+                'email' => $email,
+                'password' => Hash::make('12345678'),
+                'role_id' => $roleId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

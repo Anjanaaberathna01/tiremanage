@@ -44,8 +44,8 @@ class DriverController extends Controller
             'name' => 'required|string|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'full_name' => 'nullable|string|max:255',
-            // Allow digits, spaces, parentheses, + and hyphens
-            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
+            // Normalize and validate mobile: either 0XXXXXXXXX (10 digits) or optional +94/94 followed by 9 digits
+            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'id_number' => 'nullable|string|max:50',
         ]);
 
@@ -97,12 +97,19 @@ class DriverController extends Controller
         $driver = Driver::where('user_id', Auth::id())->firstOrFail();
         $user = $driver->user;
 
+        // Normalize mobile input
+        $rawMobile = $request->input('mobile');
+        $normalizedMobile = $rawMobile !== null ? preg_replace('/[\s\-\(\)]/', '', $rawMobile) : null;
+        $request->merge(['mobile' => $normalizedMobile]);
+
         $request->validate([
             'name' => 'required|string|unique:users,name,' . $user->id,
             'full_name' => 'required|string|max:255',
-            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^[0-9+()\-\s]+$/'],
+            'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'remove_photo' => 'nullable|in:0,1',
+        ], [
+            'mobile.regex' => 'Mobile must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
         ]);
 
         // Update username

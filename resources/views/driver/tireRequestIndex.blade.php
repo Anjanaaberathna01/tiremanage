@@ -5,106 +5,48 @@
 @section('content')
 <style>
 /* Basic Page Styling */
-body {
-    background-color: #f2f2f2;
-    font-family: Arial, sans-serif;
-}
-
-h2 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-}
+body { background-color: #f2f2f2; font-family: Arial, sans-serif; }
+h2 { color: #333; text-align: center; margin-bottom: 20px; }
 
 /* Table Styling */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.table th, .table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-}
-
-.table th {
-    background-color: #333;
-    color: white;
-}
-
-.table tr:hover {
-    background-color: #e6f0ff;
-}
+.table { width: 100%; border-collapse: collapse; background-color: #fff; margin-bottom: 20px; border-radius: 8px; overflow: hidden; }
+.table th, .table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+.table th { background-color: #333; color: white; }
+.table tr:hover { background-color: #e6f0ff; }
 
 /* Image Thumbnail */
-.img-thumbnail {
-    width: 70px;
-    border-radius: 4px;
-    transition: transform 0.2s;
-}
-
-.img-thumbnail:hover {
-    transform: scale(1.2);
-}
+.img-thumbnail { width: 70px; border-radius: 4px; transition: transform 0.2s; }
+.img-thumbnail:hover { transform: scale(1.2); }
 
 /* Status Badges */
-.badge {
-    padding: 5px 10px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    display: inline-block;
-}
-
+.badge { padding: 5px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; display: inline-block; }
 .bg-warning { background-color: #facc15; color: #000; }
 .bg-success { background-color: #16a34a; color: #fff; }
-.bg-danger { background-color: #dc2626; color: #fff; }
+.bg-danger  { background-color: #dc2626; color: #fff; }
 .bg-secondary { background-color: #6b7280; color: #fff; }
 
 /* Delete Button */
-.btn-danger {
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-.btn-danger:hover {
-    background-color: #b91c1c;
-}
+.btn-danger { background-color: #dc3545; color: #fff; border: none; padding: 5px 10px; border-radius: 12px; cursor: pointer; }
+.btn-danger:hover { background-color: #b91c1c; }
 
 /* No Requests Message */
-.alert-info {
-    background-color: #e6f0ff;
-    padding: 15px;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: bold;
-}
+.alert-info { background-color: #e6f0ff; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; }
 </style>
 
 <div class="container">
     <h2>🚗 My Tyre Requests</h2>
 
-    @if($requests->isEmpty())
-        <div class="alert-info">You have not submitted any tyre requests yet.</div>
-    @else
+    @forelse ($requests as $index => $request)
+        @if ($loop->first)
         <table class="table">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Branch</th>
                     <th>Vehicle</th>
-                    <th>Tire Size</th>
-                            <th>Tyre Size</th>
-                            <th>Tyre Count</th>
+                    <th>Tyre Size</th>
+                    <th>Damage Description</th>
+                    <th>Tyre Count</th>
                     <th>Images</th>
                     <th>Status</th>
                     <th>Requested At</th>
@@ -112,48 +54,61 @@ h2 {
                 </tr>
             </thead>
             <tbody>
-                @foreach($requests as $index => $request)
+        @endif
+
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $request->branchName() ?? 'N/A' }}</td>
-                    <td>{{ $request->vehicle->plate_no ?? 'N/A' }}</td>
-                    <td>{{ $request->tire->size ?? 'N/A' }}</td>
-                    <td>{{ $request->damage_description }}</td>
+                    <td>{{ method_exists($request, 'branchName') ? ($request->branchName() ?? 'N/A') : ($request->branch_name ?? 'N/A') }}</td>
+                    <td>{{ $request->vehicle?->plate_no ?? 'N/A' }}</td>
+                    <td>{{ $request->tire?->size ?? 'N/A' }}</td>
+                    <td>{{ $request->damage_description ?? '-' }}</td>
                     <td>{{ $request->tire_count ?? 1 }}</td>
+
                     <td>
                         @php
+                            // Normalize to an array of image paths
                             $images = [];
-                            if(!empty($request->tire_images) && is_array($request->tire_images)) {
+                            if (is_array($request->tire_images) && !empty($request->tire_images)) {
                                 $images = $request->tire_images;
-                            } elseif(!empty($request->images)) {
-                                $decoded = json_decode($request->images);
-                                if(is_array($decoded)) $images = $decoded;
+                            } elseif (!empty($request->images)) {
+                                $decoded = json_decode($request->images, true);
+                                if (is_array($decoded)) {
+                                    $images = $decoded;
+                                }
                             }
                         @endphp
-                        @if(count($images) > 0)
-                            @foreach($images as $image)
-                                <a href="{{ asset('storage/' . $image) }}" target="_blank">
-                                    <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail">
+
+                        @if (!empty($images))
+                            @foreach ($images as $image)
+                                <a href="{{ asset('storage/' . ltrim($image, '/')) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . ltrim($image, '/')) }}" class="img-thumbnail" alt="tyre image">
                                 </a>
                             @endforeach
                         @else
                             <span>No Images</span>
-                                        <td>{{ $request->tire->size ?? 'N/A' }}</td>
-                                        <td>{{ $request->tire_count ?? 1 }}</td>
-                    <td>
-                        @if($request->status == 'pending')
-                            <span class="badge bg-warning">Pending</span>
-                        @elseif($request->status == 'approved')
-                            <span class="badge bg-success">Approved</span>
-                        @elseif($request->status == 'rejected')
-                            <span class="badge bg-danger">Rejected</span>
-                        @else
-                            <span class="badge bg-secondary">{{ ucfirst($request->status) }}</span>
                         @endif
                     </td>
-                    <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
+
                     <td>
-                        @if($request->status == 'pending')
+                        @switch($request->status)
+                            @case('pending')
+                                <span class="badge bg-warning">Pending</span>
+                                @break
+                            @case('approved')
+                                <span class="badge bg-success">Approved</span>
+                                @break
+                            @case('rejected')
+                                <span class="badge bg-danger">Rejected</span>
+                                @break
+                            @default
+                                <span class="badge bg-secondary">{{ ucfirst($request->status ?? 'unknown') }}</span>
+                        @endswitch
+                    </td>
+
+                    <td>{{ optional($request->created_at)->format('Y-m-d H:i') ?? '-' }}</td>
+
+                    <td>
+                        @if(($request->status ?? 'pending') === 'pending')
                             <form action="{{ route('driver.requests.destroy', $request->id) }}" method="POST" onsubmit="return confirmDelete(this);">
                                 @csrf
                                 @method('DELETE')
@@ -164,20 +119,20 @@ h2 {
                         @endif
                     </td>
                 </tr>
-                @endforeach
+
+        @if ($loop->last)
             </tbody>
         </table>
-    @endif
+        @endif
+
+    @empty
+        <div class="alert-info">You have not submitted any tyre requests yet.</div>
+    @endforelse
 </div>
 
 <script>
-// Simple Delete Confirmation
 function confirmDelete(form) {
-    if (confirm("Are you sure you want to delete this request?")) {
-        return true;
-    } else {
-        return false;
-    }
+    return confirm("Are you sure you want to delete this request?");
 }
 </script>
 @endsection
