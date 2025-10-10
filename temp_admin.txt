@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -118,7 +118,16 @@
             transition: 0.2s;
         }
 
-        /* Footer styling handled by shared partial */
+        /* Footer styling */
+        footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            text-align: center;
+            background: #1e88e5;
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
@@ -130,7 +139,6 @@
             }
         }
     </style>
-    @stack('styles')
 </head>
 <body>
 
@@ -164,10 +172,13 @@
         @yield('content')
     </div>
 
-    @include('partials.footer')
+    <!-- Footer -->
+    <footer>
+        &copy; {{ date('Y') }} Admin Dashboard. All rights reserved.
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
 </body>
 </html>
+
