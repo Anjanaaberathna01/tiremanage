@@ -12,6 +12,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SectionManagerController;
 use App\Http\Controllers\MechanicOfficerController;
 use App\Http\Controllers\TransportOfficerController;
+use App\Http\Controllers\ReportController;
 
 // Redirect root to login
 Route::get('/', fn() => redirect()->route('login'));
@@ -44,6 +45,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
         Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
         Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
+
+
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports/vehicles', [ReportController::class, 'exportVehicles'])->name('reports.vehicles');
+            Route::get('/reports/drivers',  [ReportController::class, 'exportDrivers'])->name('reports.drivers');
+            Route::get('/reports/suppliers',[ReportController::class, 'exportSuppliers'])->name('reports.suppliers');
+            Route::get('/reports/tires',    [ReportController::class, 'exportTires'])->name('reports.tires');
+
+            Route::get('/reports/section-manager/{status}', [ReportController::class, 'exportSectionManager'])
+                ->name('reports.section_manager');
+
+            Route::get('/reports/mechanic-officer/{status}', [ReportController::class, 'exportMechanicOfficer'])
+                ->name('reports.mechanic_officer');
+
+            Route::get('/reports/transport-officer/{status}', [ReportController::class, 'exportTransportOfficer'])
+                ->name('reports.transport_officer');
+
+
     });
 
     /**

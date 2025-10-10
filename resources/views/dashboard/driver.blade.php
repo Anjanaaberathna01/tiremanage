@@ -60,10 +60,23 @@
                     <p class="card-text">Track the status of your tyre requests.</p>
                 </div>
 
-                <div class="card clickable" data-href="{{ route ('driver.receipts') }}">
-                    <h2 class="card-title">View Receipts</h2>
-                    <p class="card-text">Check all your tyre request receipts.</p>
-                </div>
+                    @php
+                        $unreadReceipts = \App\Models\Receipt::whereHas('tireRequest', function ($query) {
+                            $query->where('user_id', auth()->id());
+                        })->where('is_read', false)->count();
+                    @endphp
+
+                    <div class="card clickable" data-href="{{ route('driver.receipts') }}" style="position: relative;">
+                        {{-- Notification badge --}}
+                        @if($unreadReceipts > 0)
+                            <div class="notif-badge">{{ $unreadReceipts }}</div>
+                        @endif
+
+                        <h2 class="card-title">View Receipts</h2>
+                        <p class="card-text">Check all your tyre request receipts.</p>
+                    </div>
+
+
 
                 <div class="card clickable" data-href="{{ route('driver.profile.edit') }}">
                     <h2 class="card-title">Manage Account</h2>
@@ -322,6 +335,34 @@
     .dashboard-two-col { flex-direction: column; }
     .image-panel { height: 320px; }
 }
+/* === Creative Notification Badge === */
+.notif-badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: linear-gradient(145deg, #ef4444, #b91c1c);
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    animation: pulseBadge 1.5s infinite;
+    z-index: 10;
+}
+
+/* Pulse animation */
+@keyframes pulseBadge {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+    70%  { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+}
+
+
 </style>
 @endpush
 

@@ -44,7 +44,6 @@ class DriverController extends Controller
             'name' => 'required|string|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'full_name' => 'nullable|string|max:255',
-            // Normalize and validate mobile: either 0XXXXXXXXX (10 digits) or optional +94/94 followed by 9 digits
             'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'id_number' => 'nullable|string|max:50',
         ]);
@@ -157,6 +156,12 @@ class DriverController extends Controller
 
 public function receipts()
 {
+    Receipt::whereHas('tireRequest', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->where('is_read', false)
+        ->update(['is_read' => true]);
+
 $receipts = Receipt::with(['supplier', 'tireRequest.vehicle'])
     ->whereHas('tireRequest', function ($query) {
         $query->where('user_id', auth()->id());

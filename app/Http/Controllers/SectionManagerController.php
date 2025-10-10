@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
-
 use App\Models\Role;
 use App\Models\Driver;
 
@@ -237,6 +236,7 @@ public function update(Request $req, $id)
         }
 
         $drivers = $query->orderByDesc('id')->get();
+        $user = Auth::user(); 
 
         return view('dashboard.section_manager.drivers.index', compact('drivers'));
     }

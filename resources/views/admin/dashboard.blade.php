@@ -150,6 +150,12 @@
         <h5>Suppliers</h5>
         <h3>{{ $suppliers_count }}</h3>
     </div>
+    
+    <div class="card hover-card" onclick="window.location='{{ route('admin.reports.index') }}'">
+    <h5>Reports</h5>
+    <h3>Download</h3>
+    </div>
+
     <div class="card card-danger hover-card" onclick="window.location='{{ route('admin.request.pending') }}'">
         <h5>Pending Requests</h5>
         <h3>{{ $pending_requests }}</h3>

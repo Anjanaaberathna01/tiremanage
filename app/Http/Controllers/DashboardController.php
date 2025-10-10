@@ -9,110 +9,110 @@ use App\Models\Vehicle;
 use App\Models\Tire;
 use App\Models\TireRequest;
 use App\Models\Driver;
+use App\Models\Approval;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     /**
-     * Admin Dashboard
+     * ---------------- ADMIN DASHBOARD ----------------
      */
     public function admin()
     {
-        $vehicles = Vehicle::orderBy('model', 'asc')->get();
-        $tires = Tire::with('supplier')->get();
-        $suppliers = Supplier::all();
-        $drivers = Driver::with('user')->get();
+        $vehicles   = Vehicle::orderBy('model', 'asc')->get();
+        $tires      = Tire::with('supplier')->get();
+        $suppliers  = Supplier::all();
+        $drivers    = Driver::with('user')->get();
 
-        //  Count pending requests
-        $pending_requests = TireRequest::where('status', 'pending')->count();
+        // Count all pending requests (any level)
+        $pending_requests = TireRequest::where('status', Approval::STATUS_PENDING)->count()
+                             + TireRequest::where('status', Approval::STATUS_PENDING_MECHANIC)->count()
+                             + TireRequest::where('status', Approval::STATUS_PENDING_TRANSPORT)->count();
 
         return view('admin.dashboard', [
-            'vehicles' => $vehicles,
-            'vehicles_count' => $vehicles->count(),
-            'tires' => $tires,
-            'tires_count' => $tires->count(),
-            'suppliers' => $suppliers,
-            'suppliers_count' => $suppliers->count(),
-            'drivers' => $drivers,
-            'drivers_count' => $drivers->count(),
-            'pending_requests' => $pending_requests //  now real count
+            'vehicles'          => $vehicles,
+            'vehicles_count'    => $vehicles->count(),
+            'tires'             => $tires,
+            'tires_count'       => $tires->count(),
+            'suppliers'         => $suppliers,
+            'suppliers_count'   => $suppliers->count(),
+            'drivers'           => $drivers,
+            'drivers_count'     => $drivers->count(),
+            'pending_requests'  => $pending_requests,
         ]);
     }
 
     /**
-     * Admin view pending requests
+     * ---------------- ADMIN: PENDING REQUESTS OVERVIEW ----------------
      */
-/**
- * ---------------- ADMIN: PENDING REQUESTS OVERVIEW ----------------
- */
-public function pendingRequests()
-{
-    // Pending at Section Manager level
-    $sectionManagerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING)
-        ->where('current_level', \App\Models\Approval::LEVEL_SECTION_MANAGER)
-        ->with(['user', 'vehicle', 'tire'])
-        ->orderByDesc('created_at')
-        ->get();
+    public function pendingRequests()
+    {
+        $sectionManagerRequests = TireRequest::where('current_level', Approval::LEVEL_SECTION_MANAGER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->orderByDesc('created_at')
+            ->get();
 
-    // Pending at Mechanic Officer level
-    $mechanicOfficerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_MECHANIC)
-        ->where('current_level', \App\Models\Approval::LEVEL_MECHANIC_OFFICER)
-        ->with(['user', 'vehicle', 'tire'])
-        ->orderByDesc('created_at')
-        ->get();
+        $mechanicOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->orderByDesc('created_at')
+            ->get();
 
-    // Pending at Transport Officer level
-    $transportOfficerRequests = TireRequest::where('status', \App\Models\Approval::STATUS_PENDING_TRANSPORT)
-        ->where('current_level', \App\Models\Approval::LEVEL_TRANSPORT_OFFICER)
-        ->with(['user', 'vehicle', 'tire'])
-        ->orderByDesc('created_at')
-        ->get();
+        $transportOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_TRANSPORT_OFFICER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->orderByDesc('created_at')
+            ->get();
 
-    return view('admin.pending_requests', compact(
-        'sectionManagerRequests',
-        'mechanicOfficerRequests',
-        'transportOfficerRequests'
-    ));
-}
-
+        return view('admin.pending_requests', compact(
+            'sectionManagerRequests',
+            'mechanicOfficerRequests',
+            'transportOfficerRequests'
+        ));
+    }
 
     /**
-     * Driver Dashboard
+     * ---------------- DRIVER DASHBOARD ----------------
      */
     public function driver()
     {
         $user = Auth::user();
-        $requests = TireRequest::where('user_id', $user->id)->get();
+        $requests = TireRequest::where('user_id', $user->id)->with(['vehicle', 'tire'])->get();
 
         return view('dashboard.driver', compact('requests'));
     }
 
     /**
-     * Section Manager Dashboard
+     * ---------------- SECTION MANAGER DASHBOARD ----------------
      */
     public function sectionManager()
     {
-        $pendingRequests = TireRequest::where('status', 'pending')->get();
+        $pendingRequests = TireRequest::where('current_level', Approval::LEVEL_SECTION_MANAGER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->get();
 
         return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
     }
 
     /**
-     * Mechanic Officer Dashboard
+     * ---------------- MECHANIC OFFICER DASHBOARD ----------------
      */
     public function mechanicOfficer()
     {
-        $tires = Tire::all();
-        $vehicles = Vehicle::all();
-        return view('dashboard.mechanic_officer.pending', compact('tires', 'vehicles'));
+        $pendingRequests = TireRequest::where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->get();
+
+        return view('dashboard.mechanic_officer.pending', compact('pendingRequests'));
     }
 
     /**
-     * Transport Officer Dashboard
+     * ---------------- TRANSPORT OFFICER DASHBOARD ----------------
      */
-   /* public function transportOfficer()
+    public function transportOfficer()
     {
-        $approvals = TireRequest::where('status', 'approved')->get();
-        return view('dashboard.transport_officer', compact('approvals'));
-    }*/
+        $pendingRequests = TireRequest::where('current_level', Approval::LEVEL_TRANSPORT_OFFICER)
+            ->with(['user', 'vehicle', 'tire'])
+            ->get();
+
+        return view('dashboard.transport_officer.pending', compact('pendingRequests'));
+    }
 }

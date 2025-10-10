@@ -199,6 +199,7 @@ public function storeReceipt(Request $request)
         'supplier_id' => $supplier->id,
         'amount'      => $validated['amount'],
         'description' => $validated['description'] ?? null,
+        'is_read'      => false,
     ]);
 
     try {
