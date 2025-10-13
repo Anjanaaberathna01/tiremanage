@@ -9,6 +9,7 @@ use App\Models\Vehicle;
 use App\Models\Tire;
 use App\Models\TireRequest;
 use App\Models\Driver;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Approval;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,31 +46,38 @@ class DashboardController extends Controller
     /**
      * ---------------- ADMIN: PENDING REQUESTS OVERVIEW ----------------
      */
-    public function pendingRequests()
-    {
-        $sectionManagerRequests = TireRequest::where('current_level', Approval::LEVEL_SECTION_MANAGER)
-            ->with(['user', 'vehicle', 'tire'])
-            ->orderByDesc('created_at')
-            ->get();
+public function pendingRequests()
+{
+    // Section Manager pending requests
+    $sectionManagerRequests = TireRequest::where('current_level', Approval::LEVEL_SECTION_MANAGER)
+        ->where('status', Approval::STATUS_PENDING)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
 
-        $mechanicOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
-            ->with(['user', 'vehicle', 'tire'])
-            ->orderByDesc('created_at')
-            ->get();
+    // Mechanic Officer pending requests
+    $mechanicOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_MECHANIC_OFFICER)
+        ->where('status', Approval::STATUS_PENDING_MECHANIC)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
 
-        $transportOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_TRANSPORT_OFFICER)
-            ->with(['user', 'vehicle', 'tire'])
-            ->orderByDesc('created_at')
-            ->get();
+    // Transport Officer pending requests
+    $transportOfficerRequests = TireRequest::where('current_level', Approval::LEVEL_TRANSPORT_OFFICER)
+        ->where('status', Approval::STATUS_PENDING_TRANSPORT)
+        ->with(['user', 'vehicle', 'tire'])
+        ->orderByDesc('created_at')
+        ->get();
 
-        return view('admin.pending_requests', compact(
-            'sectionManagerRequests',
-            'mechanicOfficerRequests',
-            'transportOfficerRequests'
-        ));
-    }
+    return view('admin.pending_requests', compact(
+        'sectionManagerRequests',
+        'mechanicOfficerRequests',
+        'transportOfficerRequests'
+    ));
+}
 
-    /**
+
+    /*
      * ---------------- DRIVER DASHBOARD ----------------
      */
     public function driver()
@@ -80,7 +88,7 @@ class DashboardController extends Controller
         return view('dashboard.driver', compact('requests'));
     }
 
-    /**
+    /*
      * ---------------- SECTION MANAGER DASHBOARD ----------------
      */
     public function sectionManager()
@@ -92,7 +100,7 @@ class DashboardController extends Controller
         return view('dashboard.section_manager.section_manager', compact('pendingRequests'));
     }
 
-    /**
+    /*
      * ---------------- MECHANIC OFFICER DASHBOARD ----------------
      */
     public function mechanicOfficer()
@@ -104,7 +112,7 @@ class DashboardController extends Controller
         return view('dashboard.mechanic_officer.pending', compact('pendingRequests'));
     }
 
-    /**
+    /*
      * ---------------- TRANSPORT OFFICER DASHBOARD ----------------
      */
     public function transportOfficer()
@@ -115,4 +123,31 @@ class DashboardController extends Controller
 
         return view('dashboard.transport_officer.pending', compact('pendingRequests'));
     }
+
+
+    public function changePasswordForm()
+{
+    return view('driver.change_password');
+}
+
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => 'required|min:8|confirmed',
+    ]);
+
+    $user = Auth::user();
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->with('error', 'Current password is incorrect.');
+    }
+
+    $user->update([
+        'password' => Hash::make($request->new_password),
+        'must_change_password' => false, // Optional: useful if you use this flag
+    ]);
+
+    return back()->with('success', 'Password updated successfully!');
+}
 }

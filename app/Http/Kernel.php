@@ -32,6 +32,7 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'force.password.change' => \App\Http\Middleware\ForcePasswordChange::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,

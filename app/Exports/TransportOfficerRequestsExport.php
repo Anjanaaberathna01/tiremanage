@@ -35,7 +35,7 @@ class TransportOfficerRequestsExport implements FromCollection, WithHeadings
             $mappedStatus = $statusMap[$this->status] ?? null;
 
             if ($this->status === 'pending') {
-                // 🧠 Include requests currently waiting for Transport Officer
+                // Include requests currently waiting for Transport Officer
                 $query->where('current_level', Approval::LEVEL_TRANSPORT_OFFICER)
                       ->where(function ($q) use ($mappedStatus) {
                           $q->where('status', $mappedStatus)

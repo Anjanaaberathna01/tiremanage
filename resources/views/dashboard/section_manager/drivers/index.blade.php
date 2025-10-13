@@ -32,7 +32,7 @@
                         <th>Full Name</th>
                         <th>Mobile</th>
                         <th>ID Number</th>
-                        <th>Actions</th> <!-- ✅ New column -->
+                        <th>Actions</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -46,16 +46,16 @@
                             <td>{{ $driver->id_number ?? 'N/A' }}</td>
                             <td>
                                 <!-- Delete Button -->
-<form action="{{ $layout === 'admin' ? route('admin.drivers.destroy', $driver->id) : route('section_manager.drivers.destroy', $driver->id) }}"
-      method="POST"
-      onsubmit="return confirm('Are you sure you want to delete this driver?')"
-      style="display:inline-block;">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-sm btn-danger">
-        <i class="bi bi-trash"></i> Delete
-    </button>
-</form>
+                    <form action="{{ $layout === 'admin' ? route('admin.drivers.destroy', $driver->id) : route('section_manager.drivers.destroy', $driver->id) }}"
+                        method="POST"
+                        onsubmit="return confirm('Are you sure you want to delete this driver?')"
+                        style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
 
                             </td>
                         </tr>

@@ -48,6 +48,12 @@
                 <input type="text" class="form-control" value="{{ $driver->id_number }}" readonly>
             </div>
 
+            {{-- Change Password Button --}}
+            <div class="mb-3">
+                <a href="{{ route('driver.password.form') }}" class="btn btn-warning mt-3">Change Password</a>
+            </div>
+            {{-- Submit Button --}}
+
             <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
         </div>
 

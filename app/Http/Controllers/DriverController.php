@@ -185,4 +185,36 @@ public function downloadReceipt($id)
     return $pdf->download($filename);
 }
 
+public function changePasswordForm()
+{
+    return view('driver.change_password');
+}
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = auth()->user();
+
+        // Check if old password is correct
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Your current password is incorrect.']);
+        }
+
+        //  Hash the new password before saving
+        $user->password = Hash::make($request->password);
+        $user->must_change_password = false; // optional: reset flag
+        $user->save();
+
+        //  Redirect safely
+        return redirect()->route('driver.dashboard')->with('success', 'Password updated successfully!');
+    }
+
+
+
+
+
 }

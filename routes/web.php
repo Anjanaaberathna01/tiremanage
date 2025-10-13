@@ -8,6 +8,7 @@ use App\Http\Controllers\TireController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\TireRequestController;
 use App\Http\Controllers\DriverController;
+use App\Http\Middleware\ForcePasswordChange;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SectionManagerController;
 use App\Http\Controllers\MechanicOfficerController;
@@ -47,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
 
 
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
             Route::get('/reports/vehicles', [ReportController::class, 'exportVehicles'])->name('reports.vehicles');
             Route::get('/reports/drivers',  [ReportController::class, 'exportDrivers'])->name('reports.drivers');
             Route::get('/reports/suppliers',[ReportController::class, 'exportSuppliers'])->name('reports.suppliers');
@@ -61,8 +62,6 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/reports/transport-officer/{status}', [ReportController::class, 'exportTransportOfficer'])
                 ->name('reports.transport_officer');
-
-
     });
 
     /**
@@ -70,7 +69,11 @@ Route::middleware(['auth'])->group(function () {
      * DRIVER ROUTES
      * ----------------
      */
-    Route::prefix('driver')->name('driver.')->group(function () {
+Route::prefix('driver')
+    ->name('driver.')
+    ->middleware(['auth'])
+    ->middleware(ForcePasswordChange::class)
+    ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'driver'])->name('dashboard');
 
         Route::get('/requests', [TireRequestController::class, 'index'])->name('requests.index');
@@ -82,6 +85,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/profile', [DriverController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile', [DriverController::class, 'updateProfile'])->name('profile.update');
+
+        Route::get('/change_password', [DriverController::class, 'changePasswordForm'])->name('password.form');
+        Route::post('/change_password', [DriverController::class, 'updatePassword'])->name('password.update');
 
         Route::get('/receipts', [DriverController::class, 'receipts'])->name('receipts');
         Route::get('/receipts/{id}/download', [DriverController::class, 'downloadReceipt'])->name('receipt.download');
@@ -168,8 +174,7 @@ Route::prefix('transport-officer')->name('transport_officer.')->middleware(['aut
     //  Receipt Routes
     Route::get('receipt/create/{id}', [TransportOfficerController::class, 'createReceipt'])->name('receipt.create');
     Route::post('receipt/store', [TransportOfficerController::class, 'storeReceipt'])->name('receipt.store');
-Route::get('/receipts/{id}/pdf', [ReceiptController::class, 'generatePDF'])
-    ->name('transport_officer.receipts.pdf');
+    Route::get('/receipts/{id}/pdf', [ReceiptController::class, 'generatePDF'])->name('transport_officer.receipts.pdf');
 });
 
 });

@@ -23,6 +23,7 @@ class DriverUserSeeder extends Seeder
                     'name' => 'driver@123',
                     'password' => Hash::make('12345678'),
                     'role_id' => $roleId,
+                    'must_change_password' => true, // 👈 add this line
                     'updated_at' => now(),
                 ]);
         } else {
@@ -31,6 +32,7 @@ class DriverUserSeeder extends Seeder
                 'email' => $email,
                 'password' => Hash::make('12345678'),
                 'role_id' => $roleId,
+                'must_change_password' => true, // 👈 add this line
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

@@ -38,6 +38,8 @@
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
                             Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
+                            Tyre Brand: {{ $req->tire->brand ?? 'N/A' }}<br>
+                            Tyre Size: {{ $req->tire->size ?? 'N/A' }}<br>
                             Tyre Count: {{ $req->tire_count ?? 'N/A' }}
                         </div>
                         <div class="request-damage">
@@ -118,7 +120,7 @@
     background: #e6f7ff;
 }
 .search-bar button {
-    background: #3b82f6;
+    background: #f63b3b;
     color: white;
     border: none;
     padding: 0 20px;
@@ -126,7 +128,7 @@
     transition: background 0.3s;
 }
 .search-bar button:hover {
-    background: #2563eb;
+    background: #eb2525;
 }
 
 /* --- Requests List --- */

@@ -138,6 +138,7 @@
                         <th>ID</th>
                         <th>Driver</th>
                         <th>Vehicle</th>
+                        <th>Size</th>
                         <th>Tyre</th>
                         <th>Date</th>
                         <th>Status</th>
@@ -149,6 +150,7 @@
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
                         <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
+                        <td>{{ $req->tire->size ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>
@@ -171,7 +173,8 @@
                         <th>ID</th>
                         <th>Driver</th>
                         <th>Vehicle</th>
-                        <th>Tire</th>
+                        <th>Size</th>
+                        <th>Tyre Brand</th>
                         <th>Date</th>
                         <th>Status</th>
                     </tr>
@@ -182,6 +185,7 @@
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
                         <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
+                        <td>{{ $req->tire->size ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>
@@ -204,7 +208,8 @@
                         <th>ID</th>
                         <th>Driver</th>
                         <th>Vehicle</th>
-                        <th>Tire</th>
+                        <th>Size</th>
+                        <th>Tyre Brand</th>
                         <th>Date</th>
                         <th>Status</th>
                     </tr>
@@ -215,6 +220,7 @@
                         <td>{{ $req->id }}</td>
                         <td>{{ $req->user->name ?? 'N/A' }}</td>
                         <td>{{ $req->vehicle->plate_no ?? 'N/A' }}</td>
+                        <td>{{ $req->tire->size ?? 'N/A' }}</td>
                         <td>{{ $req->tire->brand ?? 'N/A' }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge bg-warning">Pending</span></td>

@@ -18,7 +18,9 @@
                         <div class="request-vehicle">
                             Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
                             Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tyre: {{ $req->tire->size ?? 'N/A' }}
+                            Tyre Brand: {{ $req->tire->brand ?? 'N/A' }}<br>
+                            Tyre Size: {{ $req->tire->size ?? 'N/A' }}<br>
+                            Tyre Count: {{ $req->tire_count ?? 'N/A' }}
                         </div>
                         <div class="request-damage">
                             <strong>Damage Description:</strong>
