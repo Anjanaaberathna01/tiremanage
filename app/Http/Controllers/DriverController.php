@@ -209,8 +209,12 @@ public function changePasswordForm()
         $user->must_change_password = false; // optional: reset flag
         $user->save();
 
-        //  Redirect safely
-        return redirect()->route('driver.dashboard')->with('success', 'Password updated successfully!');
+        // Log the user out and invalidate session, then redirect to login
+        \Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Password updated successfully. Please log in with your new password.');
     }
 
 

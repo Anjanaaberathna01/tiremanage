@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Tyre Management System | Login</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 <style>
   body{
@@ -71,6 +72,16 @@
     .welcome-text{ font-size:1.4rem; top:40px; }
     .logo-top-left{ width:70px; }
   }
+  /* Overrides to prevent overlapping and improve layout */
+  body{ display:block; }
+  .welcome-wrapper{ position:static; left:auto; top:auto; transform:none; margin-top:90px; }
+  .system-info{ position:static; margin-top:10px; }
+  .system-info p{ display:none !important; }
+  .login-container{ margin:20px auto 40px; max-width:420px; }
+  @media (max-width: 576px){
+    .welcome-wrapper{ display:none; }
+    .system-info{ margin-top:80px; }
+  }
 </style>
 </head>
 <body>
@@ -88,8 +99,11 @@
   <p>© 2025 SLT Mobile Systems</p>
 </div>
 
-<div class="login-container">
+  <div class="login-container">
   <h2>Login</h2>
+  @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+  @endif
   @if(session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
   @endif
@@ -99,7 +113,12 @@
     <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}" required autofocus>
     @error('email')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
 
-    <input type="password" name="password" class="form-control" placeholder="Password" required>
+    <div class="input-group">
+      <input id="loginPassword" type="password" name="password" class="form-control" placeholder="Password" required>
+      <button class="btn btn-outline-secondary" type="button" id="toggleLoginPw" aria-label="Show password">
+        <i class="bi bi-eye" id="loginPwIcon"></i>
+      </button>
+    </div>
     @error('password')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
 
     <!-- Remember Me Checkbox -->
@@ -174,5 +193,21 @@
 
   window.addEventListener('load', () => { typeStep(); });
 </script>
+<script>
+  (function(){
+    const toggleBtn = document.getElementById('toggleLoginPw');
+    const pwInput = document.getElementById('loginPassword');
+    const icon = document.getElementById('loginPwIcon');
+    if(toggleBtn && pwInput && icon){
+      toggleBtn.addEventListener('click', function(){
+        const isPw = pwInput.type === 'password';
+        pwInput.type = isPw ? 'text' : 'password';
+        icon.classList.toggle('bi-eye');
+        icon.classList.toggle('bi-eye-slash');
+        toggleBtn.setAttribute('aria-label', isPw ? 'Hide password' : 'Show password');
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
