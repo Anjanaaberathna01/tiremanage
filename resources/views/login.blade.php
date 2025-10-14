@@ -76,6 +76,7 @@
   body{ display:block; }
   .welcome-wrapper{ position:static; left:auto; top:auto; transform:none; margin-top:90px; }
   .system-info{ position:static; margin-top:10px; }
+  .system-info p{ display:none !important; }
   .login-container{ margin:20px auto 40px; max-width:420px; }
   @media (max-width: 576px){
     .welcome-wrapper{ display:none; }
