@@ -108,6 +108,10 @@
       <label class="form-check-label" for="remember">Remember Me</label>
     </div>
 
+    <div class="text-center mt-2">
+    <a href="{{ route('driver.password.request.form') }}" class="small">Forgot password?</a>
+    </div>
+
     <button type="submit" class="btn btn-primary mt-2">Login</button>
   </form>
 </div>
