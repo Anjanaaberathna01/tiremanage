@@ -3,99 +3,161 @@
 @section('title', 'Change Password')
 
 @section('content')
-<div class="container mx-auto p-6 max-w-lg">
-    <h1 class="text-2xl font-bold mb-4">Change Password</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">Change Password</h5>
+            </div>
+            <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success mb-3">{{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+                @endif
 
-    @if(session('success'))
-        <div class="alert alert-success mb-4">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger mb-4">{{ session('error') }}</div>
-    @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger mb-3">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    <form id="passwordForm" action="{{ route('driver.password.update') }}" method="POST">
-        @csrf
+                <form id="passwordForm" action="{{ route('driver.password.update') }}" method="POST" novalidate>
+                    @csrf
 
-        <div class="mb-4">
-            <label for="current_password" class="block font-medium mb-1">Current Password</label>
-            <input type="password" name="current_password" id="current_password" required class="border p-2 w-full rounded">
-            <button type="button" class="toggle-password text-sm mt-1">Show</button>
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <div class="input-group">
+                            <input type="password" name="current_password" id="current_password"
+                                   class="form-control @error('current_password') is-invalid @enderror" required>
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password" aria-label="Toggle current password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            @error('current_password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">New Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password" id="password"
+                                   class="form-control @error('password') is-invalid @enderror" required aria-describedby="passwordHelp passwordStrengthText">
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password" aria-label="Toggle new password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-text" id="passwordHelp">Use at least 8 characters, including a number and an uppercase letter.</div>
+                        <div class="mt-2">
+                            <div class="progress" style="height: 6px;">
+                                <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small id="passwordStrengthText" class="text-muted"></small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirm New Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password_confirmation" aria-label="Toggle confirm password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <small id="confirmMessage" class="form-text"></small>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
+    </div>
 
-        <div class="mb-4">
-            <label for="password" class="block font-medium mb-1">New Password</label>
-            <input type="password" name="password" id="password" required class="border p-2 w-full rounded">
-            <small id="passwordStrength" class="text-sm mt-1 block"></small>
-            <button type="button" class="toggle-password text-sm mt-1">Show</button>
-        </div>
-
-        <div class="mb-4">
-            <label for="password_confirmation" class="block font-medium mb-1">Confirm New Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" required class="border p-2 w-full rounded">
-            <small id="confirmMessage" class="text-sm mt-1 block"></small>
-            <button type="button" class="toggle-password text-sm mt-1">Show</button>
-        </div>
-
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update Password</button>
-    </form>
-</div>
-
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle password visibility
-    document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            if(input.type === 'password') {
-                input.type = 'text';
-                this.textContent = 'Hide';
-            } else {
-                input.type = 'password';
-                this.textContent = 'Show';
-            }
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-target');
+            const input = document.getElementById(id);
+            const icon = this.querySelector('i');
+            if (!input) return;
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            if (icon) icon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
         });
     });
 
     const passwordInput = document.getElementById('password');
     const confirmInput = document.getElementById('password_confirmation');
-    const strengthText = document.getElementById('passwordStrength');
+    const strengthBar = document.getElementById('passwordStrengthBar');
+    const strengthText = document.getElementById('passwordStrengthText');
     const confirmMessage = document.getElementById('confirmMessage');
 
-    // Password strength checker
-    passwordInput.addEventListener('input', function() {
-        const val = passwordInput.value;
-        let strength = '';
-        if(val.length < 6) {
-            strength = 'Too short';
-            strengthText.style.color = 'red';
-        } else if(/[A-Z]/.test(val) && /[0-9]/.test(val) && val.length >= 8) {
-            strength = 'Strong';
-            strengthText.style.color = 'green';
-        } else {
-            strength = 'Weak';
-            strengthText.style.color = 'orange';
-        }
-        strengthText.textContent = 'Strength: ' + strength;
-    });
+    function evaluateStrength(val) {
+        let score = 0;
+        if (val.length >= 8) score += 1;
+        if (/[A-Z]/.test(val)) score += 1;
+        if (/[0-9]/.test(val)) score += 1;
+        if (/[^A-Za-z0-9]/.test(val)) score += 1;
+        return score; // 0..4
+    }
 
-    // Confirm password matching
-    confirmInput.addEventListener('input', function() {
-        if(confirmInput.value === passwordInput.value) {
+    function renderStrength(val) {
+        const score = evaluateStrength(val);
+        const pct = (score / 4) * 100;
+        let cls = 'bg-danger';
+        let label = 'Too short';
+        if (score <= 1) { cls = 'bg-danger'; label = 'Weak'; }
+        if (score === 2) { cls = 'bg-warning'; label = 'Fair'; }
+        if (score === 3) { cls = 'bg-info'; label = 'Good'; }
+        if (score === 4) { cls = 'bg-success'; label = 'Strong'; }
+        strengthBar.className = 'progress-bar ' + cls;
+        strengthBar.style.width = pct + '%';
+        strengthText.textContent = val ? ('Strength: ' + label) : '';
+    }
+
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function () {
+            renderStrength(passwordInput.value);
+        });
+    }
+
+    function renderConfirmState() {
+        if (!confirmInput || !passwordInput) return;
+        if (!confirmInput.value) { confirmMessage.textContent = ''; return; }
+        if (confirmInput.value === passwordInput.value) {
             confirmMessage.textContent = 'Passwords match';
-            confirmMessage.style.color = 'green';
+            confirmMessage.className = 'form-text text-success';
         } else {
             confirmMessage.textContent = 'Passwords do not match';
-            confirmMessage.style.color = 'red';
+            confirmMessage.className = 'form-text text-danger';
         }
-    });
+    }
 
-    // Optional: prevent form submit if passwords don't match
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        if(passwordInput.value !== confirmInput.value) {
+    if (confirmInput) {
+        confirmInput.addEventListener('input', renderConfirmState);
+        passwordInput && passwordInput.addEventListener('input', renderConfirmState);
+    }
+
+    document.getElementById('passwordForm').addEventListener('submit', function (e) {
+        if (passwordInput && confirmInput && passwordInput.value !== confirmInput.value) {
             e.preventDefault();
-            alert('Passwords do not match!');
         }
     });
 });
 </script>
+@endpush
 @endsection
