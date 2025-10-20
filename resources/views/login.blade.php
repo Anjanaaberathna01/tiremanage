@@ -173,7 +173,7 @@
   const loginForm = document.getElementById('loginContainer');
 
   let partIndex = 0, charIndex = 0, currentSpan = null;
-  const typingSpeed = 100, betweenPartsDelay = 150;
+  const typingSpeed = 80, betweenPartsDelay = 100;
 
   function typeStep() {
     if (partIndex < parts.length) {
@@ -203,8 +203,8 @@
         setTimeout(() => {
           wrapper.style.display = 'none';
           loginForm.classList.add('show'); // Slide up form
-        }, 500);
-      },900);
+        }, 200);
+      },200);
     }
   }
 

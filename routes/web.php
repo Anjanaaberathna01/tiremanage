@@ -122,6 +122,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('section-manager')->name('section_manager.')->group(function () {
         Route::get('/dashboard', [SectionManagerController::class, 'index'])->name('dashboard');
 
+        // Search
+        Route::get('/requests/search', [SectionManagerController::class, 'search'])->name('requests.search');
+
         Route::get('/pending', [SectionManagerController::class, 'pending'])->name('requests.pending');
         Route::get('/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
         Route::get('/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
