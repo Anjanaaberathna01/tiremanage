@@ -22,48 +22,48 @@
     }
 
     /* Stats cards */
-    .row {
+    .stats-grid { margin-bottom: 1.5rem; }
+    .stat-card {
+        position: relative;
         display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        flex: 1 1 calc(25% - 20px);
-        min-width: 220px;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.1rem;
+        border-radius: 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transition: transform .18s ease, box-shadow .2s ease, background-color .2s ease;
         cursor: pointer;
-        text-align: center;
-        padding: 25px 15px;
-        background: #F75270;
+        text-decoration: none;
+        color: inherit;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(17,24,39,.1); }
+    .stat-card:active { transform: translateY(-1px); }
+
+    .stat-icon {
+        width: 48px; height: 48px; min-width: 48px;
+        border-radius: 12px;
+        display: grid; place-items: center;
         color: #fff;
+        box-shadow: 0 10px 18px rgba(17,24,39,.12);
     }
+    .stat-content { flex: 1; }
+    .stat-label { margin: 0; font-size: .95rem; color: var(--muted); font-weight: 600; letter-spacing: .2px; }
+    .stat-value { margin: 2px 0 0; font-size: 1.8rem; font-weight: 800; color: var(--text); line-height: 1.1; }
 
-    .card h5 {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
+    /* Color variants */
+    .stat-primary  { border-top: 3px solid var(--primary); }
+    .stat-success  { border-top: 3px solid var(--success); }
+    .stat-warning  { border-top: 3px solid var(--warning); }
+    .stat-danger   { border-top: 3px solid var(--danger); }
+    .stat-indigo   { border-top: 3px solid #6366f1; }
 
-    .card h3 {
-        font-size: 2rem;
-        font-weight: 700;
-    }
-
-    .card:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .card-danger {
-        background: #DC143C;
-        color: #fff;
-    }
+    .icon-primary  { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .icon-success  { background: linear-gradient(135deg, #34d399, #10b981); }
+    .icon-warning  { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .icon-danger   { background: linear-gradient(135deg, #f87171, #ef4444); }
+    .icon-indigo   { background: linear-gradient(135deg, #818cf8, #6366f1); }
 
     /* Table styling */
     table {
@@ -96,26 +96,9 @@
         transition: all 0.2s ease;
     }
 
-    /* Buttons */
-    .btn {
-        border-radius: 8px;
-        padding: 6px 14px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .btn-primary { background: #F75270; color: #fff; }
-    .btn-primary:hover { background: #DC143C; }
-    .btn-success { background: #F75270; color: #fff; }
-    .btn-success:hover { background: #DC143C; }
-    .btn-info { background: #F75270; color: #fff; }
-    .btn-info:hover { background: #DC143C; }
-    .btn-warning { background: #0BA6DF; color: #fff; }
-    .btn-warning:hover { background: #4fbfe8; }
-    .btn-danger { background: #DC143C; color: #fff; }
-    .btn-danger:hover { background: #d62828; }
+    /* Buttons: use global theme from layout; only tweak spacing on this page */
+    .btn { padding: 0.55rem 0.95rem; }
+    .btn-sm { padding: 0.35rem 0.6rem; font-weight: 600; }
 
     /* Hover card effect */
     .hover-card {
@@ -134,37 +117,60 @@
     }
 </style>
 
-<h2 class="mb-4">🌟 Admin Dashboard</h2>
+<h2 class="mb-4">Admin Dashboard</h2>
 
 {{-- Stats Cards --}}
-<div class="row mb-4">
-    <div class="card">
-        <h5>Total Vehicles</h5>
-        <h3>{{ $vehicles_count }}</h3>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-5 g-3 stats-grid">
+    <div class="col">
+        <a class="stat-card stat-primary" href="{{ route('admin.vehicles.index') }}">
+            <div class="stat-icon icon-primary"><i class="bi bi-truck"></i></div>
+            <div class="stat-content">
+                <p class="stat-label">Total Vehicles</p>
+                <p class="stat-value">{{ $vehicles_count }}</p>
+            </div>
+        </a>
     </div>
-    <div class="card">
-        <h5>Total Tyres</h5>
-        <h3>{{ $tires_count }}</h3>
+    <div class="col">
+        <a class="stat-card stat-success" href="{{ route('admin.tires.index') }}">
+            <div class="stat-icon icon-success"><i class="bi bi-speedometer2"></i></div>
+            <div class="stat-content">
+                <p class="stat-label">Total Tyres</p>
+                <p class="stat-value">{{ $tires_count }}</p>
+            </div>
+        </a>
     </div>
-    <div class="card">
-        <h5>Suppliers</h5>
-        <h3>{{ $suppliers_count }}</h3>
+    <div class="col">
+        <a class="stat-card stat-indigo" href="{{ route('admin.suppliers.index') }}">
+            <div class="stat-icon icon-indigo"><i class="bi bi-building"></i></div>
+            <div class="stat-content">
+                <p class="stat-label">Suppliers</p>
+                <p class="stat-value">{{ $suppliers_count }}</p>
+            </div>
+        </a>
     </div>
-    
-    <div class="card hover-card" onclick="window.location='{{ route('admin.reports.index') }}'">
-    <h5>Reports</h5>
-    <h3>Download</h3>
+    <div class="col">
+        <a class="stat-card stat-primary" href="{{ route('admin.reports.index') }}">
+            <div class="stat-icon icon-primary"><i class="bi bi-file-earmark-arrow-down"></i></div>
+            <div class="stat-content">
+                <p class="stat-label">Reports</p>
+                <p class="stat-value">Download</p>
+            </div>
+        </a>
     </div>
-
-    <div class="card card-danger hover-card" onclick="window.location='{{ route('admin.request.pending') }}'">
-        <h5>Pending Requests</h5>
-        <h3>{{ $pending_requests }}</h3>
+    <div class="col">
+        <a class="stat-card stat-danger" href="{{ route('admin.request.pending') }}">
+            <div class="stat-icon icon-danger"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-content">
+                <p class="stat-label">Pending Requests</p>
+                <p class="stat-value">{{ $pending_requests }}</p>
+            </div>
+        </a>
     </div>
 </div>
 
 {{-- Vehicles --}}
 <h3>Vehicles</h3>
-<a href="{{ route('admin.vehicles.create') }}" class="btn btn-primary mb-2">Add Vehicle</a>
+<a href="{{ route('admin.vehicles.create') }}" class="btn btn-primary btn-elevated mb-2"><i class="bi bi-plus-lg"></i> Add Vehicle</a>
 <table>
     <thead>
         <tr>
@@ -183,11 +189,11 @@
             <td>{{ $vehicle->plate_no }}</td>
             <td>{{ $vehicle->branch }}</td>
             <td>
-                <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                 <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this vehicle?')">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this vehicle?')"><i class="bi bi-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>
@@ -199,7 +205,7 @@
 
 {{-- Tires --}}
 <h3>Tyres</h3>
-<a href="{{ route('admin.tires.create') }}" class="btn btn-success mb-2">Add Tyre</a>
+<a href="{{ route('admin.tires.create') }}" class="btn btn-success btn-elevated mb-2"><i class="bi bi-plus-circle"></i> Add Tyre</a>
 <table>
     <thead>
         <tr>
@@ -216,11 +222,11 @@
             <td>{{ $tire->size }}</td>
             <td>{{ $tire->supplier->name ?? 'N/A' }}</td>
             <td>
-                <a href="{{ route('admin.tires.edit', $tire->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ route('admin.tires.edit', $tire->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                 <form action="{{ route('admin.tires.destroy', $tire->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>
@@ -232,7 +238,7 @@
 
 {{-- Suppliers --}}
 <h3>Suppliers</h3>
-<a href="{{ route('admin.suppliers.create') }}" class="btn btn-info mb-2">Add Supplier</a>
+<a href="{{ route('admin.suppliers.create') }}" class="btn btn-primary btn-elevated mb-2"><i class="bi bi-building-add"></i> Add Supplier</a>
 <table>
     <thead>
         <tr>
@@ -249,11 +255,11 @@
             <td>{{ $supplier->contact }}</td>
             <td>{{ $supplier->address }}</td>
             <td>
-                <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                 <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>
@@ -265,7 +271,7 @@
 
 {{-- Drivers --}}
 <h3>Drivers</h3>
-<a href="{{ route('admin.drivers.create') }}" class="btn btn-primary mb-2">Add Driver</a>
+<a href="{{ route('admin.drivers.create') }}" class="btn btn-primary btn-elevated mb-2"><i class="bi bi-person-plus"></i> Add Driver</a>
 <table>
     <thead>
         <tr>
@@ -291,7 +297,7 @@
                 <form action="{{ route('admin.drivers.destroy', $driver->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this driver?')">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this driver?')"><i class="bi bi-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>

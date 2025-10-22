@@ -7,12 +7,13 @@
     <title>@yield('title', 'Transport Officer')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    @include('partials.theme')
     @stack('styles')
 </head>
 
 <body>
     {{-- Transport Officer Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('transport_officer.pending') }}">
                 <img src="{{ asset('assets/images/logo3.png') }}" alt="logo"

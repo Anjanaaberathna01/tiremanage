@@ -1,4 +1,4 @@
-@extends($layout === 'admin' ? 'layouts.admin' : 'layouts.section_manager')
+@extends(($layout ?? null) === 'admin' ? 'layouts.admin' : 'layouts.section_manager')
 
 @section('title', 'Vehicles List')
 
@@ -6,16 +6,17 @@
 <h3 class="mb-3">Vehicles</h3>
 
 {{-- Search Vehicle --}}
-<form action="{{ route('section_manager.vehicles.index') }}" method="GET" class="mb-3 d-flex gap-2">
+@php($isAdmin = (($layout ?? null) === 'admin'))
+<form action="{{ route($isAdmin ? 'admin.vehicles.index' : 'section_manager.vehicles.index') }}" method="GET" class="mb-3 d-flex gap-2">
     <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by Plate Number...">
     <button class="btn btn-primary">Search</button>
 </form>
 
 {{-- Add Vehicle --}}
-<a href="{{ route('section_manager.vehicles.create') }}" class="btn btn-success mb-3">Add Vehicle</a>
+<a href="{{ route($isAdmin ? 'admin.vehicles.create' : 'section_manager.vehicles.create') }}" class="btn btn-primary btn-elevated mb-3"><i class="bi bi-plus-lg"></i> Add Vehicle</a>
 
-<table class="table table-bordered text-center align-middle">
-    <thead class="table-dark">
+<table class="table text-center align-middle">
+    <thead>
         <tr>
             <th style="width: 10%;">No</th>
             <th style="width: 25%;">Model</th>
@@ -32,11 +33,11 @@
             <td>{{ $vehicle->plate_no }}</td>
             <td>{{ $vehicle->branch }}</td>
             <td>
-                <a href="{{ route('section_manager.vehicles.edit', $vehicle->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                <form action="{{ route('section_manager.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
+                <a href="{{ route($isAdmin ? 'admin.vehicles.edit' : 'section_manager.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                <form action="{{ route($isAdmin ? 'admin.vehicles.destroy' : 'section_manager.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this vehicle?')">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this vehicle?')"><i class="bi bi-trash"></i> Delete</button>
                 </form>
             </td>
         </tr>
