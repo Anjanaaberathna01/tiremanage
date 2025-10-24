@@ -57,6 +57,7 @@
             font-size: 1.05rem;
             line-height: 1.2;
         }
+        .navbar .navbar-brand .brand-logo { height: 30px; width: auto; display: block; }
         .navbar .nav-link {
             color: rgba(255,255,255,.85) !important;
             font-weight: 500;
@@ -158,7 +159,9 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">Admin Panel</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('assets/images/logo2.png') }}" alt="SLT-MOBITEL" class="brand-logo">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
