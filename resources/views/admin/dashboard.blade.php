@@ -178,6 +178,9 @@
             <th>Model</th>
             <th>Plate Number</th>
             <th>Branch</th>
+            <th>Vehicle Type</th>
+            <th>Brand</th>
+            <th>User Section</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -188,6 +191,9 @@
             <td>{{ $vehicle->model }}</td>
             <td>{{ $vehicle->plate_no }}</td>
             <td>{{ $vehicle->branch }}</td>
+            <td>{{ $vehicle->vehicle_type }}</td>
+            <td>{{ $vehicle->brand }}</td>
+            <td>{{ $vehicle->user_section }}</td>
             <td>
                 <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                 <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
@@ -198,7 +204,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="5">No vehicles found.</td></tr>
+        <tr><td colspan="8">No vehicles found.</td></tr>
         @endforelse
     </tbody>
 </table>

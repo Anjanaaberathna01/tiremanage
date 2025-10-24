@@ -43,8 +43,16 @@ h2 { color: #333; text-align: center; margin-bottom: 20px; }
                 <tr>
                     <th>No</th>
                     <th>Branch</th>
+                    <th>Vehicle Type</th>
+                    <th>Vehicle Brand</th>
+                    <th>User Section</th>
                     <th>Vehicle</th>
                     <th>Tyre Size</th>
+                    <th>Delivery Office</th>
+                    <th>Delivery Street</th>
+                    <th>Delivery Town</th>
+                    <th>Last Replacement</th>
+                    <th>Existing Tyre Make</th>
                     <th>Damage Description</th>
                     <th>Tyre Count</th>
                     <th>Images</th>
@@ -59,8 +67,16 @@ h2 { color: #333; text-align: center; margin-bottom: 20px; }
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ method_exists($request, 'branchName') ? ($request->branchName() ?? 'N/A') : ($request->branch_name ?? 'N/A') }}</td>
+                    <td>{{ $request->vehicle?->vehicle_type ?? 'N/A' }}</td>
+                    <td>{{ $request->vehicle?->brand ?? 'N/A' }}</td>
+                    <td>{{ $request->vehicle?->user_section ?? 'N/A' }}</td>
                     <td>{{ $request->vehicle?->plate_no ?? 'N/A' }}</td>
                     <td>{{ $request->tire?->size ?? 'N/A' }}</td>
+                    <td>{{ $request->delivery_place_office ?? '-' }}</td>
+                    <td>{{ $request->delivery_place_street ?? '-' }}</td>
+                    <td>{{ $request->delivery_place_town ?? '-' }}</td>
+                    <td>{{ optional($request->last_tire_replacement_date)->format('Y-m-d') ?? '-' }}</td>
+                    <td>{{ $request->existing_tire_make ?? '-' }}</td>
                     <td>{{ $request->damage_description ?? '-' }}</td>
                     <td>{{ $request->tire_count ?? 1 }}</td>
 

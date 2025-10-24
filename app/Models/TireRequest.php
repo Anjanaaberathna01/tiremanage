@@ -29,11 +29,16 @@ class TireRequest extends Model
         'tire_images',
         'status',
         'current_level', // workflow tracking
+        'delivery_place_office',
+        'delivery_place_street',
+        'delivery_place_town',
+        'last_tire_replacement_date',
+        'existing_tire_make',
     ];
 
     protected $casts = [
         'tire_images' => 'array',
-
+        'last_tire_replacement_date' => 'date',
     ];
 
     /*

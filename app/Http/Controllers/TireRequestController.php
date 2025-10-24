@@ -24,9 +24,14 @@ class TireRequestController extends Controller
         $validated = $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
             'tire_id' => 'required|exists:tires,id',
-            'tire_count' => 'required|integer|min:1', 
+            'tire_count' => 'required|integer|min:1',
             'damage_description' => 'required|string|max:500',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'delivery_place_office' => 'nullable|string|max:255',
+            'delivery_place_street' => 'nullable|string|max:255',
+            'delivery_place_town' => 'nullable|string|max:255',
+            'last_tire_replacement_date' => 'nullable|date',
+            'existing_tire_make' => 'nullable|string|max:255',
         ]);
 
         $images = [];
@@ -40,10 +45,15 @@ class TireRequestController extends Controller
             'user_id' => auth()->id(),
             'vehicle_id' => $validated['vehicle_id'],
             'tire_id' => $validated['tire_id'],
-            'tire_count' => $validated['tire_count'], // <-- store tire count
+            'tire_count' => $validated['tire_count'],
             'damage_description' => $validated['damage_description'],
             'tire_images' => $images,
             'status' => 'pending',
+            'delivery_place_office' => $validated['delivery_place_office'] ?? null,
+            'delivery_place_street' => $validated['delivery_place_street'] ?? null,
+            'delivery_place_town' => $validated['delivery_place_town'] ?? null,
+            'last_tire_replacement_date' => $validated['last_tire_replacement_date'] ?? null,
+            'existing_tire_make' => $validated['existing_tire_make'] ?? null,
         ]);
 
         return redirect()->route('driver.dashboard')

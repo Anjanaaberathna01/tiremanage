@@ -43,7 +43,7 @@
                     <option value="{{ $v->plate_no }}"></option>
                 @endforeach
             </datalist>
-            <small class="text-muted">If the plate is registered, branch will auto-fill.</small>
+            <small class="text-muted">If the plate is registered, branch and other vehicle details will auto-fill.</small>
 
             {{-- Hidden vehicle_id --}}
             <input type="hidden" name="vehicle_id" id="vehicle_id">
@@ -53,6 +53,24 @@
         <div class="mb-3">
             <label for="branch" class="form-label">Branch</label>
             <input type="text" name="branch" id="branch" class="form-control" readonly>
+        </div>
+
+        {{-- Vehicle Type (auto-filled, read-only) --}}
+        <div class="mb-3">
+            <label for="vehicle_type" class="form-label">Vehicle Type</label>
+            <input type="text" id="vehicle_type" class="form-control" readonly>
+        </div>
+
+        {{-- Vehicle Brand (auto-filled, read-only) --}}
+        <div class="mb-3">
+            <label for="vehicle_brand" class="form-label">Vehicle Brand</label>
+            <input type="text" id="vehicle_brand" class="form-control" readonly>
+        </div>
+
+        {{-- User Section (auto-filled, read-only) --}}
+        <div class="mb-3">
+            <label for="user_section" class="form-label">User Section</label>
+            <input type="text" id="user_section" class="form-control" readonly>
         </div>
 
         {{-- Tyre Size --}}
@@ -69,6 +87,37 @@
         <div class="mb-3">
             <label for="tire_count" class="form-label">Number of Tyres</label>
             <input type="number" name="tire_count" id="tire_count" class="form-control" min="1" value="1" required>
+        </div>
+
+
+        {{-- Delivery Place - Office Name --}}
+        <div class="mb-3">
+            <label for="delivery_place_office" class="form-label">Delivery Place - Office Name</label>
+            <input type="text" name="delivery_place_office" id="delivery_place_office" class="form-control" maxlength="255">
+        </div>
+
+        {{-- Delivery Place - Street Name --}}
+        <div class="mb-3">
+            <label for="delivery_place_street" class="form-label">Delivery Place - Street Name</label>
+            <input type="text" name="delivery_place_street" id="delivery_place_street" class="form-control" maxlength="255">
+        </div>
+
+        {{-- Delivery Place - Town --}}
+        <div class="mb-3">
+            <label for="delivery_place_town" class="form-label">Delivery Place - Town</label>
+            <input type="text" name="delivery_place_town" id="delivery_place_town" class="form-control" maxlength="255">
+        </div>
+
+        {{-- Last Tire Replacement Date --}}
+        <div class="mb-3">
+            <label for="last_tire_replacement_date" class="form-label">Last Tire Replacement Date</label>
+            <input type="date" name="last_tire_replacement_date" id="last_tire_replacement_date" class="form-control">
+        </div>
+
+        {{-- Make of Existing Tyre --}}
+        <div class="mb-3">
+            <label for="existing_tire_make" class="form-label">Make of Existing Tyre</label>
+            <input type="text" name="existing_tire_make" id="existing_tire_make" class="form-control" maxlength="255">
         </div>
 
         {{-- Damage Description --}}
@@ -98,12 +147,18 @@ document.addEventListener('DOMContentLoaded', function(){
     const plateInput = document.getElementById('plate_no');
     const branchInput = document.getElementById('branch');
     const vehicleId   = document.getElementById('vehicle_id');
+    const vehicleType = document.getElementById('vehicle_type');
+    const vehicleBrand = document.getElementById('vehicle_brand');
+    const userSection = document.getElementById('user_section');
 
     async function lookupPlate(plate) {
         plate = (plate || '').trim();
         if (!plate) {
             branchInput.value = '';
             vehicleId.value   = '';
+            vehicleType.value = '';
+            vehicleBrand.value = '';
+            userSection.value = '';
             return;
         }
 
@@ -120,16 +175,25 @@ document.addEventListener('DOMContentLoaded', function(){
             const data = await res.json();
 
             if (data.found) {
-                branchInput.value = data.branch;
-                vehicleId.value   = data.id;
+                branchInput.value = data.branch || '';
+                vehicleId.value   = data.id || '';
+                vehicleType.value = data.vehicle_type || '';
+                vehicleBrand.value = data.brand || '';
+                userSection.value = data.user_section || '';
             } else {
                 branchInput.value = '';
                 vehicleId.value   = '';
+                vehicleType.value = '';
+                vehicleBrand.value = '';
+                userSection.value = '';
             }
         } catch (err) {
             console.error('Lookup failed', err);
             branchInput.value = '';
             vehicleId.value   = '';
+            vehicleType.value = '';
+            vehicleBrand.value = '';
+            userSection.value = '';
         }
     }
 
