@@ -77,6 +77,39 @@
             @enderror
         </div>
 
+        <div class="mb-3">
+            <label for="vehicle_type" class="form-label fw-bold">Vehicle Type</label>
+            <input type="text" name="vehicle_type" id="vehicle_type"
+                   class="form-control @error('vehicle_type') is-invalid @enderror"
+                   value="{{ old('vehicle_type') }}"
+                   placeholder="e.g., Car, Van, Truck">
+            @error('vehicle_type')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="brand" class="form-label fw-bold">Brand</label>
+            <input type="text" name="brand" id="brand"
+                   class="form-control @error('brand') is-invalid @enderror"
+                   value="{{ old('brand') }}"
+                   placeholder="e.g., Toyota, Nissan, Honda">
+            @error('brand')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="user_section" class="form-label fw-bold">User Section</label>
+            <input type="text" name="user_section" id="user_section"
+                   class="form-control @error('user_section') is-invalid @enderror"
+                   value="{{ old('user_section') }}"
+                   placeholder="e.g., Transport, Admin, Field Ops">
+            @error('user_section')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
         <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-success px-4">💾 Save</button>
             <a href="{{ auth()->user()->role->name === 'Admin'

@@ -128,6 +128,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pending', [SectionManagerController::class, 'pending'])->name('requests.pending');
         Route::get('/approved', [SectionManagerController::class, 'approved'])->name('requests.approved_list');
         Route::get('/rejected', [SectionManagerController::class, 'rejected'])->name('requests.rejected_list');
+        Route::get('/requests/{id}/edit', [SectionManagerController::class, 'edit'])->name('requests.edit');
+        Route::put('/requests/{id}', [SectionManagerController::class, 'update'])->name('requests.update');
         Route::post('/{id}/approve', [SectionManagerController::class, 'approve'])->name('requests.approve');
         Route::post('/{id}/reject', [SectionManagerController::class, 'reject'])->name('requests.reject');
 
