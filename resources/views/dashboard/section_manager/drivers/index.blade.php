@@ -45,16 +45,31 @@
                             <td>{{ $driver->mobile ?? 'N/A' }}</td>
                             <td>{{ $driver->id_number ?? 'N/A' }}</td>
                             <td>
-                                <form action="{{ $layout === 'admin' ? route('admin.drivers.destroy', $driver->id) : route('section_manager.drivers.destroy', $driver->id) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete this driver?')"
-                                      style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </form>
+                                @if ($layout === 'admin')
+                                    <div class="action-buttons">
+                                        <form action="{{ route('admin.drivers.destroy', $driver->id) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this driver?')"
+                                              style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @else
+                                    <form action="{{ route('section_manager.drivers.destroy', $driver->id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Are you sure you want to delete this driver?')"
+                                          style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -83,4 +98,3 @@
     });
 </script>
 @endpush
-

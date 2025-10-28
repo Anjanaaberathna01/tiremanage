@@ -5,20 +5,18 @@
 @section('content')
 
 <style>
-    /* Background */
+    /* Restore rich background for Dashboard only */
     body {
         background:
             linear-gradient(135deg, rgba(90, 90, 90, 0.85), rgba(42, 42, 42, 0.85)),
             url("{{ asset('assets/images/background2.jpg') }}") no-repeat center center fixed;
         background-size: cover;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
     }
 
     h2, h3 {
         font-family: 'Poppins', sans-serif;
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.1);
-        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+        color: #ffffff;
     }
 
     /* Stats cards */
@@ -195,12 +193,18 @@
             <td>{{ $vehicle->brand }}</td>
             <td>{{ $vehicle->user_section }}</td>
             <td>
-                <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
-                <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this vehicle?')"><i class="bi bi-trash"></i> Delete</button>
-                </form>
+                <div class="action-buttons">
+                    <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Delete this vehicle?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         @empty
@@ -228,12 +232,18 @@
             <td>{{ $tire->size }}</td>
             <td>{{ $tire->supplier->name ?? 'N/A' }}</td>
             <td>
-                <a href="{{ route('admin.tires.edit', $tire->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
-                <form action="{{ route('admin.tires.destroy', $tire->id) }}" method="POST" style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
-                </form>
+                <div class="action-buttons">
+                    <a href="{{ route('admin.tires.edit', $tire->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form action="{{ route('admin.tires.destroy', $tire->id) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Delete this tyre?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         @empty
@@ -261,12 +271,18 @@
             <td>{{ $supplier->contact }}</td>
             <td>{{ $supplier->address }}</td>
             <td>
-                <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
-                <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
-                </form>
+                <div class="action-buttons">
+                    <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Delete this supplier?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         @empty
@@ -300,11 +316,15 @@
             <td>{{ $driver->mobile }}</td>
             <td>{{ $driver->id_number }}</td>
             <td>
-                <form action="{{ route('admin.drivers.destroy', $driver->id) }}" method="POST" style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this driver?')"><i class="bi bi-trash"></i> Delete</button>
-                </form>
+                <div class="action-buttons">
+                    <form action="{{ route('admin.drivers.destroy', $driver->id) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Delete this driver?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         @empty

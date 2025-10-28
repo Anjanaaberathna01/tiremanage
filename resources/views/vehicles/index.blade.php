@@ -39,12 +39,27 @@
             <td>{{ $vehicle->brand }}</td>
             <td>{{ $vehicle->user_section }}</td>
             <td>
-                <a href="{{ route($isAdmin ? 'admin.vehicles.edit' : 'section_manager.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
-                <form action="{{ route($isAdmin ? 'admin.vehicles.destroy' : 'section_manager.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this vehicle?')"><i class="bi bi-trash"></i> Delete</button>
-                </form>
+                @if ($isAdmin)
+                    <div class="action-buttons">
+                        <a href="{{ route('admin.vehicles.edit', $vehicle->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form action="{{ route('admin.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger btn-icon btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure to delete this vehicle?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <a href="{{ route('section_manager.vehicles.edit', $vehicle->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                    <form action="{{ route('section_manager.vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this vehicle?')"><i class="bi bi-trash"></i> Delete</button>
+                    </form>
+                @endif
             </td>
         </tr>
         @empty
