@@ -261,7 +261,8 @@
             <th>Name</th>
             <th>Contact</th>
             <th>Address</th>
-            <th>Actions</th>
+            <th>Town</th>
+            <th></th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -270,6 +271,7 @@
             <td>{{ $supplier->name }}</td>
             <td>{{ $supplier->contact }}</td>
             <td>{{ $supplier->address }}</td>
+            <td>{{ $supplier->town }}</td>
             <td>
                 <div class="action-buttons">
                     <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
@@ -286,7 +288,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="4">No suppliers found.</td></tr>
+    <tr><td colspan="5">No suppliers found.</td></tr>
         @endforelse
     </tbody>
 </table>

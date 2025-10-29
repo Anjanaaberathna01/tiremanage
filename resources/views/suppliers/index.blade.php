@@ -22,6 +22,7 @@
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Address</th>
+                    <th>Town</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -31,6 +32,7 @@
                         <td class="supplier-name">{{ $supplier->name }}</td>
                         <td class="supplier-contact">{{ $supplier->contact }}</td>
                         <td class="supplier-address">{{ $supplier->address }}</td>
+                        <td class="supplier-town">{{ $supplier->town }}</td>
                         <td>
                             <div class="action-buttons">
                                 <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-outline-primary btn-icon btn-sm" data-bs-toggle="tooltip" title="Edit">
@@ -48,7 +50,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">No suppliers found.</td>
+                        <td colspan="5" class="text-center text-muted py-4">No suppliers found.</td>
                     </tr>
                 @endforelse
             </tbody>

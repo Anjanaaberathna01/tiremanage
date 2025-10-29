@@ -45,9 +45,15 @@ public function approved()
         ->orderByDesc('updated_at')
         ->get();
 
-    $suppliers = Supplier::all(); // Add this line
+    $suppliers = Supplier::all();
+    // Distinct list of towns that have registered suppliers
+    $towns = Supplier::whereNotNull('town')
+        ->where('town', '!=', '')
+        ->distinct()
+        ->orderBy('town')
+        ->pluck('town');
 
-    return view('dashboard.transport_officer.approved', compact('approvedRequests', 'suppliers'));
+    return view('dashboard.transport_officer.approved', compact('approvedRequests', 'suppliers', 'towns'));
 }
 
 
@@ -187,10 +193,23 @@ public function storeReceipt(Request $request)
         'supplier_id' => ['required', Rule::exists($supplierModel->getTable(), 'id')],
         'amount'      => 'required|numeric',
         'description' => 'nullable|string',
+        'town'        => 'nullable|string|max:100',
     ]);
 
     $tireRequest = TireRequest::with(['user', 'vehicle'])->findOrFail($validated['request_id']);
     $supplier = Supplier::findOrFail($validated['supplier_id']);
+
+    // If a town is selected on the form (or taken from request), enforce that the supplier belongs to that town
+    $selectedTown = $request->input('town') ?: ($tireRequest->delivery_place_town ?? null);
+    if ($selectedTown !== null && $selectedTown !== '') {
+        // Compare case-insensitively and trim spaces
+        $supplierTown = trim((string)($supplier->town ?? ''));
+        if (strcasecmp($supplierTown, trim((string)$selectedTown)) !== 0) {
+            return back()
+                ->withErrors(['supplier_id' => 'Selected supplier is not registered in the chosen town.'])
+                ->withInput();
+        }
+    }
 
     // Create receipt record
     $receipt = Receipt::create([

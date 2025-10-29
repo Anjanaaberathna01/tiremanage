@@ -32,6 +32,7 @@ class SupplierController extends Controller
             'name' => 'required|string|max:255',
             'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'address' => 'nullable|string|max:500',
+            'town' => 'nullable|string|max:100',
         ], [
             'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
         ]);
@@ -57,6 +58,7 @@ class SupplierController extends Controller
             'name' => 'required|string|max:255',
             'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
             'address' => 'nullable|string|max:500',
+            'town' => 'nullable|string|max:100',
         ], [
             'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
         ]);

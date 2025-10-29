@@ -20,6 +20,10 @@
             <label>Address</label>
             <textarea name="address" class="form-control"></textarea>
         </div>
+        <div class="mb-3">
+            <label>Town</label>
+            <input type="text" name="town" class="form-control" maxlength="100">
+        </div>
         <button type="submit" class="btn btn-success">Save Supplier</button>
         <a href="{{ route('admin.suppliers.index') }}" class="btn btn-secondary">Back</a>
     </form>

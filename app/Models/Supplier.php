@@ -9,7 +9,7 @@ class Supplier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'contact', 'address'];
+    protected $fillable = ['name', 'contact', 'address', 'town'];
 
     // relation: supplier has many tires
     public function tires()
