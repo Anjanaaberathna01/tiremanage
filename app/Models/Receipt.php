@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
  class Receipt extends Model
 {
-    protected $fillable = ['request_id', 'user_id', 'supplier_id', 'amount', 'description'];
+    protected $fillable = ['request_id', 'user_id', 'supplier_id', 'amount', 'description', 'is_read'];
 
     public function user()
     {

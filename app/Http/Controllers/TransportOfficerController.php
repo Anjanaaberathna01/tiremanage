@@ -115,7 +115,7 @@ public function approved()
                 'current_level' => Approval::LEVEL_TRANSPORT_OFFICER,
             ]);
             return redirect()->route('transport_officer.rejected')
-                ->with('error', '❌ Request updated and rejected.');
+                ->with('error', 'Supplier contact number not found. WhatsApp message not sent.');
         }
 
         // Pending
@@ -169,7 +169,7 @@ public function approved()
         );
 
         return redirect()->route('transport_officer.rejected')
-            ->with('error', '❌ Request rejected.');
+            ->with('error', 'Supplier contact number not found. WhatsApp message not sent.');
     }
 
 
@@ -247,14 +247,14 @@ public function storeReceipt(Request $request)
     // Prepare WhatsApp message (supplier only)
     if (empty($supplier->contact)) {
         return redirect()->route('transport_officer.approved')
-            ->with('error', '⚠️ Supplier contact number not found. WhatsApp message not sent.');
+            ->with('error', 'Supplier contact number not found. WhatsApp message not sent.');
     }
 
     $driverName   = $tireRequest->user->name ?? 'N/A';
     $vehiclePlate = $tireRequest->vehicle->plate_no ?? 'N/A';
 
     $messageLines = [
-        " Tire Request Receipt",
+        "Tire Request Receipt",
         "------------------------------",
         "Request ID: {$tireRequest->id}",
         "Driver: {$driverName}",
@@ -276,8 +276,10 @@ public function storeReceipt(Request $request)
     $phoneDigits = $this->normalizePhoneForWhatsApp($supplier->contact);
     $waLink = "https://wa.me/{$phoneDigits}?text=" . urlencode($message);
 
-    // Redirect directly to WhatsApp
-    return redirect()->away($waLink);
+    // Redirect back to app and open WhatsApp in a new tab via session
+    return redirect()->route('transport_officer.approved')
+        ->with('success', 'Receipt generated. Opening WhatsApp…')
+        ->with('wa_link', $waLink);
 }
 
 
@@ -327,3 +329,4 @@ private function normalizePhoneForWhatsApp(string $rawPhone): string
 }
 
 }
+

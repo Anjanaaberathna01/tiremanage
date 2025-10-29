@@ -16,7 +16,8 @@ class ReceiptController extends Controller
         $receipt = Receipt::with(['supplier', 'tireRequest.user', 'tireRequest.vehicle'])->findOrFail($id);
 
         // Load the PDF view and pass the receipt data
-        $pdf = Pdf::loadView('receipts.pdf', compact('receipt'));
+        // View path corrected to match resources/views/pdf/receipt.blade.php
+        $pdf = Pdf::loadView('pdf.receipt', compact('receipt'));
 
         // Return the file for download
         return $pdf->download("receipt_{$id}.pdf");
