@@ -21,6 +21,10 @@
             <label>Address</label>
             <textarea name="address" class="form-control">{{ $supplier->address }}</textarea>
         </div>
+        <div class="mb-3">
+            <label>Town</label>
+            <input type="text" name="town" class="form-control" value="{{ old('town', $supplier->town) }}" maxlength="100">
+        </div>
         <button type="submit" class="btn btn-success">Update Supplier</button>
         <a href="{{ route('admin.suppliers.index') }}" class="btn btn-secondary">Back</a>
     </form>

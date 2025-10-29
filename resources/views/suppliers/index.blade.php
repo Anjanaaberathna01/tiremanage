@@ -22,6 +22,7 @@
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Address</th>
+                    <th>Town</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -31,6 +32,7 @@
                         <td class="supplier-name">{{ $supplier->name }}</td>
                         <td class="supplier-contact">{{ $supplier->contact }}</td>
                         <td class="supplier-address">{{ $supplier->address }}</td>
+                        <td class="supplier-town">{{ $supplier->town }}</td>
                         <td>
                             <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                             <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
@@ -42,7 +44,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">No suppliers found.</td>
+                        <td colspan="5" class="text-center text-muted py-4">No suppliers found.</td>
                     </tr>
                 @endforelse
             </tbody>
