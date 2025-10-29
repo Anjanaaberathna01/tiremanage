@@ -5,6 +5,18 @@
 
 @section('content')
 <div class="container px-0">
+    @if(session('error'))
+        <div class="alert alert-danger"><i class="bi bi-exclamation-octagon me-2"></i>{{ session('error') }}</div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <ul class="list-unstyled d-flex flex-column gap-3 mb-5">
         @forelse($approvedRequests as $req)
             <li>
@@ -175,4 +187,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 @endpush
-
