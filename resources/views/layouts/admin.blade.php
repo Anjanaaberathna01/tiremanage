@@ -9,24 +9,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <!-- Custom Admin Theme (Darkened to reduce white) -->
+    <!-- Custom Admin Theme (Light, neutral palette with brand navbar) -->
     <style>
         :root {
             --nav-h: 52px;        /* compact navbar height */
-            --bg: #0f172a;        /* slate-900 */
-            --surface: #111827;   /* gray-900 */
-            --muted: #9ca3af;     /* gray-400 */
-            --text: #e5e7eb;      /* gray-200 */
-            --border: #1f2937;    /* gray-800 */
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            /* Light neutral admin palette */
+            --bg: #f5f7fb;
+            --surface: #f9fafb;
+            --muted: #6b7280;     /* gray-500 */
+            --text: #111827;      /* gray-900 */
+            --border: #e5e7eb;    /* gray-200 */
+            --shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
 
-            /* SLT-MOBITEL brand accents */
+            /* Brand accents */
             --primary: #0057A8;       /* SLT blue */
             --primary-600: #004C95;   /* darker SLT blue */
             --brand-green: #39B54A;   /* MOBITEL green */
             --success: var(--brand-green);
             --success-600: #2E9E3E;
-            --primary-focus: rgba(0, 87, 168, .32);
+            --primary-focus: rgba(0, 87, 168, .15);
             --warning: #f59e0b;   /* amber-500 */
             --warning-600: #d97706;
             --danger: #ef4444;    /* red-500 */
@@ -43,37 +44,19 @@
 
         /* Top navbar */
         .navbar {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--brand-green) 100%) !important;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-600) 100%) !important;
             border-bottom: none;
-            box-shadow: 0 6px 18px rgba(0,0,0,.35);
+            box-shadow: 0 6px 18px rgba(0,0,0,.18);
             padding-top: .15rem;
             padding-bottom: .15rem;
             min-height: var(--nav-h);
         }
-        .navbar .navbar-brand {
-            color: #ffffff !important;
-            font-weight: 700;
-            letter-spacing: .2px;
-            font-size: 1.05rem;
-            line-height: 1.2;
-        }
+        .navbar .navbar-brand { color: #ffffff !important; font-weight: 700; letter-spacing: .2px; font-size: 1.05rem; line-height: 1.2; }
         .navbar .navbar-brand .brand-logo { height: 30px; width: auto; display: block; }
-        .navbar .nav-link {
-            color: rgba(255,255,255,.85) !important;
-            font-weight: 500;
-            border-radius: .4rem;
-            padding: .35rem .6rem;
-            line-height: 1.2;
-            transition: background-color .2s ease, color .2s ease, transform .08s ease;
-        }
-        .navbar .nav-link:hover {
-            background: rgba(255,255,255,.08);
-            color: #ffffff !important;
-        }
-        .navbar .nav-link.active, .navbar .nav-link[aria-current="page"] {
-            background: rgba(255,255,255,.18);
-            color: #ffffff !important;
-        }
+        .navbar .navbar-brand .brand-logo { filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.4)); }
+        .navbar .nav-link { color: rgba(255,255,255,.85) !important; font-weight: 500; border-radius: .4rem; padding: .35rem .6rem; line-height: 1.2; transition: background-color .2s ease, color .2s ease, transform .08s ease; }
+        .navbar .nav-link:hover { background: rgba(255,255,255,.08); color: #ffffff !important; }
+        .navbar .nav-link.active, .navbar .nav-link[aria-current="page"] { background: rgba(255,255,255,.18); color: #ffffff !important; }
         .navbar .nav-link:active {
             transform: translateY(1px);
         }
@@ -97,8 +80,8 @@
             background: var(--surface);
             color: var(--text);
         }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(0,0,0,.45); }
-        .card-header { background: #0b1220; border-bottom-color: var(--border); color: var(--text); font-weight: 600; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(17,24,39,.08); }
+        .card-header { background: #f9fafb; border-bottom-color: var(--border); color: var(--text); font-weight: 600; }
 
         /* Buttons */
         .btn { border-radius: 10px; font-weight: 600; letter-spacing: .2px; }
@@ -111,9 +94,15 @@
         .btn-danger { background: var(--danger); border-color: var(--danger); }
         .btn-danger:hover { background: var(--danger-600); border-color: var(--danger-600); }
         .btn-elevated { box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
-        .btn-elevated:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(17,24,39,.1); }
-        .btn:focus { box-shadow: 0 0 0 .2rem var(--primary-focus); }
+        .btn-elevated:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,.22); }
+        .btn:focus { box-shadow: 0 0 0 .16rem var(--primary-focus); }
         .btn .bi { margin-right: .4rem; position: relative; top: -1px; }
+
+        /* Modern icon action buttons */
+        .btn-icon { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; }
+        .btn-sm.btn-icon { width: 30px; height: 30px; }
+        .btn-icon .bi { margin: 0; top: 0; }
+        .action-buttons { display: inline-flex; gap: .35rem; }
 
         /* Outline buttons for dark theme */
         .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
@@ -129,7 +118,7 @@
 
         /* Tables */
         table { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        thead th { background: #0b1220; color: var(--text); font-weight: 700; }
+        thead th { background: #f3f4f6; color: #111827; font-weight: 700; }
         th, td { vertical-align: middle; }
         tbody tr { transition: background-color .15s ease; }
         tbody tr:hover { background: rgba(255,255,255,0.03); }
@@ -140,9 +129,9 @@
         a:hover { color: var(--primary-600); }
 
         /* Forms */
-        .form-control { border-radius: 10px; border-color: var(--border); background: #0b1220; color: var(--text); }
-        .form-control::placeholder { color: #94a3b8; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 .2rem var(--primary-focus); background: #0b1220; color: var(--text); }
+        .form-control { border-radius: 10px; border-color: var(--border); background: #ffffff; color: var(--text); }
+        .form-control::placeholder { color: #9ca3af; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 .2rem var(--primary-focus); background: #ffffff; color: var(--text); }
 
         /* Footer intentionally removed from admin layout */
 
@@ -192,6 +181,14 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>
