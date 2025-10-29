@@ -1,42 +1,58 @@
 @extends('layouts.transportofficer')
 
 @section('title', 'Create Receipt')
+@section('page_title', 'Create Receipt')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <h2 class="text-xl font-bold mb-4">🧾 Create Receipt</h2>
-
-    <form action="{{ route('transport_officer.receipt.store') }}" method="POST" class="space-y-4">
+<div class="container px-0">
+    <form action="{{ route('transport_officer.receipt.store') }}" method="POST" class="card">
         @csrf
+        <div class="card-body">
+            <input type="hidden" name="request_id" value="{{ $tireRequest->id }}">
 
-        <input type="hidden" name="request_id" value="{{ $tireRequest->id }}">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Driver</label>
+                    <input type="text" class="form-control" value="{{ $tireRequest->driver->full_name ?? ($tireRequest->user->name ?? 'N/A') }}" disabled>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Vehicle</label>
+                    <input type="text" class="form-control" value="{{ $tireRequest->vehicle->plate_no ?? 'N/A' }}" disabled>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tire</label>
+                    <input type="text" class="form-control" value="{{ ($tireRequest->tire->brand ?? 'N/A') . ' ' . ($tireRequest->tire->size ?? '') }}" disabled>
+                </div>
+            </div>
 
-        <div>
-            <label class="block font-semibold">Driver:</label>
-            <p>{{ $tireRequest->driver->full_name ?? 'N/A' }}</p>
+            <hr class="my-4">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="supplier_id" class="form-label">Supplier</label>
+                    <select name="supplier_id" id="supplier_id" required class="form-select">
+                        <option value="">-- Select Supplier --</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}">{{ $supplier->name }} - {{ $supplier->contact }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input type="number" name="amount" id="amount" class="form-control" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" class="form-control" rows="3" placeholder="Enter description (optional)"></textarea>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-send-check me-1"></i> Save Receipt</button>
+                <a href="{{ route('transport_officer.approved') }}" class="btn btn-secondary">Cancel</a>
+            </div>
         </div>
-
-        <div>
-            <label for="supplier_id" class="block font-semibold">Supplier:</label>
-            <select name="supplier_id" id="supplier_id" required class="border rounded w-full p-2">
-                <option value="">-- Select Supplier --</option>
-                @foreach($suppliers as $supplier)
-                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div>
-            <label for="amount" class="block font-semibold">Amount:</label>
-            <input type="number" name="amount" id="amount" class="border rounded w-full p-2" placeholder="Enter amount">
-        </div>
-
-        <div>
-            <label for="description" class="block font-semibold">Description:</label>
-            <textarea name="description" id="description" class="border rounded w-full p-2" rows="3" placeholder="Enter description"></textarea>
-        </div>
-
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Receipt</button>
     </form>
 </div>
 @endsection
+

@@ -27,15 +27,21 @@
                 <ul class="navbar-nav ms-auto">
                     {{-- Dashboard / Pending Requests --}}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transport_officer.pending') }}">Home</a>
+                        <a class="nav-link {{ request()->routeIs('transport_officer.pending') ? 'active' : '' }}" href="{{ route('transport_officer.pending') }}">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
                     </li>
                     {{-- Approved Requests --}}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transport_officer.approved') }}">Approved Requests</a>
+                        <a class="nav-link {{ request()->routeIs('transport_officer.approved') ? 'active' : '' }}" href="{{ route('transport_officer.approved') }}">
+                            <i class="bi bi-check2-circle me-1"></i> Approved
+                        </a>
                     </li>
                     {{-- Rejected Requests --}}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transport_officer.rejected') }}">Rejected Requests</a>
+                        <a class="nav-link {{ request()->routeIs('transport_officer.rejected') ? 'active' : '' }}" href="{{ route('transport_officer.rejected') }}">
+                            <i class="bi bi-x-circle me-1"></i> Rejected
+                        </a>
                     </li>
                     {{-- Logout --}}
                     <li class="nav-item">
@@ -49,7 +55,34 @@
         </div>
     </nav>
 
+    {{-- Section header with tabs --}}
     <div class="container mt-5 pt-4">
+        <div class="card mb-3">
+            <div class="card-body d-flex flex-wrap align-items-center justify-content-between py-3">
+                <div class="me-3">
+                    <h1 class="h4 mb-1">@yield('page_title', 'Transport Officer Dashboard')</h1>
+                    <div class="text-muted small">Manage tire requests across statuses</div>
+                </div>
+                <ul class="nav nav-pills gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('transport_officer.pending') ? 'active' : '' }}" href="{{ route('transport_officer.pending') }}">
+                            <i class="bi bi-hourglass-split me-1"></i> Pending
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('transport_officer.approved') ? 'active' : '' }}" href="{{ route('transport_officer.approved') }}">
+                            <i class="bi bi-check2-circle me-1"></i> Approved
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('transport_officer.rejected') ? 'active' : '' }}" href="{{ route('transport_officer.rejected') }}">
+                            <i class="bi bi-x-circle me-1"></i> Rejected
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         @yield('content')
     </div>
 
@@ -59,10 +92,10 @@
     @stack('scripts')
 
     @if(session('success'))
-    <div class="alert alert-success" style="background:#dcfce7;color:#065f46;padding:10px 15px;border-radius:6px;margin-bottom:15px;">
-        {{ session('success') }}
-    </div>
-@endif
+        <div class="alert alert-success shadow-sm mx-3">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+        </div>
+    @endif
 
 </body>
 
