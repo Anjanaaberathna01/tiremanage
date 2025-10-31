@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.driver')
 
 @section('title', 'Driver Dashboard')
 
@@ -28,20 +28,19 @@
         </h1>
     </div>
 
-    {{-- NEW DRIVER INFO CARD --}}
-@if($driver)
-<div class="driver-info-card fade-in">
-    <div class="card-overlay"></div>
-    <h2 class="info-title">👤 Driver Information</h2>
-    <div class="info-grid">
-        <div><strong>Full Name:</strong> {{ $driver->full_name ?? 'N/A' }}</div>
-        <div><strong>Email:</strong> {{ $driver->user->email ?? 'N/A' }}</div>
-        <div><strong>Mobile:</strong> {{ $driver->mobile ?? 'N/A' }}</div>
-        <div><strong>ID Number:</strong> {{ $driver->id_number ?? 'N/A' }}</div>
+    {{-- Driver info card --}}
+    @if($driver)
+    <div class="driver-info-card fade-in">
+        <div class="card-overlay"></div>
+        <h2 class="info-title">Driver Information</h2>
+        <div class="info-grid">
+            <div><strong>Full Name:</strong> {{ $driver->full_name ?? 'N/A' }}</div>
+            <div><strong>Email:</strong> {{ $driver->user->email ?? 'N/A' }}</div>
+            <div><strong>Mobile:</strong> {{ $driver->mobile ?? 'N/A' }}</div>
+            <div><strong>ID Number:</strong> {{ $driver->id_number ?? 'N/A' }}</div>
+        </div>
     </div>
-</div>
-@endif
-
+    @endif
 
     {{-- Two Column Layout --}}
     <div class="dashboard-two-col">
@@ -51,36 +50,54 @@
             <div class="cards-stack">
 
                 <div class="card clickable" data-href="{{ route('driver.requests.create') }}">
-                    <h2 class="card-title">Request Tyre</h2>
-                    <p class="card-text">Submit a new tyre request quickly and easily.</p>
+                    <div class="card-row">
+                        <div class="card-icon"><i class="bi bi-plus-circle"></i></div>
+                        <div>
+                            <h2 class="card-title">Request Tyre</h2>
+                            <p class="card-text">Submit a new tyre request quickly and easily.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card clickable" data-href="{{ route('driver.requests.index') }}">
-                    <h2 class="card-title">View Your Requests</h2>
-                    <p class="card-text">Track the status of your tyre requests.</p>
+                    <div class="card-row">
+                        <div class="card-icon"><i class="bi bi-clipboard-check"></i></div>
+                        <div>
+                            <h2 class="card-title">View Your Requests</h2>
+                            <p class="card-text">Track the status of your tyre requests.</p>
+                        </div>
+                    </div>
                 </div>
 
-                    @php
-                        $unreadReceipts = \App\Models\Receipt::whereHas('tireRequest', function ($query) {
-                            $query->where('user_id', auth()->id());
-                        })->where('is_read', false)->count();
-                    @endphp
+                @php
+                    $unreadReceipts = \App\Models\Receipt::whereHas('tireRequest', function ($query) {
+                        $query->where('user_id', auth()->id());
+                    })->where('is_read', false)->count();
+                @endphp
 
-                    <div class="card clickable" data-href="{{ route('driver.receipts') }}" style="position: relative;">
-                        {{-- Notification badge --}}
-                        @if($unreadReceipts > 0)
-                            <div class="notif-badge">{{ $unreadReceipts }}</div>
-                        @endif
+                <div class="card clickable" data-href="{{ route('driver.receipts') }}" style="position: relative;">
+                    {{-- Notification badge --}}
+                    @if($unreadReceipts > 0)
+                        <div class="notif-badge">{{ $unreadReceipts }}</div>
+                    @endif
 
-                        <h2 class="card-title">View Receipts</h2>
-                        <p class="card-text">Check all your tyre request receipts.</p>
+                    <div class="card-row">
+                        <div class="card-icon"><i class="bi bi-receipt"></i></div>
+                        <div>
+                            <h2 class="card-title">View Receipts</h2>
+                            <p class="card-text">Check all your tyre request receipts.</p>
+                        </div>
                     </div>
-
-
+                </div>
 
                 <div class="card clickable" data-href="{{ route('driver.profile.edit') }}">
-                    <h2 class="card-title">Manage Account</h2>
-                    <p class="card-text">Update your profile and account details.</p>
+                    <div class="card-row">
+                        <div class="card-icon"><i class="bi bi-person-gear"></i></div>
+                        <div>
+                            <h2 class="card-title">Manage Account</h2>
+                            <p class="card-text">Update your profile and account details.</p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -93,9 +110,7 @@
                 <div class="image-overlay"></div>
                 <div class="image-content">
                     <h2 class="image-title">Smooth Rides Start Here</h2>
-                    <p class="image-desc">
-                        Manage your tyre requests — request, track approvals, and view receipts all in one place.
-                    </p>
+                    <p class="image-desc">Manage your tyre requests — request, track approvals, and view receipts all in one place.</p>
                 </div>
             </div>
         </div>
@@ -227,7 +242,6 @@
     }
 }
 
-
 /* ===== Two Column Layout ===== */
 .dashboard-two-col {
     display: flex;
@@ -250,10 +264,11 @@
     gap: 30px;
 }
 .card {
-    background: #2563eb;
+    background: linear-gradient(180deg, #0b1220, #111827);
+    border: 1px solid rgba(148, 163, 184, 0.12);
     border-radius: 14px;
     padding: 24px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.35);
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -266,29 +281,44 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: #2563eb
+    background: radial-gradient(120% 120% at -10% -10%, rgba(37,99,235,.18), rgba(37,99,235,0) 50%);
     opacity: 0;
     transition: opacity 0.4s;
     z-index: 0;
 }
-.card:hover::before { opacity: 0.15; }
+.card:hover::before { opacity: 1; }
 .card:hover {
     transform: translateY(-4px);
-
 }
+.card-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+.card-icon {
+    height: 42px;
+    width: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    flex: 0 0 auto;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+.card-icon i { font-size: 20px; line-height: 1; }
 .card-title {
     font-size: 20px;
     font-weight: 700;
-    color: #ead024;
-    margin-bottom: 6px;
-    position: relative;
-    z-index: 1;
+    color: #e2e8f0;
+    margin-bottom: 4px;
 }
 .card-text {
     font-size: 15px;
-    color: #dbba15;
-    position: relative;
-    z-index: 1;
+    color: #cbd5e1;
 }
 
 /* ===== Image Panel ===== */
@@ -335,7 +365,8 @@
     .dashboard-two-col { flex-direction: column; }
     .image-panel { height: 320px; }
 }
-/* === Creative Notification Badge === */
+
+/* Notification Badge */
 .notif-badge {
     position: absolute;
     top: 14px;
@@ -354,14 +385,11 @@
     animation: pulseBadge 1.5s infinite;
     z-index: 10;
 }
-
-/* Pulse animation */
 @keyframes pulseBadge {
     0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
     70%  { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(239,68,68,0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0); }
 }
-
 
 </style>
 @endpush
