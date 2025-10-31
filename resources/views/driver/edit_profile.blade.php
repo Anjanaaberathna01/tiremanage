@@ -117,5 +117,5 @@ function removePhoto() {
 .remove-icon:hover { transform: scale(1.2); background-color: #b91c1c; }
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}">
 @endsection
