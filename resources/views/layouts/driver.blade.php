@@ -18,7 +18,7 @@
       .driver-navbar .nav-link { color: #cbd5e1 !important; font-weight: 600; }
       .driver-navbar .nav-link:hover, .driver-navbar .nav-link.active { background: rgba(59,130,246,.12); color: #ffffff !important; }
       .driver-navbar .btn-link.nav-link { color: #fca5a5 !important; }
-      .driver-navbar .navbar-toggler { border-color: rgba(148,163,184,.35); }
+      .driver-navbar .navbar-toggler { border-color: rgba(250, 250, 250, 0.35); }
       .driver-navbar .navbar-toggler:focus { box-shadow: 0 0 0 .15rem rgba(59,130,246,.35); }
       .driver-navbar .navbar-toggler-icon { filter: invert(1) brightness(1.2); }
     </style>
