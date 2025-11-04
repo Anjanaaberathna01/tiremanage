@@ -3,141 +3,116 @@
 @section('title', 'Pending Requests')
 
 @section('content')
-<div class="container mx-auto p-6">
+<div class="container mx-auto p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="bi bi-hourglass-split me-2"></i> Pending Requests</h3>
+    <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET" class="m-0">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+        <input type="text" name="search" id="search-input" value="{{ request('search') }}" class="form-control" placeholder="Search by driver name">
+        @if(request('search'))
+          <a href="{{ route('section_manager.dashboard') }}" class="btn btn-outline-secondary">Reset</a>
+        @endif
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+  </div>
 
-    {{--  Toolbar / Creative Search Bar --}}
-    <div class="toolbar mb-6">
-        <form id="driver-search-form" action="{{ route('section_manager.requests.search') }}" method="GET" class="search-bar">
-            <input type="text" name="search" id="search-input" value="{{ request('search') }}"
-                placeholder="Search by Driver Name..." />
-            <button type="submit">🔍 Search</button>
-        </form>
-    </div>
+  <ul class="requests-list list-unstyled">
+    @forelse($pendingRequests as $req)
+      <li class="request-card card shadow-sm">
+        <div class="request-content p-3">
+          <div class="request-info">
+            <div class="request-header d-flex justify-content-between align-items-center">
+              <div class="fw-semibold">
+                <i class="bi bi-person-circle me-1"></i>{{ $req->user->name ?? 'N/A' }}
+              </div>
+              <div class="small text-muted">
+                <i class="bi bi-calendar3 me-1"></i>{{ optional($req->created_at)->format('Y-m-d H:i') ?? '-' }}
+              </div>
+            </div>
 
-    {{--  Pending Requests --}}
-    <ul class="requests-list">
-        @forelse($pendingRequests as $req)
-            <li class="request-card">
-                <div class="request-content">
-                    <div class="request-info">
-                        <div class="request-header">
-                            <strong>Request:</strong> {{ $req->user->name ?? 'N/A' }}
-                        </div>
-                        <div class="request-vehicle">
-                            Vehicle: {{ $req->vehicle->plate_no ?? 'N/A' }}<br>
-                            Branch: {{ $req->vehicle->branch ?? 'N/A' }}<br>
-                            Tyre Brand: {{ $req->tire->brand ?? 'N/A' }}<br>
-                            Tyre Size: {{ $req->tire->size ?? 'N/A' }}<br>
-                            Tyre Count: {{ $req->tire_count ?? 'N/A' }}
-                        </div>
-                        <div class="request-damage">
-                            <strong>Damage Description:</strong>
-                            <p>{{ $req->damage_description ?? 'No description provided' }}</p>
-                        </div>
+            <div class="request-vehicle mb-2">
+              <span class="badge text-bg-light border fw-semibold"><i class="bi bi-truck me-1"></i>{{ $req->vehicle->plate_no ?? 'N/A' }}</span>
+              <span class="badge bg-secondary-subtle text-secondary border"><i class="bi bi-geo-alt me-1"></i>{{ $req->vehicle->branch ?? 'N/A' }}</span>
+              <span class="badge bg-info-subtle text-info border"><i class="bi bi-record2 me-1"></i>{{ $req->tire->brand ?? 'N/A' }}</span>
+              <span class="badge bg-dark-subtle text-dark border"><i class="bi bi-aspect-ratio me-1"></i>{{ $req->tire->size ?? 'N/A' }}</span>
+              <span class="badge bg-primary-subtle text-primary border"><i class="bi bi-123 me-1"></i>{{ $req->tire_count ?? 'N/A' }}</span>
+            </div>
 
-                        @php
-                            $images = [];
-                            if(!empty($req->tire_images)) {
-                                if(is_array($req->tire_images)) {
-                                    $images = $req->tire_images;
-                                } elseif(is_string($req->tire_images)) {
-                                    $decoded = json_decode($req->tire_images, true);
-                                    if(is_array($decoded)) $images = $decoded;
-                                }
-                            }
-                        @endphp
+            <div class="request-damage">
+              <strong>Damage Description:</strong>
+              <p class="mb-2">{{ $req->damage_description ?? 'No description provided' }}</p>
+            </div>
 
-                        @if(count($images) > 0)
-                        <div class="request-images">
-                            <strong>Images:</strong>
-                            <div class="images-container">
-                                @foreach($images as $img)
-                                    <img src="{{ asset('storage/' . $img) }}"
-                                         alt="image-{{ $req->id }}"
-                                         class="request-img"
-                                         data-full="{{ asset('storage/' . $img) }}" />
-                                @endforeach
-                            </div>
-                        </div>
-                        @else
-                            <div class="no-images"><em>No images provided</em></div>
-                        @endif
-                    </div>
+            @php
+              $images = [];
+              if(!empty($req->tire_images)) {
+                if(is_array($req->tire_images)) {
+                  $images = $req->tire_images;
+                } elseif(is_string($req->tire_images)) {
+                  $decoded = json_decode($req->tire_images, true);
+                  if(is_array($decoded)) $images = $decoded;
+                }
+              }
+            @endphp
 
-                    <div class="request-actions">
-                        <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="approve-btn">Approve</button>
-                        </form>
-                        <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="reject-btn">Reject</button>
-                        </form>
-                    </div>
+            @if(count($images) > 0)
+              <div class="request-images mt-2">
+                <strong>Images:</strong>
+                <div class="images-container">
+                  @foreach($images as $img)
+                    <img src="{{ asset('storage/' . $img) }}" alt="image-{{ $req->id }}" class="request-img" data-full="{{ asset('storage/' . $img) }}" />
+                  @endforeach
                 </div>
-            </li>
-        @empty
-            <li class="request-card empty-card">No pending requests found.</li>
-        @endforelse
-    </ul>
+              </div>
+            @else
+              <div class="no-images"><em>No images provided</em></div>
+            @endif
+          </div>
 
+          <div class="request-actions">
+            <form action="{{ route('section_manager.requests.approve', $req->id) }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="btn btn-outline-success btn-sm btn-icon" data-bs-toggle="tooltip" title="Approve">
+                <i class="bi bi-check2-circle"></i> <span class="d-none d-sm-inline">Approve</span>
+              </button>
+            </form>
+            <form action="{{ route('section_manager.requests.reject', $req->id) }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="btn btn-outline-danger btn-sm btn-icon" data-bs-toggle="tooltip" title="Reject">
+                <i class="bi bi-x-circle"></i> <span class="d-none d-sm-inline">Reject</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </li>
+    @empty
+      <li class="request-card empty-card">No pending requests found.</li>
+    @endforelse
+  </ul>
 </div>
 @endsection
 
 @push('styles')
 <style>
-/* --- Search Bar --- */
-.search-bar {
-    display: flex;
-    max-width: 400px;
-    margin-bottom: 20px;
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.search-bar input[type="text"] {
-    flex: 1;
-    padding: 10px 20px;
-    border: none;
-    font-size: 1rem;
-    outline: none;
-    transition: background 0.3s;
-}
-.search-bar input[type="text"]:focus {
-    background: #e6f7ff;
-}
-.search-bar button {
-    background: #4f5251;
-    color: white;
-    border: none;
-    padding: 0 20px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.search-bar button:hover {
-    background: #3a423f;
-}
-
-/* --- Requests --- */
-.requests-list { display:flex; flex-direction:column; gap:1.5rem; }
-.request-card { background: linear-gradient(135deg,#f5f593,#f5f589); border:1px solid rgba(6,95,70,0.2); border-radius:1rem; padding:1.5rem; box-shadow:0 6px 14px rgba(0,0,0,0.06); transition:transform .3s, box-shadow .3s; }
-.request-card:hover { transform:translateY(-4px); box-shadow:0 12px 20px rgba(0,0,0,0.1); }
-.request-header { font-weight:600; color:#7a6b00; margin-bottom:5px; font-size:1.1rem; }
-.request-vehicle, .request-damage p { color:#374151; margin-bottom:5px; }
+.requests-list { display:flex; flex-direction:column; gap:1rem; }
+.request-card { border:1px solid #e5e7eb; border-left:4px solid #0d6efd; border-radius:.75rem; background:#fff; }
+.request-card:hover { transform:translateY(-2px); box-shadow:0 12px 18px rgba(0,0,0,.08) !important; }
+.request-header { font-weight:600; color:#111827; font-size:1.05rem; }
+.request-vehicle, .request-damage p { color:#374151; }
 .images-container { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem; }
-.request-img { width:100px; height:70px; object-fit:cover; border-radius:6px; border:1px solid #ccc; cursor:pointer; transition:transform 0.25s, box-shadow 0.25s; }
+.request-img { width:100px; height:70px; object-fit:cover; border-radius:6px; border:1px solid #ccc; cursor:pointer; transition:transform .25s, box-shadow .25s; }
 .request-img:hover { transform:scale(1.05); box-shadow:0 6px 15px rgba(0,0,0,0.15); }
 .no-images { font-style:italic; color:#6b7280; margin-top:5px; }
-
-/* --- Buttons --- */
-.request-actions { margin-top:10px; display:flex; gap:10px; }
-.approve-btn { background:#10b981; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; transition:background 0.25s, transform 0.25s; }
-.approve-btn:hover { background:#059669; transform:translateY(-2px); }
-.reject-btn { background:#ef4444; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; transition:background 0.25s, transform 0.25s; }
-.reject-btn:hover { background:#b91c1c; transform:translateY(-2px); }
-.empty-card { text-align:center; color:#6b7280; font-style:italic; }
-
-/* --- Lightbox --- */
+.request-actions { margin-top:10px; display:flex; gap:8px; }
+.empty-card { text-align:center; color:#6b7280; font-style:italic; padding:1rem; }
+/* helpers for badges */
+.bg-primary-subtle { background: rgba(13,110,253,.10) !important; }
+.bg-secondary-subtle { background: rgba(108,117,125,.12) !important; }
+.bg-info-subtle { background: rgba(13,202,240,.12) !important; }
+.bg-dark-subtle { background: rgba(33,37,41,.10) !important; }
+/* Lightbox */
 .lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:10000; }
 .lightbox.active { display:flex; }
 .lightbox img { max-width:90%; max-height:85%; border-radius:12px; }
@@ -145,56 +120,31 @@
 </style>
 @endpush
 
-
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Lightbox
-    const lightbox = document.createElement('div');
-    lightbox.className = 'lightbox';
-    lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
-    document.body.appendChild(lightbox);
-    const imgEl = lightbox.querySelector('img');
-    const closeBtn = lightbox.querySelector('.close-btn');
+  // Lightbox
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  lightbox.innerHTML = '<span class="close-btn">&times;</span><img src="" alt="preview"/>';
+  document.body.appendChild(lightbox);
+  const imgEl = lightbox.querySelector('img');
+  const closeBtn = lightbox.querySelector('.close-btn');
+  document.querySelectorAll('.request-img').forEach(img => {
+    img.addEventListener('click', () => {
+      imgEl.src = img.dataset.full || img.src;
+      lightbox.classList.add('active');
+    });
+  });
+  const close = () => { lightbox.classList.remove('active'); imgEl.src=''; };
+  closeBtn.addEventListener('click', close);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
 
-    document.querySelectorAll('.request-img').forEach(img => {
-        img.addEventListener('click', () => {
-            imgEl.src = img.dataset.full || img.src;
-            lightbox.classList.add('active');
-        });
-    });
-    closeBtn.addEventListener('click', () => {
-        lightbox.classList.remove('active');
-        imgEl.src = '';
-    });
-    lightbox.addEventListener('click', (e) => {
-        if(e.target === lightbox){
-            lightbox.classList.remove('active');
-            imgEl.src = '';
-        }
-    });
-
-    // Live Search Highlight Effect
-    const searchInput = document.getElementById('search-input');
-    const searchForm = document.getElementById('driver-search-form');
-    searchInput.addEventListener('keypress', function(e){
-        if(e.key === 'Enter'){
-            e.preventDefault();
-            searchForm.submit();
-        }
-    });
-
-    searchInput.addEventListener('input', function(){
-        const term = searchInput.value.toLowerCase();
-        document.querySelectorAll('.request-card').forEach(card => {
-            const userName = card.querySelector('.request-header').textContent.toLowerCase();
-            if(userName.includes(term) || term === ''){
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    });
+  // Enable tooltips
+  if (window.bootstrap && bootstrap.Tooltip) {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+  }
 });
 </script>
 @endpush
+
