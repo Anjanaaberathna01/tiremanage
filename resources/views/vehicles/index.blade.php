@@ -18,7 +18,7 @@
     .bg-secondary-subtle { background: rgba(108,117,125,.12) !important; }
     .bg-info-subtle { background: rgba(13,202,240,.12) !important; }
     .bg-dark-subtle { background: rgba(33,37,41,.10) !important; }
-    .text-bg-light { background-color: #f8f9fa !important; }
+    .text-bg-light { background-color: #d7d9dcff !important; }
     .table-responsive thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
     .action-buttons { display: inline-flex; gap: .35rem; align-items: center; }
   </style>
