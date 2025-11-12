@@ -81,11 +81,25 @@ class DriverController extends Controller
     // Show driver edit profile form
     public function editProfile()
     {
-        $driver = Driver::where('user_id', Auth::id())->firstOrFail();
+        // If driver record doesn't exist yet, create a minimal profile so the Manage Account page works
+        $user = Auth::user();
+        $driver = Driver::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'name' => $user->name,
+                'email' => $user->email,
+                'full_name' => $user->name,
+                'mobile' => null,
+                'id_number' => null,
+            ]
+        );
 
-        $profilePhoto = $driver->profile_photo && Storage::disk('public')->exists($driver->profile_photo)
-            ? asset('storage/' . $driver->profile_photo)
-            : asset('assets/images/default-profile.jpg'); //  default path
+        $profilePhoto = null;
+        if (!empty($driver->profile_photo) && Storage::disk('public')->exists($driver->profile_photo)) {
+            $profilePhoto = asset('storage/' . $driver->profile_photo);
+        } else {
+            $profilePhoto = asset('assets/images/default-profile.jpg'); // default path
+        }
 
         return view('driver.edit_profile', compact('driver', 'profilePhoto'));
     }
