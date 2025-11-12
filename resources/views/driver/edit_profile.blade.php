@@ -1,121 +1,120 @@
 @extends('layouts.driver')
 
-@section('title', 'Edit Profile')
+@section('title', 'Manage Account')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Update Profile</h1>
+<div class="settings-shell container px-0">
+  <div class="settings-header d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div>
+      <h1 class="h4 mb-1 fw-semibold">Account</h1>
+      <div class="text-muted">Manage your profile information and photo.</div>
+    </div>
+  </div>
 
-    @if(session('success'))
-        <div class="alert alert-success mb-4">{{ session('success') }}</div>
-    @endif
+  @if(session('success'))
+    <div class="alert alert-success mb-3">{{ session('success') }}</div>
+  @endif
 
-    <form action="{{ route('driver.profile.update') }}" method="POST" enctype="multipart/form-data" class="row g-4 align-items-center">
-        @csrf
-
-        {{-- Left column --}}
-        <div class="col-md-8">
-            {{-- Username --}}
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="name" class="form-control" value="{{ $driver->user->name }}" required>
-            </div>
-
-            {{-- Full Name --}}
-            <div class="mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="full_name" class="form-control" value="{{ $driver->full_name }}" required>
-            </div>
-
-            {{-- Mobile --}}
-            <div class="mb-3">
-                <label class="form-label">Mobile</label>
-                <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" value="{{ old('mobile', $driver->mobile) }}" placeholder="e.g. 0711234567 or +94711234567">
-                @error('mobile')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            {{-- Email (Read Only) --}}
-            <div class="mb-3">
-                <label class="form-label">Email (Read Only)</label>
-                <input type="email" class="form-control" value="{{ $driver->user->email }}" readonly>
-            </div>
-
-            {{-- ID Number (Read Only) --}}
-            <div class="mb-3">
-                <label class="form-label">ID Number (Read Only)</label>
-                <input type="text" class="form-control" value="{{ $driver->id_number }}" readonly>
-            </div>
-
-            {{-- Change Password Button --}}
-            <div class="mb-3">
-                <a href="{{ route('driver.password.form') }}" class="btn btn-warning mt-3">Change Password</a>
-            </div>
-            {{-- Submit Button --}}
-
-            <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
+  <div class="row g-4">
+    <aside class="col-lg-3">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <img id="photoPreview" src="{{ $profilePhoto }}" alt="Profile Photo" class="rounded-circle border avatar-md shadow-sm">
+          </div>
+          <nav class="settings-nav nav flex-column">
+            <a class="nav-link active" href="{{ route('driver.profile.edit') }}">Profile</a>
+            <a class="nav-link" href="{{ route('driver.password.form') }}">Security</a>
+          </nav>
+          <div class="mt-3 d-flex gap-2">
+            <label for="profilePhotoInput" class="btn btn-light border btn-icon" title="Upload" aria-label="Upload">
+              <i class="bi bi-upload"></i>
+            </label>
+            <button type="button" class="btn btn-outline-danger btn-icon" title="Remove" aria-label="Remove" onclick="removePhoto()">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+          <input type="file" id="profilePhotoInput" name="profile_photo" accept="image/*" onchange="previewPhoto(event)" class="d-none">
+          <input type="hidden" id="removePhotoFlag" name="remove_photo" value="0">
         </div>
+      </div>
+    </aside>
 
-        {{-- Right column: profile photo --}}
-        <div class="col-md-4 text-center">
-            <div class="position-relative d-inline-block profile-photo-wrapper">
-                <img id="photoPreview"
-                     src="{{ $profilePhoto }}"
-                     alt="Profile Photo"
-                     class="rounded-circle shadow"
-                     style="width:250px; height:250px; object-fit:cover; border:5px solid #2563eb;">
-
-                {{-- Camera icon --}}
-                <label for="profilePhotoInput" class="camera-icon">
-                    <i class="bi bi-camera-fill"></i>
-                </label>
-
-                {{-- Remove icon --}}
-                <label class="remove-icon" onclick="removePhoto()">
-                    <i class="bi bi-x-circle-fill"></i>
-                </label>
-            </div>
-            <input type="file" id="profilePhotoInput" name="profile_photo" accept="image/*" onchange="previewPhoto(event)" style="display:none;">
-            <input type="hidden" id="removePhotoFlag" name="remove_photo" value="0">
+    <section class="col-lg-9">
+      <div class="panel card">
+        <div class="card-header bg-white">
+          <div class="fw-semibold">Profile</div>
+          <div class="small text-muted">Keep your details up to date.</div>
         </div>
-    </form>
+        <div class="card-body">
+          <form action="{{ route('driver.profile.update') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+            @csrf
+            <div class="col-12">
+              <label class="form-label">Username</label>
+              <input type="text" name="name" class="form-control form-control-modern" value="{{ $driver->user->name }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="full_name" class="form-control form-control-modern" value="{{ $driver->full_name }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Mobile</label>
+              <input type="text" name="mobile" class="form-control form-control-modern @error('mobile') is-invalid @enderror" value="{{ old('mobile', $driver->mobile) }}" placeholder="e.g. 0711234567 or +94711234567">
+              @error('mobile')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control form-control-modern" value="{{ $driver->user->email }}" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">ID Number</label>
+              <input type="text" class="form-control form-control-modern" value="{{ $driver->id_number }}" readonly>
+            </div>
+            <div class="col-12 pt-2 d-flex gap-2">
+              <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Changes</button>
+              <a href="{{ route('driver.password.form') }}" class="btn btn-outline-secondary">Change Password</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 
 <script>
 function previewPhoto(event) {
-    const output = document.getElementById('photoPreview');
+  const output = document.getElementById('photoPreview');
+  if (event.target.files && event.target.files[0]) {
     output.src = URL.createObjectURL(event.target.files[0]);
     document.getElementById('removePhotoFlag').value = 0;
+  }
 }
 
 function removePhoto() {
-    const output = document.getElementById('photoPreview');
-    output.src = "{{ asset('assets/images/default-profile.jpg') }}"; // ✅ correct path
-    document.getElementById('removePhotoFlag').value = 1;
-    document.getElementById('profilePhotoInput').value = "";
+  const output = document.getElementById('photoPreview');
+  output.src = "{{ asset('assets/images/default-profile.jpg') }}";
+  document.getElementById('removePhotoFlag').value = 1;
+  const input = document.getElementById('profilePhotoInput');
+  if (input) input.value = "";
 }
 </script>
 
 <style>
-.profile-photo-wrapper { position: relative; display: inline-block; }
+:root { --surface: #ffffff; --border: rgba(0,0,0,.08); --muted: #64748b; --accent: #0d6efd; }
 
-.camera-icon {
-    position: absolute; bottom: 10px; right: 10px;
-    width: 45px; height: 45px; background-color: #2563eb; color: white;
-    border-radius: 50%; cursor: pointer; font-size: 1.3rem; border: 2px solid white;
-    display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
-}
-.camera-icon:hover { transform: scale(1.2); }
+.settings-header { padding: .25rem 0 1rem; border-bottom: 1px solid var(--border); }
+.avatar-md { width: 72px; height: 72px; object-fit: cover; }
+.card { border-radius: 14px; border: 1px solid var(--border); background: var(--surface); }
+.card-header { border-bottom: 1px solid var(--border); }
+.panel { box-shadow: 0 6px 24px rgba(2,6,23,.06); }
+.form-control-modern { border-radius: .6rem; }
+.form-control-modern:focus { box-shadow: 0 0 0 .2rem rgba(13,110,253,.12); border-color: #86b7fe; }
 
-.remove-icon {
-    position: absolute; top: 10px; right: 10px; width: 35px; height: 35px;
-    background-color: #dc2626; color: white; border-radius: 50%;
-    cursor: pointer; font-size: 1.1rem; border: 2px solid white;
-    display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
-}
-.remove-icon:hover { transform: scale(1.2); background-color: #b91c1c; }
+.settings-nav .nav-link { color: #0f172a; border-radius: 10px; padding: .5rem .75rem; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+.settings-nav .nav-link:hover { background: #f0f6ff; color: #0b5ed7; }
+.settings-nav .nav-link.active { background: #e7f1ff; color: #0d6efd; border: 1px solid rgba(13,110,253,.25); }
+.btn-icon { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; }
 </style>
-
-<link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}">
 @endsection
