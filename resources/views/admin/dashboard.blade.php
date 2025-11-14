@@ -151,7 +151,7 @@
             <div class="stat-icon icon-primary"><i class="bi bi-file-earmark-arrow-down"></i></div>
             <div class="stat-content">
                 <p class="stat-label">Reports</p>
-                <p class="stat-value">Download</p>
+                <p class="stat-value"><i class="bi bi-download"></i></p>
             </div>
         </a>
     </div>
