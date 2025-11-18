@@ -165,7 +165,8 @@ class DriverController extends Controller
 
     $driver->delete();
 
-    return redirect()->route('admin.dashboard')->with('success', 'Driver deleted successfully.');
+    // Send the user back to the shared driver listing tab instead of the dashboard
+    return redirect()->route('section_manager.drivers.index')->with('success', 'Driver deleted successfully.');
 }
 
 public function receipts()

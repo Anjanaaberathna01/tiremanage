@@ -14,6 +14,13 @@
   </a>
 </div>
 
+@if(session('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
+
 <form action="{{ route('section_manager.drivers.index') }}" method="GET" class="mb-3">
   <div class="row g-2 align-items-center">
     <div class="col-sm-8 col-md-6">
