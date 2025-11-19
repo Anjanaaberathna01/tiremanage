@@ -49,7 +49,8 @@
             <input type="text" name="model" id="model"
                    class="form-control @error('model') is-invalid @enderror"
                    value="{{ old('model') }}"
-                   placeholder="Enter vehicle model" required>
+                   placeholder="Enter vehicle model" required
+                   pattern="^[^0-9]*$" title="Model must not contain numbers">
             @error('model')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -71,7 +72,8 @@
             <input type="text" name="branch" id="branch"
                    class="form-control @error('branch') is-invalid @enderror"
                    value="{{ old('branch') }}"
-                   placeholder="Enter branch name" required>
+                   placeholder="Enter branch name" required
+                   pattern="^[^0-9]*$" title="Branch must not contain numbers">
             @error('branch')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -82,7 +84,8 @@
             <input type="text" name="vehicle_type" id="vehicle_type"
                    class="form-control @error('vehicle_type') is-invalid @enderror"
                    value="{{ old('vehicle_type') }}"
-                   placeholder="e.g., Car, Van, Truck">
+                   placeholder="e.g., Car, Van, Truck"
+                   pattern="^[^0-9]*$" title="Vehicle type must not contain numbers">
             @error('vehicle_type')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -93,7 +96,8 @@
             <input type="text" name="brand" id="brand"
                    class="form-control @error('brand') is-invalid @enderror"
                    value="{{ old('brand') }}"
-                   placeholder="e.g., Toyota, Nissan, Honda">
+                   placeholder="e.g., Toyota, Nissan, Honda"
+                   pattern="^[^0-9]*$" title="Brand must not contain numbers">
             @error('brand')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -104,7 +108,8 @@
             <input type="text" name="user_section" id="user_section"
                    class="form-control @error('user_section') is-invalid @enderror"
                    value="{{ old('user_section') }}"
-                   placeholder="e.g., Transport, Admin, Field Ops">
+                   placeholder="e.g., Transport, Admin, Field Ops"
+                   pattern="^[^0-9]*$" title="User section must not contain numbers">
             @error('user_section')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

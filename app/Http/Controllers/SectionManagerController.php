@@ -281,7 +281,8 @@ public function storeDriver(Request $request)
         'id_number' => $request->id_number,
     ]);
 
-    return redirect()->route('section_manager.drivers.index')
+    // After creating a driver from section manager area, go back to the section manager dashboard
+    return redirect()->route('section_manager.dashboard')
         ->with('success', '✅ Driver created successfully.');
 }
 

@@ -73,9 +73,10 @@ class DriverController extends Controller
             'id_number' => $request->id_number,
         ]);
 
-        return redirect()->route(
-            $user->role->name === 'admin' ? 'admin.drivers.create' : 'section_manager.drivers.create'
-        )->with('success', 'Driver created successfully.');
+        // After creating a driver, redirect the current user back to their dashboard
+        // so both Admin and Section Manager land on their respective dashboards.
+        return redirect()->route($userRole === 'admin' ? 'admin.dashboard' : 'section_manager.dashboard')
+            ->with('success', 'Driver created successfully.');
     }
 
     // Show driver edit profile form

@@ -55,13 +55,23 @@ public function index(Request $request)
     public function store(Request $request)
     {
         // Validate all fields and check uniqueness of plate_no
+        // Disallow digits in textual fields (model, branch, vehicle_type, brand, user_section)
+        // Plate number is allowed to contain digits
+        $noDigits = 'regex:/^[^0-9]*$/';
+
         $request->validate([
-            'model'     => 'required|string|max:255',
+            'model'     => ['required','string','max:255',$noDigits],
             'plate_no'  => 'required|string|max:50|unique:vehicles,plate_no',
-            'branch'    => 'required|string|max:100',
-            'vehicle_type' => 'nullable|string|max:100',
-            'brand'        => 'nullable|string|max:100',
-            'user_section' => 'nullable|string|max:150',
+            'branch'    => ['required','string','max:100',$noDigits],
+            'vehicle_type' => ['nullable','string','max:100',$noDigits],
+            'brand'        => ['nullable','string','max:100',$noDigits],
+            'user_section' => ['nullable','string','max:150',$noDigits],
+        ], [
+            'model.regex' => 'Model must not contain numbers.',
+            'branch.regex' => 'Branch must not contain numbers.',
+            'vehicle_type.regex' => 'Vehicle type must not contain numbers.',
+            'brand.regex' => 'Brand must not contain numbers.',
+            'user_section.regex' => 'User section must not contain numbers.',
         ]);
 
         // Normalize plate number (uppercase, trim spaces)
@@ -105,13 +115,21 @@ public function index(Request $request)
      */
     public function update(Request $request, Vehicle $vehicle)
     {
+        $noDigits = 'regex:/^[^0-9]*$/';
+
         $request->validate([
-            'model'    => 'required|string|max:255',
+            'model'    => ['required','string','max:255',$noDigits],
             'plate_no' => 'required|string|max:50|unique:vehicles,plate_no,' . $vehicle->id,
-            'branch'   => 'required|string|max:255',
-            'vehicle_type' => 'nullable|string|max:100',
-            'brand'        => 'nullable|string|max:100',
-            'user_section' => 'nullable|string|max:150',
+            'branch'   => ['required','string','max:255',$noDigits],
+            'vehicle_type' => ['nullable','string','max:100',$noDigits],
+            'brand'        => ['nullable','string','max:100',$noDigits],
+            'user_section' => ['nullable','string','max:150',$noDigits],
+        ], [
+            'model.regex' => 'Model must not contain numbers.',
+            'branch.regex' => 'Branch must not contain numbers.',
+            'vehicle_type.regex' => 'Vehicle type must not contain numbers.',
+            'brand.regex' => 'Brand must not contain numbers.',
+            'user_section.regex' => 'User section must not contain numbers.',
         ]);
 
         $vehicle->update([
