@@ -257,7 +257,7 @@ public function storeDriver(Request $request)
         'email' => 'required|email|unique:users,email',
         'full_name' => 'required|string|max:255',
         'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
-        'id_number' => 'nullable|string|max:20|unique:drivers,id_number',
+    'id_number' => 'required|string|max:12|unique:drivers,id_number',
     ], [
         'mobile.regex' => 'Mobile must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
     ]);

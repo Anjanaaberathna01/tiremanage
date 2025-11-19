@@ -45,7 +45,7 @@ class DriverController extends Controller
             'email' => 'required|email|unique:users,email',
             'full_name' => 'nullable|string|max:255',
             'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
-            'id_number' => 'nullable|string|max:50|unique:drivers,id_number',
+            'id_number' => 'required|string|max:12|unique:drivers,id_number',
         ]);
 
         // Get driver role

@@ -36,12 +36,12 @@
         @csrf
 
         <div class="mb-3">
-            <label for="name" class="form-label">Username</label>
+            <label for="name" class="form-label">Username*</label>
             <input type="text" name="name" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email (for login)</label>
+            <label for="email" class="form-label">Email (for login)*</label>
             <input type="email" name="email" class="form-control" required>
         </div>
 
@@ -59,8 +59,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="id_number" class="form-label">ID Number</label>
-            <input type="text" id="id_number" name="id_number" class="form-control @error('id_number') is-invalid @enderror" value="{{ old('id_number') }}">
+            <label for="id_number" class="form-label">ID Number*</label>
+            <input type="text" id="id_number" name="id_number" maxlength="12" class="form-control @error('id_number') is-invalid @enderror" value="{{ old('id_number') }}" inputmode="numeric" required>
             @error('id_number')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -106,11 +106,33 @@
                         }
                     })
                     .catch(err => {
+                            // enforce maxlength client-side (extra safety)
+                            if (this.value.length > 12) {
+                                this.value = this.value.slice(0, 12);
+                            }
                         // silent fail; server may be unreachable during dev
                         console.error('ID check failed', err);
                     });
             }, 450);
         });
+        
+        // Auto-complete email domain when user types '@'
+        const emailInput = document.querySelector('input[name="email"]');
+        if (emailInput) {
+            emailInput.addEventListener('keyup', function (e) {
+                try {
+                    // Trigger only when user typed the '@' character and the value currently ends with '@'
+                    if (e.key === '@' && this.value.endsWith('@')) {
+                        this.value = this.value + 'gmail.com';
+                        // put caret at end
+                        this.setSelectionRange(this.value.length, this.value.length);
+                    }
+                } catch (ex) {
+                    // ignore any selection errors on older browsers
+                    console.error('Email autocomplete error', ex);
+                }
+            });
+        }
     })();
 </script>
 @endpush
