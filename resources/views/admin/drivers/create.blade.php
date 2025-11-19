@@ -60,10 +60,57 @@
 
         <div class="mb-3">
             <label for="id_number" class="form-label">ID Number</label>
-            <input type="text" name="id_number" class="form-control">
+            <input type="text" id="id_number" name="id_number" class="form-control @error('id_number') is-invalid @enderror" value="{{ old('id_number') }}">
+            @error('id_number')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <div id="idFeedback" class="form-text text-danger" style="display:none;">This ID number is already registered.</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Register Driver</button>
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function(){
+        const input = document.getElementById('id_number');
+        const feedback = document.getElementById('idFeedback');
+        let timeout = null;
+
+        if (!input) return;
+
+        input.addEventListener('input', function () {
+            feedback.style.display = 'none';
+            input.classList.remove('is-invalid');
+            input.setCustomValidity('');
+
+            const val = this.value.trim();
+            if (val.length === 0) return; // empty -- nothing to check
+
+            // debounce
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                fetch("{{ route('admin.drivers.checkId') }}?q=" + encodeURIComponent(val), { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.exists) {
+                            feedback.style.display = 'block';
+                            input.classList.add('is-invalid');
+                            input.setCustomValidity('This ID number is already registered.');
+                        } else {
+                            feedback.style.display = 'none';
+                            input.classList.remove('is-invalid');
+                            input.setCustomValidity('');
+                        }
+                    })
+                    .catch(err => {
+                        // silent fail; server may be unreachable during dev
+                        console.error('ID check failed', err);
+                    });
+            }, 450);
+        });
+    })();
+</script>
+@endpush

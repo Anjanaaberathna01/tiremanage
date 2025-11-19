@@ -45,7 +45,7 @@ class DriverController extends Controller
             'email' => 'required|email|unique:users,email',
             'full_name' => 'nullable|string|max:255',
             'mobile' => ['nullable', 'string', 'max:50', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
-            'id_number' => 'nullable|string|max:50',
+            'id_number' => 'nullable|string|max:50|unique:drivers,id_number',
         ]);
 
         // Get driver role
@@ -230,6 +230,22 @@ public function changePasswordForm()
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', 'Password updated successfully. Please log in with your new password.');
+    }
+
+    /**
+     * AJAX: Check whether a driver ID is already taken.
+     * Returns JSON: { exists: true } if found, otherwise { exists: false }
+     */
+    public function checkId(Request $request)
+    {
+        $value = $request->query('q') ?? $request->query('id_number');
+        if (empty($value)) {
+            return response()->json(['exists' => false]);
+        }
+
+        $exists = Driver::where('id_number', $value)->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 
 

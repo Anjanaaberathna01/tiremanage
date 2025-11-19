@@ -69,7 +69,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/requests/pending', [DashboardController::class, 'pendingRequests'])->name('request.pending');
 
-        Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
+    Route::get('/drivers/check-id', [DriverController::class, 'checkId'])->name('drivers.checkId');
+    Route::get('/drivers/create', [DriverController::class, 'create'])->name('drivers.create');
         Route::post('/drivers', [DriverController::class, 'store'])->name('drivers.store');
         Route::delete('/drivers/{id}', [DriverController::class, 'destroy'])->name('drivers.destroy');
 

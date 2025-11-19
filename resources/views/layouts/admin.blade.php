@@ -156,6 +156,9 @@
             </button>
             <div class="collapse navbar-collapse" id="adminNavbar">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Home tab: navigates to admin dashboard -->
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Home</a></li>
+                    
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.vehicles.*') ? 'active' : '' }}" href="{{ route('admin.vehicles.index') }}">Vehicles</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.tires.*') ? 'active' : '' }}" href="{{ route('admin.tires.index') }}">Tyres</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.drivers.*') || request()->routeIs('section_manager.drivers.*') ? 'active' : '' }}" href="{{ route('section_manager.drivers.index') }}">Drivers</a></li>
