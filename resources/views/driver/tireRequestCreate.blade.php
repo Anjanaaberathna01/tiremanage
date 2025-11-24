@@ -199,6 +199,39 @@ document.addEventListener('DOMContentLoaded', function(){
 
     plateInput.addEventListener('input', () => lookupPlate(plateInput.value));
     plateInput.addEventListener('change', () => lookupPlate(plateInput.value));
+
+    // Set client-side max date to enforce "older than 3 months" rule and provide hint
+    const lastDateInput = document.getElementById('last_tire_replacement_date');
+    if (lastDateInput) {
+        const now = new Date();
+        // compute threshold: 3 months ago
+        const threshold = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+        // require strictly older than 3 months -> set max to the day before threshold
+        threshold.setDate(threshold.getDate() - 1);
+        const isoMax = threshold.toISOString().split('T')[0];
+        lastDateInput.max = isoMax;
+
+        // Add a small hint below the input
+        const hint = document.createElement('small');
+        hint.className = 'text-muted d-block';
+        hint.textContent = 'Please enter a date older than 3 months (latest allowed: ' + isoMax + ').';
+        lastDateInput.parentNode.appendChild(hint);
+
+        // Prevent form submission if the date is not older than 3 months (client-side check)
+        const form = lastDateInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                const val = lastDateInput.value;
+                if (val) {
+                    if (val >= lastDateInput.max) {
+                        e.preventDefault();
+                        alert('Last Tire Replacement Date must be older than 3 months.');
+                        lastDateInput.focus();
+                    }
+                }
+            });
+        }
+    }
 });
 </script>
 @endpush

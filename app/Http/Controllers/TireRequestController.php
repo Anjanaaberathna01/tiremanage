@@ -34,6 +34,19 @@ class TireRequestController extends Controller
             'existing_tire_make' => 'nullable|string|max:255',
         ]);
 
+        // Enforce: last_tire_replacement_date MUST be older than 3 months.
+        if (!empty($validated['last_tire_replacement_date'])) {
+            $date = Carbon::parse($validated['last_tire_replacement_date'])->startOfDay();
+            $threshold = Carbon::today()->subMonths(3)->startOfDay();
+
+            // Require date to be strictly older than 3 months
+            if ($date->greaterThanOrEqualTo($threshold)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['last_tire_replacement_date' => 'The last tire replacement date must be older than 3 months.']);
+            }
+        }
+
         $images = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {

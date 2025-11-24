@@ -40,6 +40,22 @@
 
             <div class="collapse navbar-collapse" id="driverNavbar">
                 <ul class="navbar-nav ms-auto">
+                    {{-- Home Tab: explicit link to dashboard --}}
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('driver.dashboard') ? 'active' : '' }}" href="{{ route('driver.dashboard') }}">
+                          Home
+                        </a>
+                    </li>
+
+                    {{-- Receipts: safe link that checks available route names or falls back to URL --}}
+                    <li class="nav-item">
+                        @if (Route::has('driver.receipts'))
+                            <a class="nav-link {{ request()->routeIs('driver.receipts*') ? 'active' : '' }}" href="{{ route('driver.receipts') }}">Receipts</a>
+                        @else
+                            <a class="nav-link" href="{{ url('/driver/receipts') }}">Receipts</a>
+                        @endif
+                    </li>
+
                     {{-- Request Tire --}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('driver.requests.create') }}">

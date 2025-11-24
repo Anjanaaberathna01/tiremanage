@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 
 class SupplierController extends Controller
@@ -30,11 +31,12 @@ class SupplierController extends Controller
         // Accept either: 0XXXXXXXXX (10 digits, leading 0) OR optional +94/94 followed by 9 digits
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
+            'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/', 'unique:suppliers,contact'],
             'address' => 'nullable|string|max:500',
             'town' => 'nullable|string|max:100',
         ], [
             'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
+            'contact.unique' => 'A supplier with this contact already exists.',
         ]);
 
         Supplier::create($request->all());
@@ -56,11 +58,18 @@ class SupplierController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => ['required', 'string', 'max:255', 'regex:/^(0\d{9}|\+?94\d{9})$/'],
+            'contact' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^(0\d{9}|\+?94\d{9})$/',
+                Rule::unique('suppliers', 'contact')->ignore($supplier->id),
+            ],
             'address' => 'nullable|string|max:500',
             'town' => 'nullable|string|max:100',
         ], [
             'contact.regex' => 'Contact must be 10 digits starting with 0 (e.g. 0711234567) or include country code 94 with 9 subscriber digits (e.g. +94711234567).',
+            'contact.unique' => 'A supplier with this contact already exists.',
         ]);
 
         $supplier->update($request->all());
