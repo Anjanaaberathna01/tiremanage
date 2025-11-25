@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,63 +12,70 @@
     <!-- Custom Admin Theme (Light, neutral palette with brand navbar) -->
     <style>
         :root {
-            --nav-h: 52px;        /* compact navbar height */
-            /* Light neutral admin palette */
+            --nav-h: 96px;
             --bg: #f5f7fb;
             --surface: #f9fafb;
-            --muted: #6b7280;     /* gray-500 */
-            --text: #111827;      /* gray-900 */
-            --border: #e5e7eb;    /* gray-200 */
-            --shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
-
-            /* Brand accents */
-            --primary: #0057A8;       /* SLT blue */
-            --primary-600: #004C95;   /* darker SLT blue */
-            --brand-green: #39B54A;   /* MOBITEL green */
-            --success: var(--brand-green);
-            --success-600: #2E9E3E;
-            --primary-focus: rgba(0, 87, 168, .15);
-            --warning: #f59e0b;   /* amber-500 */
-            --warning-600: #d97706;
-            --danger: #ef4444;    /* red-500 */
-            --danger-600: #dc2626;
+            --muted: #e5e7eb;
+            --text: #111827;
+            --border: #e5e7eb;
+            --shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+            --primary: #0b4fb4;
+            --primary-600: #0a3f99;
+            --brand-green: #39b54a;
+            --danger: #ef4444;
+            --primary-focus: rgba(11, 79, 180, 0.16);
         }
 
         /* Body and typography */
         body {
-            background: var(--bg);
+            background: var(--bg) url("{{ asset('assets/images/background.jpg') }}") center center / cover fixed no-repeat;
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text);
             line-height: 1.5;
         }
 
-        /* Top navbar */
-        .navbar {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-600) 100%) !important;
-            border-bottom: none;
-            box-shadow: 0 6px 18px rgba(0,0,0,.18);
-            padding-top: .15rem;
-            padding-bottom: .15rem;
+        /* Hero-style admin navbar */
+        .navbar.admin-hero {
+            background: #0b4fb4 !important;
+            border: none;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
             min-height: var(--nav-h);
         }
-        .navbar .navbar-brand { color: #ffffff !important; font-weight: 700; letter-spacing: .2px; font-size: 1.05rem; line-height: 1.2; }
-        .navbar .navbar-brand .brand-logo { height: 30px; width: auto; display: block; }
-        .navbar .navbar-brand .brand-logo { filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.4)); }
-        .navbar .nav-link { color: rgba(255,255,255,.85) !important; font-weight: 500; border-radius: .4rem; padding: .35rem .6rem; line-height: 1.2; transition: background-color .2s ease, color .2s ease, transform .08s ease; }
-        .navbar .nav-link:hover { background: rgba(255,255,255,.08); color: #ffffff !important; }
-        .navbar .nav-link.active, .navbar .nav-link[aria-current="page"] { background: rgba(255,255,255,.18); color: #ffffff !important; }
-        .navbar .nav-link:active {
-            transform: translateY(1px);
+        .admin-hero .nav-inner { display: flex; align-items: center; justify-content: flex-start; gap: 3rem; }
+        .admin-hero .brand-block { display: flex; align-items: center; gap: .75rem; padding-left: 4.25rem; padding-right: 45rem; }
+        .admin-hero .brand-logo { height: 46px; width: auto; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.28)); }
+        .admin-hero .status-block {
+            color: #ffffff;
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-left: auto;
         }
-        .btn-link.nav-link { color: var(--danger) !important; }
-        .navbar .navbar-toggler { border-color: rgba(255,255,255,.55); padding: .15rem .45rem; }
-        .navbar .navbar-toggler:focus { box-shadow: 0 0 0 .15rem rgba(255,255,255,.35); }
+        .admin-hero .status-block .date-time { font-weight: 700; letter-spacing: .25px; }
+        .admin-hero .status-block .muted { opacity: .9; font-size: .93rem; }
+        .admin-hero .logout-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,.75);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: .55rem .95rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            transition: background-color .18s ease, transform .12s ease, box-shadow .18s ease;
+        }
+        .admin-hero .logout-btn:hover { background: rgba(255,255,255,.1); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.18); }
+        .admin-hero .logout-btn:focus { box-shadow: 0 0 0 .16rem rgba(255,255,255,.35); }
+        .admin-hero .logout-btn .bi { font-size: 1.05rem; }
 
         /* Main container spacing */
         .container { padding-top: .5rem; padding-bottom: 2rem; }
 
         /* Ensure space for fixed navbar */
-        body { padding-top: calc(var(--nav-h) + 8px); }
+        body { padding-top: calc(var(--nav-h) + 10px); }
 
         /* Cards */
         .card {
@@ -136,41 +143,36 @@
         /* Footer intentionally removed from admin layout */
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .navbar-brand { font-size: 1rem; }
-            .navbar .nav-link { font-size: .9rem; padding: .3rem .55rem; }
+        @media (max-width: 992px) {
+            .admin-hero .nav-inner { flex-direction: column; align-items: flex-start; }
+            .admin-hero .status-block { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+            .admin-hero .status-block .date-time { font-size: .95rem; text-align: right; }
+            .admin-hero .status-block .muted { text-align: right; }
         }
     </style>
     @stack('styles')
 </head>
 <body>
-
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('admin.dashboard') }}">
-                <img src="{{ asset('assets/images/logo2.png') }}" alt="SLT-MOBITEL" class="brand-logo">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="adminNavbar">
-                <ul class="navbar-nav ms-auto">
-                    <!-- Home tab: navigates to admin dashboard -->
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Home</a></li>
-                    
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.vehicles.*') ? 'active' : '' }}" href="{{ route('admin.vehicles.index') }}">Vehicles</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.tires.*') ? 'active' : '' }}" href="{{ route('admin.tires.index') }}">Tyres</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.drivers.*') || request()->routeIs('section_manager.drivers.*') ? 'active' : '' }}" href="{{ route('section_manager.drivers.index') }}">Drivers</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}" href="{{ route('admin.suppliers.index') }}">Suppliers</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.request.*') ? 'active' : '' }}" href="{{ route('admin.request.pending') }}">Requests</a></li>
-                    <li class="nav-item">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-link nav-link">Logout</button>
-                        </form>
-                    </li>
-                </ul>
+    <nav class="navbar navbar-dark admin-hero fixed-top">
+        <div class="container-fluid px-4">
+            <div class="nav-inner">
+                <div class="brand-block">
+                    <img src="{{ asset('assets/images/logo2.png') }}" alt="SLT-MOBITEL" class="brand-logo">
+                </div>
+                <div class="status-block d-flex align-items-center gap-4 flex-wrap">
+                    <div class="d-flex flex-column align-items-end text-end">
+                        <div class="date-time" id="adminCurrentDateTime">Loading time...</div>
+                        <div class="muted" id="adminLastUpdated">Last updated: —</div>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" class="mb-0">
+                        @csrf
+                        <button type="submit" class="logout-btn">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
@@ -190,6 +192,30 @@
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            // Live date/time display to mirror the reference header layout
+            var dateTimeEl = document.getElementById('adminCurrentDateTime');
+            var lastUpdatedEl = document.getElementById('adminLastUpdated');
+            if (dateTimeEl && lastUpdatedEl) {
+                var lastUpdatedSet = false;
+                var optionsDate = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+                var optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+                var updateClock = function () {
+                    var now = new Date();
+                    var dateString = now.toLocaleDateString('en-US', optionsDate);
+                    var timeString = now.toLocaleTimeString('en-US', optionsTime);
+                    dateTimeEl.textContent = dateString + ' | ' + timeString;
+
+                    if (!lastUpdatedSet) {
+                        lastUpdatedEl.textContent = 'Last updated: ' + timeString;
+                        lastUpdatedSet = true;
+                    }
+                };
+
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
         });
     </script>
     @stack('scripts')
