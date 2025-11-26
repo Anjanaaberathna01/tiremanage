@@ -8,8 +8,8 @@
     /* Restore rich background for Dashboard only */
     body {
         background:
-            linear-gradient(135deg, rgba(90, 90, 90, 0.85), rgba(42, 42, 42, 0.85)),
-            url("{{ asset('assets/images/background2.jpg') }}") no-repeat center center fixed;
+            linear-gradient(135deg, rgba(90, 90, 90, 0.78), rgba(42, 42, 42, 0.78)),
+            url("{{ asset('assets/images/background.jpg') }}") no-repeat center center fixed;
         background-size: cover;
     }
 
